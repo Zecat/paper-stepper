@@ -1,0 +1,141 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-selector/iron-selectable.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <paper-stepper></paper-stepper>
+
+@group Seed Elements
+@element paper-stepper
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="paper-stepper">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+        padding: 24px;
+      }
+    </style>
+    <content>
+    </content>
+  </template>
+
+</dom-module>
+
+<script>
+  'use strict';
+  Polymer({
+
+    is: 'paper-stepper',
+
+    properties: {
+      activateEvent: {
+        value: 'select-step'
+      },
+
+      alternativeLabel: {
+        type: Boolean,
+        value: false
+      },
+
+      cancelText: String,
+
+      continueText: String,
+
+      editable: {
+        type: Boolean,
+        value: false
+      },
+
+      linear: {
+        type: Boolean,
+        value: false
+      },
+
+      mobileStep: {
+        type: String,
+        value: 'auto' // 'dots', 'progressBar', 'text'
+      },
+
+      opened: {
+        type: String,
+        value: 0
+      },
+
+      vertical: {
+        type: Boolean,
+        value: false
+      },
+    },
+
+    behaviors: [
+      Polymer.IronSelectableBehavior
+    ],
+
+    listeners: {
+      'iron-select': 'openStep',
+      'iron-deselect': 'closeStep',
+      'continue': 'selectNext',
+      'cancel': 'clearSelection'
+    },
+
+    attached: function() {
+      var steps = Polymer.dom(this).children;
+      for (let i in steps) {
+        steps[i].index = i;
+        if (this.linear) {
+          steps[i].linearStepper = true;
+        }
+        if (this.editable) {
+          steps[i].editable = true;
+        }
+        if(this.cancelText) {
+          steps[i].cancelText = this.cancelText;
+        }
+        if(this.continueText) {
+          steps[i].continueText = this.continueText;
+        }
+      }
+      this.selected = this.opened;
+    },
+
+    clearSelection: function() {
+      this.selected = null;
+    },
+
+    closeStep: function(e) {
+      e.detail.item.close();
+    },
+
+    openStep: function(e) {
+      e.detail.item.open();
+    },
+
+    selectNext: function() {
+      var index = (Number(this._valueToIndex(this.selected)) + 1) % this.items.length;
+      var nextItem = this.items[index];
+      // if next item is validated and can't be edited, abort selection
+      if (!nextItem.validated || nextItem.editable) {
+        this.selected = this._indexToValue(index);
+      }
+    }
+
+  });
+
+</script>

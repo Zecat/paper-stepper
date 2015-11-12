@@ -1,0 +1,40 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>paper-stepper Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../../paper-input/paper-input.html">
+    <link rel="import" href="../../paper-input/paper-textarea.html">
+    <link rel="import" href="../paper-stepper.html">
+    <link rel="import" href="../paper-step.html">
+  </head>
+  <body unresolved>
+
+  <paper-stepper linear>
+    <paper-step label="Create an account" summarize="Summarize if needed">
+      <paper-input label="E-mail"></paper-input>
+      <paper-input type="password" label="Password"></paper-input>
+      <paper-input type="password" label="Confirm password"></paper-input>
+    </paper-step>
+    <paper-step editable label="Enter personal informations" optional>
+      <paper-input label="Name"></paper-input>
+      <paper-input label="Address"></paper-input>
+    </paper-step>
+    <paper-step label="Write a word about you">
+      <paper-textarea label="Your description" rows=3></paper-textarea>
+    </paper-step>
+  </paper-stepper>
+
+  </body>
+</html>
