@@ -1,10 +1,10 @@
 {
   "name": "paper-stepper",
-  "version": "1.0.3",
+  "version": "1.0.0",
   "authors": [
-    "Anonymous <anonymous@example.com>"
+    "Zecat <jullienfelix@gmail.com>"
   ],
-  "description": "An element providing a solution to no problem in particular.",
+  "description": "Material paper-stepper element.",
   "keywords": [
     "web-component",
     "polymer",
@@ -12,25 +12,25 @@
   ],
   "main": "paper-stepper.html",
   "license": "http://polymer.github.io/LICENSE.txt",
-  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "homepage": "https://github.com/zecat/paper-stepper/",
   "ignore": [
     "/.*",
     "/test/"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.1.0",
-    "paper-button": "PolymerElements/paper-button#~1.0.8",
-    "iron-icons": "PolymerElements/iron-icons#~1.0.4",
-    "paper-styles": "PolymerElements/paper-styles#~1.0.12",
-    "iron-dropdown": "PolymerElements/iron-dropdown#~1.0.6",
-    "paper-ripple": "PolymerElements/paper-ripple#~1.0.4",
+    "polymer": "Polymer/polymer#^1.2.0",
+    "paper-button": "PolymerElements/paper-button#~1.0.11",
+    "iron-icons": "PolymerElements/iron-icons#~1.1.1",
+    "paper-styles": "PolymerElements/paper-styles#~1.1.2",
+    "iron-dropdown": "PolymerElements/iron-dropdown#~1.1.0",
+    "paper-ripple": "PolymerElements/paper-ripple#~1.0.5",
     "iron-selector": "PolymerElements/iron-selector#~1.0.8",
-    "iron-checked-element-behavior": "PolymerElements/iron-checked-element-behavior#~1.0.2",
+    "iron-checked-element-behavior": "PolymerElements/iron-checked-element-behavior#~1.0.4",
     "iron-icon": "PolymerElements/iron-icon#~1.0.7",
-    "iron-flex-layout": "PolymerElements/iron-flex-layout#~1.0.5",
-    "neon-animation": "PolymerElements/neon-animation#~1.0.8",
-    "paper-input": "PolymerElements/paper-input#~1.0.18",
-    "neon-advanced-animations": "https://github.com/Zecat/neon-advanced-animations.git#master"
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#~1.2.2",
+    "neon-animation": "PolymerElements/neon-animation#~1.0.9",
+    "paper-input": "PolymerElements/paper-input#~1.1.4",
+    "neon-advanced-animations": "Zecat/neon-advanced-animations#~1.1.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
