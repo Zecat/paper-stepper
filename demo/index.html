@@ -16,16 +16,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../../paper-input/paper-input.html">
     <link rel="import" href="../../paper-input/paper-textarea.html">
+    <link rel="import" href="../../iron-form/iron-form.html">
     <link rel="import" href="../paper-stepper.html">
     <link rel="import" href="../paper-step.html">
   </head>
   <body unresolved>
 
   <paper-stepper linear>
-    <paper-step label="Create an account" summarize="Summarize if needed">
-      <paper-input label="E-mail"></paper-input>
-      <paper-input type="password" label="Password"></paper-input>
-      <paper-input type="password" label="Confirm password"></paper-input>
+    <paper-step id="step" label="Create an account" summarize="Summarize if needed">
+      <form is="iron-form" id="form" method="post" action="/">
+        <paper-input label="Pseudo*" required error-message="required"></paper-input>
+        <paper-input type="password" label="Password"></paper-input>
+        <paper-input type="password" label="Confirm password"></paper-input>
+      </form>
     </paper-step>
     <paper-step editable label="Enter personal informations" optional>
       <paper-input label="Name"></paper-input>
@@ -35,6 +38,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-textarea label="Your description" rows=3></paper-textarea>
     </paper-step>
   </paper-stepper>
+
+  <script>
+    var step = document.getElementById('step');
+    var form = document.getElementById('form');
+
+    step._getValidity = function() {
+      return form.validate();
+    }
+  </script>
 
   </body>
 </html>
