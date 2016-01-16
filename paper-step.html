@@ -112,7 +112,7 @@ Example:
         font-weight: 500;
       }
 
-      #stepContent {
+      #stepSection {
         display: none;
         overflow: hidden;
       }
@@ -135,10 +135,14 @@ Example:
         </template>
       </div>
     </div>
-    <div id="stepContent">
-      <content></content>
-      <paper-button on-tap="continue" class="primary-button">[[continueText]]</paper-button>
-      <paper-button on-tap="cancel">[[cancelText]]</paper-button>
+    <div id="stepSection" class="layout vertical">
+      <div id="stepContent">
+        <content></content>
+      </div>
+      <div>
+        <paper-button on-tap="continue" class="primary-button">[[continueText]]</paper-button>
+        <paper-button on-tap="cancel">[[cancelText]]</paper-button>
+      </div>
     </div>
   </template>
 
@@ -163,11 +167,11 @@ Example:
           return {
             'entry': {
               name: 'unroll-animation',
-              node: this.$.stepContent
+              node: this.$.stepSection
             },
             'exit': {
               name: 'roll-up-animation',
-              node: this.$.stepContent
+              node: this.$.stepSection
             }
           }
         }
@@ -245,7 +249,7 @@ Example:
 
     hide: function() {
       if(!this.opened) {
-        this.$.stepContent.style.display = 'none';
+        this.$.stepSection.style.display = 'none';
         this.fire('open-animation-finish');
       } else {
         this.fire('close-animation-finish');
@@ -268,7 +272,7 @@ Example:
 
     _openedChanged: function(opened) {
       if (opened) {
-        this.$.stepContent.style.display = 'block';
+        this.$.stepSection.style.display = 'block';
         this.playAnimation('entry');
       } else {
         this.playAnimation('exit');
