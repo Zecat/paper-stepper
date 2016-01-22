@@ -16,28 +16,43 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../../paper-input/paper-input.html">
     <link rel="import" href="../../paper-input/paper-textarea.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-form/iron-form.html">
     <link rel="import" href="../paper-stepper.html">
     <link rel="import" href="../paper-step.html">
   </head>
   <body unresolved>
 
-  <paper-stepper linear>
-    <paper-step id="step" label="Create an account" summarize="Summarize if needed">
-      <form is="iron-form" id="form" method="post" action="/">
-        <paper-input label="Pseudo*" required error-message="required"></paper-input>
-        <paper-input type="password" label="Password"></paper-input>
-        <paper-input type="password" label="Confirm password"></paper-input>
-      </form>
-    </paper-step>
-    <paper-step editable label="Enter personal informations" optional>
-      <paper-input label="Name"></paper-input>
-      <paper-input label="Address"></paper-input>
-    </paper-step>
-    <paper-step label="Write a word about you">
-      <paper-textarea label="Your description" rows=3></paper-textarea>
-    </paper-step>
-  </paper-stepper>
+  <style include="demo-pages-shared-styles">
+    .vertical-section-container {
+      max-width: 700px;
+      margin: auto;
+    }
+  </style>
+  
+  <div class="vertical-section-container">
+    <demo-snippet>
+      <template>
+        <paper-stepper linear>
+          <paper-step id="step" label="Create an account" summarize="Summarize if needed">
+            <form is="iron-form" id="form" method="post" action="/">
+              <paper-input label="Pseudo*" required error-message="required"></paper-input>
+              <paper-input type="password" label="Password"></paper-input>
+              <paper-input type="password" label="Confirm password"></paper-input>
+            </form>
+          </paper-step>
+          <paper-step editable label="Enter personal informations" optional>
+            <paper-input label="Name"></paper-input>
+            <paper-input label="Address"></paper-input>
+          </paper-step>
+          <paper-step label="Write a word about you">
+            <paper-textarea label="Your description" rows=3></paper-textarea>
+          </paper-step>
+        </paper-stepper>
+      </template>
+    </demo-snippet>
+  </div>
 
   <script>
     var step = document.getElementById('step');
