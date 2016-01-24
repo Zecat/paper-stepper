@@ -1,0 +1,141 @@
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-selector/iron-selector.html">
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="paper-stepper-behavior.html">
+<link rel="import" href="paper-vertical-step.html">
+
+<!--
+@group Seed Elements
+@element paper-vertical-stepper
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="paper-vertical-stepper">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+        @apply(--paper-font-common-base);
+        @apply(--layout-vertical);
+        padding-top: 16px;
+      }
+      iron-selector > paper-vertical-step:last-of-type ::content #connectorLine {
+        visibility: hidden;
+      }
+    </style>
+    <iron-selector
+      selected="[[initialSelected]]"
+      selected-values="[[initialSelectedValues]]"
+      id="stepSelector"
+      selected-attribute="opened"
+      activate-event="step-select">
+      <!-- multi="[[multiOpenable]]"> -->
+    </iron-selector>
+  </template>
+  <script>
+    Polymer({
+      is: 'paper-vertical-stepper',
+
+      behaviors: [
+        Zecat.PaperStepperBehavior
+      ],
+
+      properties: {
+        // multiOpenable: {
+        //   type: Boolean,
+        //   value: false
+        // },
+        initialSelectedValues: {
+          type: Array,
+          value: [0]
+        }
+      },
+
+      listeners: {
+        'continue-step': '_continueStep',
+        'cancel-step': '_cancelStep',
+        'progress': '_updatePreviousCompleted'
+      },
+
+      attached: function() {
+        this.getEffectiveChildren().forEach(function(step, index) {
+          var verticalStep = this.create('paper-vertical-step', {
+            index: index + 1,
+            linearStepper: this.linear,
+            editable: step.editable,
+            optional: step.optional,
+            label: step.label,
+            // set previousComplete true for the first step
+            previousCompleted: !index
+          });
+          Polymer.dom(verticalStep).appendChild(step);
+          Polymer.dom(this.$.stepSelector).appendChild(verticalStep);
+        }.bind(this));
+      },
+
+      _cancelStep: function(e) {
+        if (this.multiOpenable) {
+          this.$.stepSelector.select(this.$.stepSelector.indexOf(e.target));
+        } else {
+          this.$.stepSelector.selected = -1;
+        }
+      },
+
+      _continueStep: function(e) {
+        var selectedItem = e.target;
+        if ( ( step = selectedItem.getEffectiveChildren()[0] )
+          && step.validate() ) {          
+          selectedItem.completed = true;
+          this.progress();
+        }
+      },
+
+      continue: function() {
+        if ( (this.$.stepSelector.selectedItem || this.progress())
+          && ( step = this.$.stepSelector.selectedItem.getEffectiveChildren()[0] )
+          && step.validate() ) {
+          this.$.stepSelector.selectedItem.completed = true;
+          this.progress();
+        }
+      },
+
+      _updatePreviousCompleted: function(e) {
+        var progressIdx = e.detail;
+        progressIdx == this.$.stepSelector.items.length ?
+          this._setCompleted(true) :
+          this.$.stepSelector.items[e.detail].previousCompleted = true;
+      },
+      /**
+       * Loops around the steps from the current (if no step opened, from the first one)
+       * in order to open the next selectable not completed step. It can be used to past the current step
+       * and open the next required. Returns true if a step has been opened.
+       */
+      progress: function() {
+        if (this.completed) {
+          return false;
+        }
+        var selector = this.$.stepSelector;
+        var selectedIndex = selector.selected;
+        var items = selector.items;
+        var length = items.length;
+        if (selectedIndex < 0 || selectedIndex > length - 1) {
+          selectedIndex = 0;
+        }
+        for (var i=(selectedIndex+1)%length; i!=selectedIndex; i=(i+1)%length) {
+          if (items[i].selectable && !items[i].completed) {
+            selector.select(i);
+            return true;
+          }
+        }
+        return false;
+      },
+
+      _completedChange: function(completed) {
+        if (completed) {
+          this.$.stepSelector.selected = -1;
+        }
+      }
+    });
+  </script>
+</dom-module>

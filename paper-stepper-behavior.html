@@ -1,0 +1,47 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<script>
+  
+  window.Zecat = window.Zecat || {};
+
+  Zecat.PaperStepperBehavior = {
+
+    properties: {
+      backText: {
+        type: String,
+        value: 'BACK'
+      },
+      cancelText: {
+        type: String,
+        value: 'CANCEL'
+      },
+      continueText: {
+        type: String,
+        value: 'CONTINUE'
+      },
+      initialSelected: {
+        type: Number,
+        value: 0
+      },
+      linear: {
+        type: Boolean,
+        value: false
+      },
+      optionalText: {
+        type: String,
+        value: 'Optional'
+      },
+      stepsProperties: {
+        type: Array
+      },
+      completed: {
+        type: Boolean,
+        value: false,
+        readOnly: true,
+        observer: '_completedChange'
+      }
+    }
+  };
+
+
+</script>

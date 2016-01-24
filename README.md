@@ -9,13 +9,9 @@ See [component page](http://zecat.github.io/paper-stepper)
 
 ## todo
 
-- apply material layout
 - horizontal layout
-- add connector line
 - add summarize
-- cancel button action ?
+- cancel button action
 - add doc
-- better demo
-- alternativeLabel
+- add test
 - mobileStep
-- add events

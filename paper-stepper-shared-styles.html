@@ -1,0 +1,93 @@
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../paper-styles/default-theme.html">
+<link rel="import" href="../paper-styles/color.html">
+
+<dom-module id="paper-stepper-shared-styles">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+        @apply(--paper-font-common-base);
+        cursor: default;
+      }
+      paper-badge {
+        position: relative;
+        padding: 0 8px;
+        --paper-badge-width: 24px;
+        --paper-badge-height: 24px;
+        /*
+        todo: add var here;
+         */
+        --paper-badge-background: var(--paper-grey-400);
+      }
+      .pathLine {
+        background: var(--divider-color, --paper-grey-300);
+        @apply(--layout-flex);
+      }
+      .opened paper-badge, .opened paper-label {
+        cursor: default !important;
+      }
+
+      :host[selectable] {
+        cursor: pointer;
+      }
+
+      :host[selectable]:hover {
+        background: var(--google-grey-100) !important;
+      }
+
+      :host:hover {
+        background: var(--paper-step-label-cursor-hover, --google-grey-100) !important;
+      }
+
+      :host[selectable]:hover paper-badge{
+        --paper-badge-background: var(--paper-grey-600);
+      }
+
+      
+
+      iron-label {
+        color: var(--paper-grey-400);
+        font-size: 16px;
+        /* needs vertical layout */
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      .optional{
+        color: var(--paper-grey-400);
+        font-size: 12px;
+      }
+
+      :host[selectable] iron-label {
+        color: var(--paper-grey-600);
+      }
+
+      :host[opened] iron-label {
+        color: var(--paper-grey-900) !important;
+        font-weight: 500;
+      }
+
+      iron-label > div {
+        @apply(--layout-vertical);
+        padding-right: 8px;
+      }
+
+      paper-badge {
+        position: relative;
+        padding: 0 8px;
+        --paper-badge-width: 24px;
+        --paper-badge-height: 24px;
+        /*
+        todo: add var here;
+         */
+        --paper-badge-background: var(--paper-grey-400);
+      }
+
+      :host[opened] paper-badge, :host:not([invalid]) paper-badge {
+        --paper-badge-background: var(--default-primary-color, --google-blue-500);
+      }
+    </style>
+  </template>
+</dom-module>
