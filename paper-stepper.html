@@ -23,34 +23,6 @@
         box-sizing: border-box;
       }
     </style>
-
-    <template is="dom-if" if="[[vertical]]" on-dom-change="_insertSteps">
-      <paper-vertical-stepper
-        class="insertPoint"
-        back-text="[[backText]]"
-        cancel-text="[[cancelText]]"
-        continue-text="[[continueText]]"
-        optional-text="[[optionalText]]"
-        linear="[[linear]]"
-        initial-selected="[[initialSelected]]"
-        initial-selected-values="[[initialSelectedValues]]"
-        completed="[[completed]]">
-        <!-- multi-openable="[[multiOpenable]]"> -->
-      </paper-vertical-stepper>
-    </template>
-    <!-- <template is="dom-if" if="[[!vertical]]" on-dom-change="_insertHorizontalSteps">
-      <paper-horizontal-stepper
-        class="insertPoint"
-        back-text="[[backText]]"
-        cancel-text="[[cancelText]]"
-        continue-text="[[continueText]]"
-        optional-text="[[optionalText]]"
-        alternative-label="[[continueText]]"
-        linear="[[linear]]"
-        initial-selected="[[initialSelected]]"
-        completed="[[completed]]">
-      </paper-horizontal-stepper>
-    </template> -->
   </template>
 </dom-module>
 
@@ -107,13 +79,26 @@
       }
     },
 
-    _insertSteps: function() {
+    ready: function() {
       if (this.vertical) {
+        var verticalStepper = this.create('paper-vertical-stepper', {
+          backText: this.backText,
+          cancelText: this.cancelText,
+          continueText: this.continueText,
+          optionalText: this.optionalText,
+          linear: this.linear,
+          initialSelected: this.initialSelected,
+          initialSelectedValues: this.initialSelectedValues,
+          completed: this.completed
+        });
         var steps = this.getEffectiveChildren();
-        var insertPoint = Polymer.dom(this.$$('.insertPoint'));
         steps.forEach(function(step) {
-          insertPoint.appendChild(step);
+          Polymer.dom(verticalStepper).appendChild(step);
         }.bind(this));
+        Polymer.dom(this.root).appendChild(verticalStepper);
+      } else {
+        // TODO: create & insert horizontal stepper
+        console.warn("No horizontal stepper for now");
       }
     }
   });
