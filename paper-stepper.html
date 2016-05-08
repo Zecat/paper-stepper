@@ -8,6 +8,7 @@
 <link rel="import" href="../paper-styles/typography.html">
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="paper-vertical-stepper.html">
+<link rel="import" href="paper-horizontal-stepper.html">
 
 <!--
 @group Seed Elements
@@ -49,26 +50,18 @@
         type: String,
         value: 'CONTINUE'
       },
-      cancelText: {
+      skipText: {
         type: String,
-        value: 'CANCEL'
+        value: 'SKIP'
       },
-      initialSelected: {
+      selected: {
         type: Number,
         value: 0
-      },
-      initialSelectedValues: {
-        type: Array,
-        value: [0]
       },
       optionalText: {
         type: String,
         value: 'Optional'
       },
-      // multiOpenable: {
-      //   type: Boolean,
-      //   value: false
-      // },
       linear: {
         type: Boolean,
         value: false
@@ -76,30 +69,29 @@
       completed: {
         type: Boolean,
         value: false
+      },
+      responsiveWidth: {
+        type: Number,
+        value: 600
       }
     },
 
     ready: function() {
-      if (this.vertical) {
-        var verticalStepper = this.create('paper-vertical-stepper', {
+      var orientedStepper = this.create(
+        this.vertical ? 'paper-vertical-stepper' : 'paper-horizontal-stepper', {
           backText: this.backText,
-          cancelText: this.cancelText,
+          skipText: this.skipText,
           continueText: this.continueText,
           optionalText: this.optionalText,
           linear: this.linear,
-          initialSelected: this.initialSelected,
-          initialSelectedValues: this.initialSelectedValues,
+          selected: this.selected,
           completed: this.completed
-        });
-        var steps = this.getEffectiveChildren();
-        steps.forEach(function(step) {
-          Polymer.dom(verticalStepper).appendChild(step);
-        }.bind(this));
-        Polymer.dom(this.root).appendChild(verticalStepper);
-      } else {
-        // TODO: create & insert horizontal stepper
-        console.warn("No horizontal stepper for now");
-      }
+      });
+      var steps = this.getEffectiveChildren();
+      steps.forEach(function(step) {
+        Polymer.dom(orientedStepper).appendChild(step);
+      }.bind(this));
+      Polymer.dom(this.root).appendChild(orientedStepper);
     }
   });
 

@@ -10,6 +10,12 @@
 -->
 <dom-module id="paper-step">
   <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+    </style>
     <content></content>
   </template>
 </dom-module>
@@ -44,6 +50,12 @@
         type: Boolean,
         readOnly: true
       }
+    },
+    skip: function() {
+      this.fire('skip-step');
+    },
+    continue: function() {
+      this.fire('continue-step');
     }
   });
 

@@ -1,0 +1,98 @@
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icons/editor-icons.html">
+<link rel="import" href="../iron-label/iron-label.html">
+<link rel="import" href="../paper-badge/paper-badge.html">
+<link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="../paper-styles/typography.html">
+<link rel="import" href="../paper-ripple/paper-ripple.html">
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="paper-step-behavior.html">
+<link rel="import" href="paper-step-shared-styles.html">
+
+<dom-module id="paper-horizontal-step">
+  <template>
+    <style include="paper-step-shared-styles">
+      :host {
+        @apply(--paper-step-header);
+        cursor: default;
+        position: relative;
+        padding: 24px 0;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      :host[selectable]:hover paper-badge{
+        --paper-badge-background: var(--paper-grey-600);
+      }
+      iron-label {
+        height: 33px;
+      }
+      #textWrapper {
+        @apply(--layout-vertical);
+        padding-right: 8px;
+      }
+      #label {
+        white-space: nowrap;
+      }
+      :host[opened] paper-badge, :host[completed] paper-badge {
+        --paper-badge-background: var(--default-primary-color, --google-blue-500);
+      }
+      :host[selectable]:hover {
+        /* using alpha chanel for .connectorLine to grow dark*/
+        background: rgba(0,0,0,0.04);
+      }
+      :host[selectable] {
+        cursor: pointer;
+      }
+      #leftConnectorLine, #rightConnectorLine {
+        height: 1px;
+        min-width: 24px;
+        background: var(--divider-color, --paper-grey-300);
+        @apply(--layout-flex);
+      }
+    </style>
+    <div id="leftConnectorLine"></div>
+    <paper-ripple noink="[[!selectable]]"></paper-ripple>
+    <iron-label>
+      <paper-badge for="noFor" icon="[[_computeIcon(completed, editable)]]"
+        label="[[index]]">
+      </paper-badge>
+      <div id="textWrapper">
+        <span id="label">[[label]]</span>
+        <template is="dom-if" if="[[optional]]">
+          <span id="optional">Optional</span>
+        </template>
+      </div>
+    </iron-label>
+    <div id="rightConnectorLine"></div>
+  </template>
+  <script>
+    Polymer({
+      is: 'paper-horizontal-step',
+
+      behaviors: [
+        Zecat.PaperStepBehavior
+      ],
+
+      listeners: {
+        'tap': '_stepLabelTapped'
+      },
+
+      properties : {
+        alternativeLabel: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        }
+      },
+
+      _computeIcon: function(completed, editable) {
+        return completed ? ( editable ? 'editor:mode-edit' : 'done' ) : '';
+      }
+    });
+  </script>
+</dom-module>

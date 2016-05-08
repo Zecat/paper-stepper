@@ -8,7 +8,7 @@
 
     listeners: {
       'continue-step': '_continueStep',
-      'cancel-step': '_cancelStep',
+      'skip-step': 'progress',
       'progress': '_updatePreviousCompleted'
     },
 
@@ -17,15 +17,15 @@
         type: String,
         value: 'BACK'
       },
-      cancelText: {
+      skipText: {
         type: String,
-        value: 'CANCEL'
+        value: 'skip'
       },
       continueText: {
         type: String,
         value: 'CONTINUE'
       },
-      initialSelected: {
+      selected: {
         type: Number,
         value: 0
       },
@@ -45,14 +45,6 @@
         value: false,
         readOnly: true,
         observer: '_completedChange'
-      }
-    },
-
-    _cancelStep: function(e) {
-      if (this.multiOpenable) {
-        this.$.stepSelector.select(this.$.stepSelector.indexOf(e.target));
-      } else {
-        this.$.stepSelector.selected = -1;
       }
     },
 
@@ -82,8 +74,7 @@
     },
     /**
      * Loops around the steps from the current (if no step opened, from the first one)
-     * in order to open the next selectable not completed step. It can be used to past the current step
-     * and open the next required. Returns true if a step has been opened.
+     * in order to open the next selectable uncompleted step. Returns true if a step has been opened.
      */
     progress: function() {
       if (this.completed) {
@@ -107,6 +98,7 @@
 
     _completedChange: function(completed) {
       if (completed) {
+        //maybe use null instead
         this.$.stepSelector.selected = -1;
       }
     }

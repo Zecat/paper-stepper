@@ -1,0 +1,140 @@
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-selector/iron-selector.html">
+<link rel="import" href="../neon-animation/neon-animated-pages.html">
+<link rel="import" href="../neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../neon-animation/animations/slide-left-animation.html">
+<link rel="import" href="../neon-animation/animations/slide-from-right-animation.html">
+<link rel="import" href="../neon-animation/animations/slide-right-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-styles/shadow.html">
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="paper-stepper-behavior.html">
+<link rel="import" href="paper-horizontal-step.html">
+
+<!--
+@group Seed Elements
+@element paper-horizontal-stepper
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="paper-horizontal-stepper">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+        @apply(--paper-font-common-base);
+        @apply(--layout-vertical);
+      }
+      #stepSelector {
+        @apply(--shadow-elevation-2dp);
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+        @apply(--layout-center);
+      }
+      paper-horizontal-step {
+        @apply(--layout-flex);
+      }
+      neon-animated-pages {
+        @apply(--layout-vertical);
+        min-height: 200px;
+      }
+      #buttonsWrapper {
+        @apply(--layout-horizontal);
+        padding: 0 24px 24px 24px;
+      }
+      #stepSelector > paper-horizontal-step:first-of-type ::content #leftConnectorLine,
+      #stepSelector > paper-horizontal-step:last-of-type ::content #rightConnectorLine {
+        display: none;
+      }
+      #stepSelector > paper-horizontal-step:first-of-type {
+        padding-left: 24px;
+      }
+      #stepSelector > paper-horizontal-step:last-of-type {
+        padding-right: 24px;
+      }
+      neon-animated-pages, neon-animated-pages ::content > * {
+        padding: 24px;
+      }
+      neon-animated-pages {
+        overflow: hidden;
+      }
+      .layout-flex {
+        @apply(--layout-flex);
+      }
+      #continueButton:not([disabled]) {
+        color: var(--primary-color);
+      }
+      paper-button[disabled] {
+        background-color: transparent;
+      }
+    </style>
+    <iron-selector id="stepSelector"
+      selected="{{selected}}"
+      selected-attribute="opened"
+      activate-event="select-step">
+    </iron-selector>
+    <neon-animated-pages
+      id="slideshow"
+      selected="[[selectedCopy]]">
+      <content></content>
+    </neon-animated-pages>
+    <div id="buttonsWrapper">
+      <paper-button disabled on-tap="back">[[backText]]</paper-button>
+      <span class="layout-flex"></span>
+      <paper-button disabled="[[completed]]" on-tap="progress">[[skipText]]</paper-button>
+      <paper-button disabled="[[completed]]" id="continueButton" on-tap="continue">[[continueText]]</paper-button>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'paper-horizontal-stepper',
+
+      behaviors: [
+        Zecat.PaperStepperBehavior
+      ],
+
+      properties: {
+        alternativeLabel: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+        selected: {
+          observer: '_selectedChange'
+        }
+      },
+
+      attached: function() {
+        this.getEffectiveChildren().forEach(function(step, index) {
+          var horizontalStep = this.create('paper-horizontal-step', {
+            index: index + 1,
+            linearStepper: this.linear,
+            alternativeLabel: this.alternativeLabel,
+            editable: step.editable,
+            optional: step.optional,
+            label: step.label,
+            // set previousComplete true for the first step
+            previousCompleted: !index
+          });
+          Polymer.dom(horizontalStep).appendChild(step.cloneNode(true));
+          Polymer.dom(this.$.stepSelector).appendChild(horizontalStep);
+        }.bind(this));
+      },
+
+      _selectedChange: function(newValue, oldValue) {
+        if (newValue > oldValue) {
+          this.$.slideshow.entryAnimation = 'slide-from-right-animation';
+          this.$.slideshow.exitAnimation = 'slide-left-animation';
+        } else {
+          this.$.slideshow.entryAnimation = 'slide-from-left-animation';
+          this.$.slideshow.exitAnimation = 'slide-right-animation';
+        }
+        // use on-iron-activate when https://github.com/PolymerElements/neon-animation/issues/130 is fixed
+        this.selectedCopy = newValue;
+      }
+    });
+  </script>
+</dom-module>

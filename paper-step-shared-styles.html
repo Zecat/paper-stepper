@@ -1,0 +1,48 @@
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../paper-styles/default-theme.html">
+<link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="../paper-styles/typography.html">
+
+<dom-module id="paper-step-shared-styles">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+        @apply(--paper-font-common-base);
+      }
+      iron-label {
+        color: var(--paper-grey-400);
+        font-size: 16px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+      #optional{
+        color: var(--paper-grey-400);
+        font-size: 12px;
+      }
+      :host[selectable] iron-label {
+        color: var(--paper-grey-600);
+      }
+      paper-badge {
+        position: relative;
+        padding: 0 8px;
+        /* in order to convey events to .backdrop*/
+        pointer-events: none;
+        --paper-badge-width: 24px;
+        --paper-badge-height: 24px;
+        --paper-badge-background: var(--paper-grey-400);
+        --paper-badge: {
+          font-size: 12px;
+        };
+      }
+      paper-ripple {
+        color: var(--paper-grey-400);
+      }
+      :host[opened] iron-label {
+        color: var(--paper-grey-900) !important;
+        font-weight: 500;
+      }
+    </style>
+  </template>
+</dom-module>

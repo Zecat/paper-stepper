@@ -1,0 +1,78 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<script>
+  
+  window.Zecat = window.Zecat || {};
+
+  Zecat.PaperStepBehavior = {
+      properties: {
+         completed: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+        continueText: {
+          type: String,
+          value: 'CONTINUE'
+        },
+        skipText: {
+          type: String,
+          value: 'SKIP'
+        },
+        editable: {
+          type: Boolean,
+          value: false
+        },
+        index: Number,
+        linearStepper: {
+          type: Boolean,
+          value: false
+        },
+        previousCompleted: {
+          type: Boolean,
+          value: false
+        },
+        optional: {
+          type: Boolean,
+          value: false
+        },
+        selectable: {
+          type: Boolean,
+          computed: '_computeSelectable(linearStepper, completed, editable, previousCompleted)',
+          reflectToAttribute: true
+        },
+        label: {
+          type: String,
+          value: ''
+        },
+        opened: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        }
+      },
+
+      observers: [
+        '_notifyProgress(completed, previousCompleted)',
+        '_updateBadgeBackground(opened)'
+      ],
+
+      _computeSelectable: function(linearStepper, completed, editable, previousCompleted) {
+        return (!linearStepper || previousCompleted) && (!completed || editable);
+      },
+      _updateBadgeBackground: function() {
+        this.updateStyles('--paper-badge-background');
+      },
+      _notifyProgress: function(completed, previousCompleted) {
+        if (completed && previousCompleted) {
+          this.fire('progress', this.index);
+        }
+      },
+      _stepLabelTapped: function() {
+        if (this.selectable) {
+          this.fire('select-step');
+        }
+      }
+  };
+
+</script>

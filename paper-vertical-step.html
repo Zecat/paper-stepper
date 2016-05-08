@@ -12,6 +12,8 @@
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-icons/editor-icons.html">
 <link rel="import" href="../iron-label/iron-label.html">
+<link rel="import" href="paper-step-behavior.html">
+<link rel="import" href="paper-step-shared-styles.html">
 
 <!--
 @group Seed Elements
@@ -21,18 +23,15 @@
 -->
 <dom-module id="paper-vertical-step">
   <template>
-    <style>
+    <style include="paper-step-shared-styles">
       :host {
-        display: block;
-        box-sizing: border-box;
         /* for .backdrop to overflow */
         overflow: visible;
         @apply(--layout-vertical);
-        @apply(--paper-font-common-base);
       }
       #connectorLine {
         width: 1px;
-        background: var(--divider-color);
+        background: var(--divider-color, --paper-grey-300);
         margin-left: 35px;
         margin-right: 20px;
       }
@@ -50,7 +49,7 @@
         height: 16px;
         overflow: hidden;
       }
-      :host.iron-selected #animationWrapper,
+      :host[opened] #animationWrapper,
       :host.neon-animating #animationWrapper {
         height: auto;
       }
@@ -72,10 +71,6 @@
           margin-left: 0;
         };
       }
-      #cancelButton {
-        --paper-button: {
-        };
-      }
       /**
        * Step label
        */
@@ -83,37 +78,11 @@
         cursor: default;
         position: relative;
         padding: 8px 16px;
-        color: var(--paper-grey-400);
-        font-size: 16px;
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
       }
-      #optional{
-        color: var(--paper-grey-400);
-        font-size: 12px;
-      }
-      :host[selectable] iron-label {
-        color: var(--paper-grey-600);
-      }
-      :host.iron-selected iron-label {
-        color: var(--paper-grey-900) !important;
-        font-weight: 500;
-      }
+
       #textWrapper {
         @apply(--layout-vertical);
         padding-right: 8px;
-      }
-      paper-badge {
-        position: relative;
-        padding: 0 8px;
-        /* in order to convey events to .backdrop*/
-        pointer-events: none;
-        --paper-badge-width: 24px;
-        --paper-badge-height: 24px;
-        --paper-badge-background: var(--paper-grey-400);
-        --paper-badge: {
-          font-size: 12px;
-        };
       }
       :host.iron-selected paper-badge,
       :host[completed] paper-badge {
@@ -141,9 +110,6 @@
         position: relative;
         /* in order to convey events to .backdrop*/
         pointer-events: none;
-      }
-      paper-ripple {
-        color: var(--paper-grey-400);
       }
     </style>
     <iron-label>
@@ -173,8 +139,8 @@
           <paper-button id="continueButton" on-tap="continue">
             [[continueText]]
           </paper-button>
-          <paper-button id="cancelButton" on-tap="cancel">
-            [[cancelText]]
+          <paper-button id="skipButton" on-tap="skip">
+            [[skipText]]
           </paper-button>
         </div>
       </div>
@@ -186,7 +152,8 @@
       is: 'paper-vertical-step',
 
       behaviors: [
-        Polymer.NeonAnimationRunnerBehavior
+        Polymer.NeonAnimationRunnerBehavior,
+        Zecat.PaperStepBehavior
       ],
 
       properties: {
@@ -206,63 +173,19 @@
             }
           }
         },
-        completed: {
-          type: Boolean,
-          value: false,
-          reflectToAttribute: true
-        },
-        continueText: {
-          type: String,
-          value: 'CONTINUE'
-        },
-        cancelText: {
-          type: String,
-          value: 'CANCEL'
-        },
-        editable: Boolean,
-        index: Number,
-        linearStepper: Boolean,
-        previousCompleted: {
-          type: Boolean,
-          value: false
-        },
+
         opened: {
-          type: Boolean,
-          value: false,
           observer: '_openedChange'
         },
-        optional: Boolean,
-        selectable: {
-          type: Boolean,
-          computed: '_computeSelectable(linearStepper, completed, editable, previousCompleted)',
-          reflectToAttribute: true
-        },
-        label: String
       },
 
       listeners: {
         'neon-animation-finish': '_removeAnimatingClass'
       },
 
-      observers: [
-        '_notifyProgress(completed, previousCompleted)'
-      ],
-
-      _computeSelectable: function(linearStepper, completed, editable, previousCompleted) {
-        return (!linearStepper || previousCompleted) && (!completed || editable);
-      },
-
       _closeAnimation: function() {
         this.toggleClass('neon-animating', true);
         this.playAnimation('exit');
-      },
-
-      cancel: function() {
-        this.fire('cancel-step');
-      },
-
-      continue: function() {
-        this.fire('continue-step');
       },
 
       _openAnimation: function() {
@@ -277,29 +200,17 @@
       _openedChange: function(opened, old) {
         if (old != undefined) { 
           opened ? this._openAnimation() : this._closeAnimation();
-          this._updateBadgeBackground();
         }
       },
-
       _removeAnimatingClass: function() {
         this.toggleClass('neon-animating', false);
       },
-
-      _stepLabelTapped: function() {
-        if (this.selectable) {
-          this.fire('step-select');
-        }
+      skip: function() {
+        this.fire('skip-step');
       },
-
-      _notifyProgress: function(completed, previousCompleted) {
-        if (completed && previousCompleted) {
-          this.fire('progress', this.index);
-        }
+      continue: function() {
+        this.fire('continue-step');
       },
-
-      _updateBadgeBackground: function() {
-        this.updateStyles('--paper-badge-background');
-      }
     });
   </script>
 </dom-module>

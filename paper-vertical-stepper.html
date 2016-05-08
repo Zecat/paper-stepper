@@ -25,12 +25,10 @@
       }
     </style>
     <iron-selector
-      selected="[[initialSelected]]"
-      selected-values="[[initialSelectedValues]]"
+      selected="[[selected]]"
       id="stepSelector"
       selected-attribute="opened"
-      activate-event="step-select">
-      <!-- multi="[[multiOpenable]]"> -->
+      activate-event="select-step">
     </iron-selector>
   </template>
   <script>
@@ -40,17 +38,6 @@
       behaviors: [
         Zecat.PaperStepperBehavior
       ],
-
-      properties: {
-        // multiOpenable: {
-        //   type: Boolean,
-        //   value: false
-        // },
-        initialSelectedValues: {
-          type: Array,
-          value: [0]
-        }
-      },
 
       attached: function() {
         this.getEffectiveChildren().forEach(function(step, index) {

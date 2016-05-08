@@ -26,8 +26,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <body unresolved>
 
   <style is="custom-style" include="demo-pages-shared-styles">
-    .vertical-section-container {
-      max-width: 700px;
+    .vertical-stepper-wrapper {
+      max-width: 600px;
+      margin: auto;
+    }
+    .horizontal-stepper-wrapper {
+      max-width: 1200px;
       margin: auto;
     }
     demo-snippet {
@@ -37,9 +41,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
   </style>
   
-  <div class="vertical-section-container">
+  <div class="vertical-stepper-wrapper">
+    <a href="https://github.com/PolymerElements/iron-demo-helpers/issues/30">double demo issue</a>
     <demo-snippet>
-      <template>
+      <template id="scope" is="dom-bind">
         <paper-stepper vertical>
           <paper-step id="step1" label="Create an account" summarize="Summarize if needed">
             <form is="iron-form" id="form1" method="post" action="/">
@@ -59,17 +64,41 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-input label="Name"></paper-input>
             <paper-input label="Address"></paper-input>
           </paper-step>
-          <paper-step label="Write a word about you" optional>
-            <paper-textarea label="Your description" rows=3></paper-textarea>
-          </paper-step>
         </paper-stepper>
         <script>
-          // var step1 = document.getElementById('step1');
-          // var form1 = document.getElementById('form1');
-          // step1._getValidity = function() {
-          //   return form1.validate();
-          // };
+          var scope = document.getElementById('scope');
+          var step1 = scope.$.step1;
+          var form1 = scope.$.form1;
+          step1._getValidity = function() {
+            return form1.validate();
+          };
         </script>
+      </template>
+    </demo-snippet>
+  </div>
+  <div class="horizontal-stepper-wrapper">
+    <demo-snippet>
+      <template>
+        <paper-stepper>
+          <paper-step label="Create an account" summarize="Summarize if needed">
+            <form is="iron-form" method="post" action="/">
+              <paper-input label="Pseudo"></paper-input>
+              <paper-input type="password" label="Password"></paper-input>
+              <paper-input type="password" label="Confirm password"></paper-input>
+            </form>
+          </paper-step>
+          <paper-step label="Enter personal informations">
+            <paper-input label="Name"></paper-input>
+            <paper-input label="Address"></paper-input>
+          </paper-step>
+          <paper-step label="Write a word about you" editable optional>
+            <paper-textarea label="Your description" rows=3></paper-textarea>
+          </paper-step>
+          <paper-step label="Enter personal informations">
+            <paper-input label="Name"></paper-input>
+            <paper-input label="Address"></paper-input>
+          </paper-step>
+        </paper-stepper>
       </template>
     </demo-snippet>
   </div>
