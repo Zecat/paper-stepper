@@ -82,7 +82,7 @@
       <content></content>
     </neon-animated-pages>
     <div id="buttonsWrapper">
-      <paper-button disabled on-tap="back">[[backText]]</paper-button>
+      <paper-button disabled=[[!_hasBackStep]] on-tap="back">[[backText]]</paper-button>
       <span class="layout-flex"></span>
       <paper-button disabled="[[completed]]" on-tap="progress">[[skipText]]</paper-button>
       <paper-button disabled="[[completed]]" id="continueButton" on-tap="continue">[[continueText]]</paper-button>
@@ -103,7 +103,7 @@
           reflectToAttribute: true
         },
         selected: {
-          observer: '_selectedChange'
+          observer: '_chooseAnimationDirection'
         }
       },
 
@@ -124,7 +124,7 @@
         }.bind(this));
       },
 
-      _selectedChange: function(newValue, oldValue) {
+      _chooseAnimationDirection: function(newValue, oldValue) {
         if (newValue > oldValue) {
           this.$.slideshow.entryAnimation = 'slide-from-right-animation';
           this.$.slideshow.exitAnimation = 'slide-left-animation';
