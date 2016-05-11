@@ -52,14 +52,6 @@
         readOnly: true,
         observer: '_completedChange'
       },
-      _backStepIndex: {
-        type: Number,
-        computed: '_compute_backStepIndex(selected)'
-      },
-      _hasBackStep: {
-        type: Boolean,
-        computed: '_compute_hasBackStep(_backStepIndex)'
-      },
       _firstStep: {
         type: Object,
         readOnly: true,
@@ -70,12 +62,30 @@
         readOnly: true,
         observer: '_followLastStepClass'
       },
+      _backStepIndex: {
+        type: Number,
+        readOnly: true
+      },
+      _hasBackStep: {
+        type: Boolean,
+        computed: '_isntNull(_backStepIndex)'
+      },
+      _skipStepIndex: {
+        type: Number,
+        readOnly: true
+      },
+      _canSkip: {
+        type: Boolean,
+        computed: '_isntNull(_skipStepIndex)'
+      },
     },
 
     attached: function() {
       Polymer.dom(this.$.stepSelector).observeNodes(function(info) {
         this._set_firstStep(this.$.stepSelector.items[0]);
         this._set_lastStep(this.$.stepSelector.items[this.$.stepSelector.items.length-1]);
+        this._update_skipStepIndex(this.selected);
+        this._update_backStepIndex(this.selected);
       }.bind(this));
     },
 
@@ -158,25 +168,45 @@
         this.fire('completed');
       }
     },
-    _compute_backStepIndex: function(selected) {
-      for (i=selected - 1; i >= 0; i--) {
-        console.log(i);
-        if (this.$.stepSelector.items[i] && this.$.stepSelector.items[i].selectable) {
-          return i;
+    _update_backStepIndex: function(selected) {
+      var items = this.$.stepSelector.items;
+      if (selected != null && items.length) {
+        for (i=selected - 1; i >= 0; i--) {
+          if (items[i].selectable) {
+            this._set_backStepIndex(i);
+            return;
+          }
         }
       }
-      return null;
+      this._set_backStepIndex(null);
     },
-    _compute_hasBackStep: function(_backStepIndex) {
-      return _backStepIndex != null;
+    _update_skipStepIndex: function(selected) {
+      var items = this.$.stepSelector.items;
+      var length = items.length;
+      if (length && selected != null) {
+        for (var i=(selected+1)%length; i!=selected; i=(i+1)%length) {
+          if (items[i].selectable && !items[i].completed) {
+            this._set_skipStepIndex(i);
+            return;
+          }
+        }
+      }
+      this._set_skipStepIndex(null);
+    },
+    _isntNull: function(n) {
+      return n != null;
     },
     /* Reset the old value if the step isn't selectable*/
     _selectedChange: function(newValue, oldValue) {
       if (newValue != null && this.$.stepSelector.items.length
         && !( (step = this.$.stepSelector.items[newValue]) && step.selectable) ) {
         this.selected = oldValue;
+        return;
       }
-    }
+      this._update_skipStepIndex(newValue);
+      this._update_backStepIndex(newValue);
+    },
+
   };
 
 

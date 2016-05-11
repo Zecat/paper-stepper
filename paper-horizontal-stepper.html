@@ -76,7 +76,7 @@
     <div id="buttonsWrapper">
       <paper-button disabled=[[!_hasBackStep]] on-tap="back">[[backText]]</paper-button>
       <span class="layout-flex"></span>
-      <paper-button disabled="[[completed]]" on-tap="progress">[[skipText]]</paper-button>
+      <paper-button disabled="[[!_canSkip]]" on-tap="progress">[[skipText]]</paper-button>
       <paper-button disabled="[[completed]]" id="continueButton" on-tap="continue">[[continueText]]</paper-button>
     </div>
   </template>
