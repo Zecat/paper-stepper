@@ -8,6 +8,7 @@
 <link rel="import" href="../neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-styles/default-theme.html">
 <link rel="import" href="../paper-styles/shadow.html">
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="paper-stepper-behavior.html">
@@ -33,6 +34,8 @@
         @apply(--layout-horizontal);
         @apply(--layout-justified);
         @apply(--layout-center);
+        background: var(--primary-background-color);
+        @apply(--paper-horizontal-stepper-selector);
       }
       paper-horizontal-step {
         @apply(--layout-flex);
