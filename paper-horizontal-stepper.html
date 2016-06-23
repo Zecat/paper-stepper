@@ -34,6 +34,9 @@
         @apply(--layout-horizontal);
         @apply(--layout-justified);
         @apply(--layout-center);
+        -ms-flex-negative: 0;
+        -webkit-flex-shrink: 0;
+        flex-shrink: 0;
         background: var(--primary-background-color);
         @apply(--paper-horizontal-stepper-selector);
       }
@@ -42,10 +45,14 @@
       }
       neon-animated-pages {
         @apply(--layout-vertical);
-        min-height: 200px;
+        @apply(--layout-flex-auto);
+        height: 200px;
       }
       #buttonsWrapper {
         @apply(--layout-horizontal);
+        -ms-flex-negative: 0;
+        -webkit-flex-shrink: 0;
+        flex-shrink: 0;
         padding: 0 24px 24px 24px;
       }
       #stepSelector > paper-horizontal-step:first-of-type::shadow #leftConnectorLine,
