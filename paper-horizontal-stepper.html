@@ -74,11 +74,31 @@
       .layout-flex {
         @apply(--layout-flex);
       }
-      paper-button:not([disabled]) {
-        color: var(--secondary-text-color);
+      paper-button {
+        --paper-button: {
+          color: var(--secondary-text-color);
+          @apply(--paper-stepper-flat-button);
+        };
       }
-      #continueButton:not([disabled]) {
-        color: var(--primary-color);
+      #continueButton {
+        --paper-button: {
+          color: var(--primary-color);
+          @apply(--paper-stepper-continue-button);
+        };
+      }
+      paper-button[raised] {
+        --paper-button: {
+          background-color: var(--light-theme-background-color);
+          color: var(--primary-text-color);
+          @apply(--paper-stepper-raised-button);
+        };
+      }
+      #continueButton[raised] {
+        --paper-button: {
+          background-color: var(--primary-color);
+          color: var(--dark-theme-text-color);
+          @apply(--paper-stepper-continue-button);
+        };
       }
       paper-button[disabled] {
         background-color: transparent;
@@ -97,8 +117,8 @@
     <div id="buttonsWrapper">
       <paper-button disabled=[[!_hasBackStep]] on-tap="back">[[backText]]</paper-button>
       <span class="layout-flex"></span>
-      <paper-button disabled="[[completed]]" on-tap="progress">[[skipText]]</paper-button>
-      <paper-button disabled="[[completed]]" id="continueButton" on-tap="continue">[[continueText]]</paper-button>
+      <paper-button disabled="[[completed]]" raised="[[raisedButtons]]" on-tap="progress">[[skipText]]</paper-button>
+      <paper-button disabled="[[completed]]" raised="[[raisedButtons]]" id="continueButton" on-tap="continue">[[continueText]]</paper-button>
     </div>
   </template>
   <script>

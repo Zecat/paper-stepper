@@ -73,6 +73,10 @@
         type: Boolean,
         value: false
       },
+      raisedButtons: {
+        type: Boolean,
+        value: false
+      },
       responsiveWidth: {
         type: Number,
         value: 600
@@ -89,7 +93,8 @@
           optionalText: this.optionalText,
           linear: this.linear,
           selected: this.selected,
-          completed: this.completed
+          completed: this.completed,
+          raisedButtons: this.raisedButtons
       });
       var content = this.create('content');
       Polymer.dom(this.root).appendChild(orientedStepper);
