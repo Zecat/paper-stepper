@@ -49,8 +49,11 @@
             // set previousComplete true for the first step
             previousCompleted: !index
           });
-          Polymer.dom(verticalStep).appendChild(step);
+          step.setAttribute('paper-stepper-index', index + 1);
           Polymer.dom(this.$.stepSelector).appendChild(verticalStep);
+          Polymer.dom(verticalStep).appendChild(this.create('content', {
+            select: '[paper-stepper-index="' + (index + 1) + '"]'
+          }));
         }.bind(this));
       }
       

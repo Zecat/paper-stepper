@@ -86,11 +86,9 @@
           selected: this.selected,
           completed: this.completed
       });
-      var steps = this.getEffectiveChildren();
-      steps.forEach(function(step) {
-        Polymer.dom(orientedStepper).appendChild(step);
-      }.bind(this));
+      var content = this.create('content');
       Polymer.dom(this.root).appendChild(orientedStepper);
+      Polymer.dom(orientedStepper).appendChild(content);
     }
   });
 

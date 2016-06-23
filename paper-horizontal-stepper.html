@@ -48,8 +48,8 @@
         @apply(--layout-horizontal);
         padding: 0 24px 24px 24px;
       }
-      #stepSelector > paper-horizontal-step:first-of-type ::content #leftConnectorLine,
-      #stepSelector > paper-horizontal-step:last-of-type ::content #rightConnectorLine {
+      #stepSelector > paper-horizontal-step:first-of-type::shadow #leftConnectorLine,
+      #stepSelector > paper-horizontal-step:last-of-type::shadow #rightConnectorLine {
         display: none;
       }
       #stepSelector > paper-horizontal-step:first-of-type {
@@ -122,7 +122,6 @@
             // set previousComplete true for the first step
             previousCompleted: !index
           });
-          Polymer.dom(horizontalStep).appendChild(step.cloneNode(true));
           Polymer.dom(this.$.stepSelector).appendChild(horizontalStep);
         }.bind(this));
       },

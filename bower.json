@@ -30,7 +30,7 @@
     "paper-input": "PolymerElements/paper-input#^1.1.10",
     "neon-advanced-animations": "Zecat/neon-advanced-animations#^1.2.0",
     "iron-label": "PolymerElements/iron-label#^1.0.2",
-    "paper-badge": "PolymerElements/paper-badge#^1.1.1",
+    "paper-badge": "PolymerElements/paper-badge#^1.1.2",
     "paper-material": "PolymerElements/paper-material#^1.0.6",
     "iron-validatable-behavior": "PolymerElements/iron-validatable-behavior#^1.0.5"
   },
