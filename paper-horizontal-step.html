@@ -30,7 +30,7 @@
         -webkit-user-select: none;
         user-select: none;
       }
-      :host[selectable]:hover paper-badge{
+      :host([selectable]:hover) paper-badge{
         --paper-badge-background: var(--paper-grey-600);
       }
       iron-label {
@@ -43,14 +43,14 @@
       #label {
         white-space: nowrap;
       }
-      :host[opened] paper-badge, :host[completed] paper-badge {
+      :host([opened]) paper-badge, :host([completed]) paper-badge {
         --paper-badge-background: var(--default-primary-color, --google-blue-500);
       }
-      :host[selectable]:hover {
+      :host([selectable]:hover) {
         /* using alpha chanel for .connectorLine to grow dark*/
         background: rgba(0,0,0,0.04);
       }
-      :host[selectable] {
+      :host([selectable]) {
         cursor: pointer;
       }
       #leftConnectorLine, #rightConnectorLine {
