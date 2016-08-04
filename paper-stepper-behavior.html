@@ -66,7 +66,7 @@
     },
 
     _continueStep: function(e) {
-      var selectedItem = e.target;
+      var selectedItem = Polymer.dom(e).rootTarget;
       if ( ( step = selectedItem.getEffectiveChildren()[0] )
         && step.validate() ) {          
         selectedItem.completed = true;
