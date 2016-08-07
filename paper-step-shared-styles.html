@@ -11,37 +11,62 @@
         box-sizing: border-box;
         @apply(--paper-font-common-base);
       }
-      iron-label {
+      #textWrapper {
         color: var(--paper-grey-400);
+      }
+      #textLabel {
         font-size: 16px;
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
       }
       #optional{
-        color: var(--paper-grey-400);
         font-size: 12px;
       }
-      :host[selectable] iron-label {
+      :host([selectable]) #textWrapper {
         color: var(--paper-grey-600);
       }
-      paper-badge {
-        position: relative;
-        padding: 0 8px;
-        /* in order to convey events to .backdrop*/
+      :host([opened]) #textLabel {
+        color: var(--paper-grey-900);
+        font-weight: 500;
+      }
+      #label {
+        cursor: default;
         pointer-events: none;
-        --paper-badge-width: 24px;
-        --paper-badge-height: 24px;
-        --paper-badge-background: var(--paper-grey-400);
-        --paper-badge: {
-          font-size: 12px;
-        };
+        /* For paper-ripple */
+        position: relative;
+      }
+      :host([selectable]) #label {
+        cursor: pointer;
+        pointer-events: auto;
+      }
+      #label:hover {
+        /* using alpha chanel for .connectorLine to grow dark */
+        background: rgba(0,0,0,0.04);
+      }
+      #badge {
+        width: 24px;
+        height: 24px;
+        background: var(--paper-grey-300);
+        border-radius: 50%;
+        color: white;
+        font-size: 12px;
+        @apply(--layout);
+        @apply(--layout-center-center);
+      }
+      #badge iron-icon {
+        --iron-icon-height: 16px;
+        --iron-icon-width: 16px;  
+      }
+      :host(.iron-selected) #badge,
+      :host([completed]) #badge {
+        background-color: var(--primary-color, --paper-blue-500);
+      }
+      :host([selectable]:not([opened]):not([completed])) #label:hover #badge {
+        background-color: var(--paper-grey-500);
       }
       paper-ripple {
         color: var(--paper-grey-400);
       }
-      :host[opened] iron-label {
-        color: var(--paper-grey-900) !important;
-        font-weight: 500;
+      [hidden] {
+        display: none;
       }
     </style>
   </template>

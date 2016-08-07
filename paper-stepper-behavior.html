@@ -59,7 +59,32 @@
       _hasBackStep: {
         type: Boolean,
         computed: '_compute_hasBackStep(_backStepIndex)'
-      }
+      },
+      _firstStep: {
+        type: Object,
+        readOnly: true,
+        observer: '_followFirstStepClass'
+      },
+      _lastStep: {
+        type: Object,
+        readOnly: true,
+        observer: '_followLastStepClass'
+      },
+    },
+
+    attached: function() {
+      Polymer.dom(this.$.stepSelector).observeNodes(function(info) {
+        this._set_firstStep(this.$.stepSelector.items[0]);
+        this._set_lastStep(this.$.stepSelector.items[this.$.stepSelector.items.length-1]);
+      }.bind(this));
+    },
+
+    _followFirstStepClass: function(oldValue, newValue) {
+      this.classFollows('firstStep', oldValue, newValue);
+    },
+
+    _followLastStepClass: function(oldValue, newValue) {
+      this.classFollows('lastStep', oldValue, newValue);
     },
 
     _continueStep: function(e) {

@@ -51,19 +51,19 @@
           type: Boolean,
           value: false,
           reflectToAttribute: true
+        },
+        icon: {
+          type: String,
+          computed: '_computeIcon(completed, editable)'
         }
       },
 
       observers: [
-        '_notifyProgress(completed, previousCompleted)',
-        '_updateBadgeBackground(opened)'
+        '_notifyProgress(completed, previousCompleted)'
       ],
 
       _computeSelectable: function(linearStepper, completed, editable, previousCompleted) {
         return (!linearStepper || previousCompleted) && (!completed || editable);
-      },
-      _updateBadgeBackground: function() {
-        this.updateStyles('--paper-badge-background');
       },
       _notifyProgress: function(completed, previousCompleted) {
         if (completed && previousCompleted) {
@@ -74,6 +74,12 @@
         if (this.selectable) {
           this.fire('select-step');
         }
+      },
+      _computeIcon: function(completed, editable) {
+        return completed ? ( editable ? 'editor:mode-edit' : 'done' ) : '';
+      },
+      _computeIsIconBadge: function(icon) {
+        return icon.length > 0;
       }
   };
 

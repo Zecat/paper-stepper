@@ -26,7 +26,6 @@
       :host {
         display: block;
         box-sizing: border-box;
-        @apply(--paper-font-common-base);
         @apply(--layout-vertical);
       }
       #stepSelector {
@@ -47,16 +46,6 @@
       #buttonsWrapper {
         @apply(--layout-horizontal);
         padding: 0 24px 24px 24px;
-      }
-      #stepSelector > paper-horizontal-step:first-of-type ::content #leftConnectorLine,
-      #stepSelector > paper-horizontal-step:last-of-type ::content #rightConnectorLine {
-        display: none;
-      }
-      #stepSelector > paper-horizontal-step:first-of-type {
-        padding-left: 24px;
-      }
-      #stepSelector > paper-horizontal-step:last-of-type {
-        padding-right: 24px;
       }
       neon-animated-pages, neon-animated-pages ::content > * {
         padding: 24px;
