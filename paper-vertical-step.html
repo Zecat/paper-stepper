@@ -1,7 +1,4 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../neon-advanced-animations/roll-up-animation.html">
-<link rel="import" href="../neon-advanced-animations/unroll-animation.html">
-<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="../paper-badge/paper-badge.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-ripple/paper-ripple.html">
@@ -12,6 +9,7 @@
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-icons/editor-icons.html">
 <link rel="import" href="../iron-label/iron-label.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="paper-step-behavior.html">
 <link rel="import" href="paper-step-shared-styles.html">
 
@@ -40,17 +38,10 @@
       .flex-content-childs ::content > * {
         @apply(--layout-flex);
       }
-      /**
-       * Animations
-       */
-      #animationWrapper {
+      #collapse {
         @apply(--layout-horizontal);
-        height: 16px;
-        overflow: hidden;
-      }
-      :host[opened] #animationWrapper,
-      :host.neon-animating #animationWrapper {
-        height: auto;
+        max-height: var(--paper-vertical-step-max-height, 300px);
+        --iron-collapse-transition-duration: var(--paper-vertical-step-transition-duration, 500ms);
       }
       /**
        * Buttons
@@ -128,7 +119,7 @@
         </template>
       </div>
     </iron-label>
-    <div id="animationWrapper">
+    <iron-collapse id="collapse" opened="[[opened]]">
       <div id="connectorLine"></div>
       <div id="stepButtonsWrapper">
         <div id="stepWrapper" class="layout horizontal flex flex-content-childs">
@@ -143,7 +134,7 @@
           </paper-button>
         </div>
       </div>
-    </div>
+    </iron-collapse>
   </template>
   <script>
 
@@ -151,59 +142,13 @@
       is: 'paper-vertical-step',
 
       behaviors: [
-        Polymer.NeonAnimationRunnerBehavior,
         Zecat.PaperStepBehavior
       ],
-
-      properties: {
-        animationConfig: {
-          value: function() {
-            return {
-              'entry': {
-                name: 'unroll-animation',
-                node: this.$.animationWrapper,
-                from: 16
-              },
-              'exit': {
-                name: 'roll-up-animation',
-                node: this.$.animationWrapper,
-                to: 16
-              }
-            }
-          }
-        },
-
-        opened: {
-          observer: '_openedChange'
-        },
-      },
-
-      listeners: {
-        'neon-animation-finish': '_removeAnimatingClass'
-      },
-
-      _closeAnimation: function() {
-        this.toggleClass('neon-animating', true);
-        this.playAnimation('exit');
-      },
-
-      _openAnimation: function() {
-        this.toggleClass('neon-animating', true);
-        this.playAnimation('entry');
-      },
 
       _computeIcon: function(completed, editable) {
         return completed ? ( editable ? 'editor:mode-edit' : 'done' ) : '';
       },
 
-      _openedChange: function(opened, old) {
-        if (old != undefined) { 
-          opened ? this._openAnimation() : this._closeAnimation();
-        }
-      },
-      _removeAnimatingClass: function() {
-        this.toggleClass('neon-animating', false);
-      },
       skip: function() {
         this.fire('skip-step');
       },
