@@ -72,6 +72,10 @@
       responsiveWidth: {
         type: Number,
         value: 600
+      },
+      hasSkipButton: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -83,7 +87,8 @@
           continueText: this.continueText,
           optionalText: this.optionalText,
           linear: this.linear,
-          selected: this.selected
+          selected: this.selected,
+          hasSkipButton: this.hasSkipButton
       });
       var steps = this.getEffectiveChildren();
       steps.forEach(function(step) {

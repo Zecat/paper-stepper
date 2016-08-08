@@ -62,6 +62,9 @@
       paper-button[disabled] {
         background-color: transparent;
       }
+      [hidden] {
+        display: none;
+      }
     </style>
     <iron-selector id="stepSelector"
       selected="{{selected}}"
@@ -76,7 +79,7 @@
     <div id="buttonsWrapper">
       <paper-button disabled=[[!_hasBackStep]] on-tap="back">[[backText]]</paper-button>
       <span class="layout-flex"></span>
-      <paper-button disabled="[[!_canSkip]]" on-tap="progress">[[skipText]]</paper-button>
+      <paper-button hidden$="[[!hasSkipButton]]" disabled="[[!_canSkip]]" on-tap="progress">[[skipText]]</paper-button>
       <paper-button disabled="[[completed]]" id="continueButton" on-tap="continue">[[continueText]]</paper-button>
     </div>
   </template>
@@ -96,6 +99,10 @@
         },
         selected: {
           observer: '_chooseAnimationDirection'
+        },
+        hasSkipButton: {
+          type: Boolean,
+          value: false
         }
       },
 
