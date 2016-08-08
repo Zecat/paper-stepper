@@ -16,16 +16,26 @@
 <dom-module id="paper-horizontal-step">
   <template>
     <style include="paper-step-shared-styles">
+      :host {
+        @apply(--layout-flex);
+        overflow: hidden;
+      }
+      :host(:hover) {
+        overflow: visible;
+      }
       #textWrapper {
         @apply(--layout-vertical);
         padding-right: 8px;
+        overflow: hidden;
       }
-      #textLabel {
+      #textLabel, #optional {
         white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
       #beforeConnectorLine, #afterConnectorLine {
         height: 1px;
-        min-width: 24px;
+        min-width: 16px;
         background: var(--divider-color, --paper-grey-300);
         @apply(--layout-flex);
       }
@@ -39,6 +49,7 @@
       }
       #badge {
         margin: 0 8px;
+        @apply(--layout-flex-none);
       }
       :host(.firstStep) #badge {
         margin-left: 24px;
