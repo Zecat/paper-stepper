@@ -27,6 +27,10 @@
         /* to be above paper-ripple*/
         z-index: 1;
       }
+      #collapse {
+        --iron-collapse-transition-duration: var(--paper-vertical-step-transition-duration, 500ms);
+        @apply(--layout-horizontal);
+      }
       /**
        * Content
        */
@@ -39,15 +43,16 @@
         margin-left: 36px;
         margin-right: 24px;
       }
-      #collapse {
-        max-height: var(--paper-vertical-step-max-height, 300px);
-        --iron-collapse-transition-duration: var(--paper-vertical-step-transition-duration, 500ms);
-        @apply(--layout-scroll);
-        @apply(--layout-vertical);
+      #stepWrapper {
         @apply(--layout-flex);
         /*should be 48px on large screen?*/
         padding-right: 24px;
       }
+      #paperStepWrapper {
+        max-height: calc(var(--paper-vertical-step-max-height, 400px) - 92px);
+        @apply(--layout-scroll);
+      }
+
       /**
        * Buttons
        */
@@ -121,18 +126,20 @@
         </template>
       </div>
     </div>
-    <div id="connectedStep">
+    <iron-collapse id="collapse" opened="[[opened]]">
       <div id="contentConnectorLine"></div>
-      <iron-collapse id="collapse" opened="[[opened]]">
-        <content></content>
+      <div id="stepWrapper">
+        <div id="paperStepWrapper">
+          <content></content>
+        </div>
         <div id="buttonsWrapper">
           <paper-button id="continueButton" on-tap="continue">[[continueText]]</paper-button>
           <!-- <paper-button id="skipButton" on-tap="skip">
             [[skipText]]
           </paper-button> -->
         </div>
-      </iron-collapse>
-    </div>
+      </div>
+    </iron-collapse>
   </template>
   <script>
 
