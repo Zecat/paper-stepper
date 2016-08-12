@@ -1,11 +1,4 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
-<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
-<link rel="import" href="../neon-animation/neon-animated-pages.html">
-<link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../paper-material/paper-material.html">
-<link rel="import" href="../paper-styles/color.html">
-<link rel="import" href="../paper-styles/typography.html">
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="paper-vertical-stepper.html">
 <link rel="import" href="paper-horizontal-stepper.html">
@@ -21,6 +14,13 @@
       :host {
         display: block;
         box-sizing: border-box;
+        @apply(--layout-scroll);
+      }
+      paper-horizontal-stepper {
+        height: var(--paper-horizontal-stepper-height, 100%);
+      }
+      paper-vertical-stepper {
+        max-height: var(--paper-vertical-stepper-max-height);
       }
     </style>
   </template>

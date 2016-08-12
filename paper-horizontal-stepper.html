@@ -35,19 +35,16 @@
         background: var(--primary-background-color);
         @apply(--paper-horizontal-stepper-selector);
       }
-      neon-animated-pages {
+      #slideshow {
         @apply(--layout-vertical);
-        min-height: 200px;
+        @apply(--layout-flex);
       }
       #buttonsWrapper {
         @apply(--layout-horizontal);
         padding: 0 24px 24px 24px;
       }
-      neon-animated-pages, neon-animated-pages ::content > * {
+       #slideshow ,  #slideshow  ::content > * {
         padding: 24px;
-      }
-      neon-animated-pages {
-        overflow: hidden;
       }
       .layout-flex {
         @apply(--layout-flex);
