@@ -32,7 +32,6 @@
         @apply(--shadow-elevation-2dp);
         @apply(--layout-horizontal);
         @apply(--layout-justified);
-        @apply(--layout-center);
         background: var(--primary-background-color);
         @apply(--paper-horizontal-stepper-selector);
       }
@@ -94,8 +93,7 @@
       properties: {
         alternativeLabel: {
           type: Boolean,
-          value: false,
-          reflectToAttribute: true
+          value: false
         },
         selected: {
           observer: '_chooseAnimationDirection'

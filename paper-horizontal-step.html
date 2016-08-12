@@ -33,41 +33,69 @@
         text-overflow: ellipsis;
         overflow: hidden;
       }
-      #beforeConnectorLine, #afterConnectorLine {
-        height: 1px;
-        min-width: 16px;
-        background: var(--divider-color, --paper-grey-300);
-        @apply(--layout-flex);
+      #badge {
+        margin: 0 8px;
       }
-      :host(.firstStep) #beforeConnectorLine, :host(.lastStep) #afterConnectorLine {
-        display: none;
+      #badgeWrapper, #textWrapper {
+        /* to be above paper-ripple*/
+        z-index: 1;
       }
-      #label {
+      :host(:not([alternative-label])) #label {
         @apply(--layout-horizontal);
         @apply(--layout-center);
         height: 72px;
       }
-      #badge {
-        margin: 0 8px;
-        @apply(--layout-flex-none);
-      }
-      :host(.firstStep) #badge {
+      :host(.firstStep:not([alternative-label])) #badge {
         margin-left: 24px;
       }
-      :host(.lastStep) #textWrapper {
+      :host(.lastStep:not([alternative-label])) #textWrapper {
         padding-right: 24px;
       }
-      #badge, #textWrapper {
-        /* to be above paper-ripple*/
-        z-index: 1;
+      :host(:not([alternative-label]):not(.firstStep)) #label::before, 
+      :host(:not([alternative-label]):not(.lastStep)) #label::after,
+      :host([alternative-label]) #badgeWrapper::before,
+      :host([alternative-label]) #badgeWrapper::after  {
+        height: 1px;
+        min-width: 16px;
+        background: var(--divider-color, --paper-grey-300);
+        @apply(--layout-flex);
+        content: '';
+      }
+      :host([alternative-label].firstStep) #badgeWrapper::before,
+      :host([alternative-label].lastStep) #badgeWrapper::after {
+        visibility: hidden;
+      }
+      :host([alternative-label]) {
+        @apply(--layout);
+      }
+      :host([alternative-label]) #textWrapper{
+        padding: 0 16px;
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+      }
+      :host([alternative-label]) #textLabel, :host([alternative-label]) #optional{
+        text-align: center;
+        @apply(--layout-self-stretch);
+      }
+      :host([alternative-label]) #label{
+        @apply(--layout-vertical);
+        @apply(--layout-self-stretch);
+        padding: 24px 0;
+        width: 100%;
+      }
+      :host([alternative-label]) #badgeWrapper {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        padding-bottom: 16px;
       }
     </style>
     <div id="label" on-tap="_stepLabelTapped">
       <paper-ripple></paper-ripple>
-      <div id="beforeConnectorLine"></div>
-      <div id="badge">
-        <iron-icon hidden$="{{!_computeIsIconBadge(icon)}}" icon="{{icon}}"></iron-icon>
-        <span hidden$="{{_computeIsIconBadge(icon)}}">{{index}}</span>
+      <div id="badgeWrapper">
+        <div id="badge">
+          <iron-icon hidden$="{{!_computeIsIconBadge(icon)}}" icon="{{icon}}"></iron-icon>
+          <span hidden$="{{_computeIsIconBadge(icon)}}">{{index}}</span>
+        </div>
       </div>
       <div id="textWrapper">
         <span id="textLabel">[[label]]</span>
@@ -75,7 +103,6 @@
           <span id="optional">Optional</span>
         </template>
       </div>
-      <div id="afterConnectorLine"></div>
     </div>
   </template>
   <script>
