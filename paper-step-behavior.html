@@ -8,7 +8,7 @@
 */
   Zecat.PaperStepBehavior = {
       properties: {
-         completed: {
+         saved: {
           type: Boolean,
           value: false,
           reflectToAttribute: true
@@ -30,7 +30,7 @@
           type: Boolean,
           value: false
         },
-        previousCompleted: {
+        previousSaved: {
           type: Boolean,
           value: false
         },
@@ -40,7 +40,7 @@
         },
         selectable: {
           type: Boolean,
-          computed: '_computeSelectable(linearStepper, completed, editable, previousCompleted)',
+          computed: '_computeSelectable(linearStepper, saved, editable, previousSaved)',
           reflectToAttribute: true
         },
         label: {
@@ -54,19 +54,19 @@
         },
         icon: {
           type: String,
-          computed: '_computeIcon(completed, editable)'
+          computed: '_computeIcon(saved, editable)'
         }
       },
 
       observers: [
-        '_notifyProgress(completed, previousCompleted)'
+        '_notifyProgress(saved, previousSaved)'
       ],
 
-      _computeSelectable: function(linearStepper, completed, editable, previousCompleted) {
-        return (!linearStepper || previousCompleted) && (!completed || editable);
+      _computeSelectable: function(linearStepper, saved, editable, previousSaved) {
+        return (!linearStepper || previousSaved) && (!saved || editable);
       },
-      _notifyProgress: function(completed, previousCompleted) {
-        if (completed && previousCompleted) {
+      _notifyProgress: function(saved, previousSaved) {
+        if (saved && previousSaved) {
           this.fire('progress', this.index);
         }
       },
@@ -75,8 +75,8 @@
           this.fire('select-step');
         }
       },
-      _computeIcon: function(completed, editable) {
-        return completed ? ( editable ? 'editor:mode-edit' : 'done' ) : '';
+      _computeIcon: function(saved, editable) {
+        return saved ? ( editable ? 'editor:mode-edit' : 'done' ) : '';
       },
       _computeIsIconBadge: function(icon) {
         return icon.length > 0;

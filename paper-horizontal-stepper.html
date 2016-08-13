@@ -111,7 +111,7 @@
             optional: step.optional,
             label: step.label,
             // set previousComplete true for the first step
-            previousCompleted: !index
+            previousSaved: !index
           });
           Polymer.dom(horizontalStep).appendChild(step.cloneNode(true));
           Polymer.dom(this.$.stepSelector).appendChild(horizontalStep);

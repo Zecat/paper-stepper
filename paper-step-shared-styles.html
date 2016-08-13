@@ -56,10 +56,10 @@
         --iron-icon-width: 16px;  
       }
       :host(.iron-selected) #badge,
-      :host([completed]) #badge {
+      :host([saved]) #badge {
         background-color: var(--primary-color, --paper-blue-500);
       }
-      :host([selectable]:not([opened]):not([completed])) #label:hover #badge {
+      :host([selectable]:not([opened]):not([saved])) #label:hover #badge {
         background-color: var(--paper-grey-500);
       }
       paper-ripple {
