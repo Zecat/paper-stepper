@@ -5,23 +5,17 @@
 <link rel="import" href="../paper-styles/typography.html">
 <link rel="import" href="../paper-ripple/paper-ripple.html">
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="paper-step-behavior.html">
-<link rel="import" href="paper-step-shared-styles.html">
+<link rel="import" href="step-label-behavior.html">
+<link rel="import" href="step-label-shared-styles.html">
 
-<!--
-@element paper-horizontal-step
-@demo demo/index.html
-@hero hero.svg
--->
-<dom-module id="paper-horizontal-step">
+<dom-module id="step-horizontal-label">
   <template>
-    <style include="paper-step-shared-styles">
-      :host {
-        @apply(--layout-flex);
+    <style include="step-label-shared-styles">
+      :host{
         overflow: hidden;
       }
-      :host(:hover) {
-        overflow: visible;
+      :host([alternative-label]) {
+        @apply(--layout);
       }
       #textWrapper {
         @apply(--layout-vertical);
@@ -51,8 +45,8 @@
       :host(.lastStep:not([alternative-label])) #textWrapper {
         padding-right: 24px;
       }
-      :host(:not([alternative-label]):not(.firstStep)) #label::before, 
-      :host(:not([alternative-label]):not(.lastStep)) #label::after,
+      :host(:not([alternative-label]):not(.first-step)) #label::before, 
+      :host(:not([alternative-label]):not(.last-step)) #label::after,
       :host([alternative-label]) #badgeWrapper::before,
       :host([alternative-label]) #badgeWrapper::after  {
         height: 1px;
@@ -61,12 +55,9 @@
         @apply(--layout-flex);
         content: '';
       }
-      :host([alternative-label].firstStep) #badgeWrapper::before,
-      :host([alternative-label].lastStep) #badgeWrapper::after {
+      :host([alternative-label].first-step) #badgeWrapper::before,
+      :host([alternative-label].last-step) #badgeWrapper::after {
         visibility: hidden;
-      }
-      :host([alternative-label]) {
-        @apply(--layout);
       }
       :host([alternative-label]) #textWrapper{
         padding: 0 16px;
@@ -88,8 +79,15 @@
         @apply(--layout-center);
         padding-bottom: 16px;
       }
+      :host(.first-step:not([alternative-label])) #label {
+        padding-left: 16px;
+      }
+      :host(.last-step:not([alternative-label])) #label {
+        padding-right: 16px;
+      }
     </style>
-    <div id="label" on-tap="_stepLabelTapped">
+    <!-- use a "label" wrapper to use the same shared css rules with step-vertical -->
+    <div id="label" on-tap="_labelTapped">
       <paper-ripple></paper-ripple>
       <div id="badgeWrapper">
         <div id="badge">
@@ -100,22 +98,18 @@
       <div id="textWrapper">
         <span id="textLabel">[[label]]</span>
         <template is="dom-if" if="[[optional]]">
-          <span id="optional">Optional</span>
+          <span id="optional">[[stepperData.optionalText]]</span>
         </template>
       </div>
     </div>
   </template>
   <script>
     Polymer({
-      is: 'paper-horizontal-step',
+      is: 'step-horizontal-label',
 
       behaviors: [
-        Zecat.PaperStepBehavior
+        Stepper.StepLabelBehavior
       ],
-
-      listeners: {
-        'tap': '_stepLabelTapped'
-      },
 
       properties: {
         alternativeLabel: {
@@ -123,7 +117,8 @@
           value: false,
           reflectToAttribute: true
         }
-      }
+      },
+
     });
   </script>
 </dom-module>

@@ -2,14 +2,16 @@
 <link rel="import" href="../paper-styles/default-theme.html">
 <link rel="import" href="../paper-styles/color.html">
 <link rel="import" href="../paper-styles/typography.html">
+<link rel="import" href="../polymer/polymer.html">
 
-<dom-module id="paper-step-shared-styles">
+<dom-module id="step-label-shared-styles">
   <template>
     <style>
       :host {
         display: block;
         box-sizing: border-box;
         @apply(--paper-font-common-base);
+        @apply(--layout-flex);
       }
       #textWrapper {
         color: var(--paper-grey-400);
@@ -55,7 +57,7 @@
         --iron-icon-height: 16px;
         --iron-icon-width: 16px;  
       }
-      :host(.iron-selected) #badge,
+      :host([opened]) #badge,
       :host([saved]) #badge {
         background-color: var(--primary-color, --paper-blue-500);
       }

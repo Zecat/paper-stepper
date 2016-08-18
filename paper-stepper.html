@@ -1,9 +1,16 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-selector/iron-selectable.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-styles/default-theme.html">
+<link rel="import" href="../paper-styles/shadow.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="paper-vertical-stepper.html">
-<link rel="import" href="paper-horizontal-stepper.html">
+<link rel="import" href="paper-step.html">
 
 <!--
+Missing Doc
+
+
 @element paper-stepper
 @demo demo/index.html
 @hero hero.svg
@@ -14,85 +21,512 @@
       :host {
         display: block;
         box-sizing: border-box;
+        @apply(--layout-vertical);
+        @apply(--shadow-elevation-2dp);
+        background: white;
+        border-radius: 1px;
+      }
+      /* Horizontal layout styles */
+      :host([vertical]) {
+        padding: 4px 0;
         @apply(--layout-scroll);
+        max-height: var(--paper-stepper-vertical-max-height);
       }
-      paper-horizontal-stepper {
-        height: var(--paper-horizontal-stepper-height, 100%);
+      :host(:not([vertical])) {
+        position: relative;
+        height: var(--label-wrapper-height);
+        /* Note: this variable is updated by the stepper itself, don't use it on user side */
+        max-height: var(--label-wrapper-height);
+        transition: max-height var(--paper-stepper-horizontal-opening-transition-duration, 300ms), box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
       }
-      paper-vertical-stepper {
-        max-height: var(--paper-vertical-stepper-max-height);
+      :host(:not([vertical]):not([opened]):not(.collapsing)) {
+        @apply(--shadow-none);
+      }
+      :host(:not([vertical])[opened]) {
+        max-height: var(--paper-stepper-horizontal-opened-height, 450px);
+      }
+      :host(:not([vertical])[opened]), :host(:not([vertical]).collapsing) {
+        height: var(--paper-stepper-horizontal-opened-height, 450px);
+      }
+      #label-wrapper {
+        @apply(--shadow-elevation-2dp);
+        @apply(--layout-horizontal);
+        @apply(--layout-flex-none);
+        @apply(--layout-justified);
+        background: var(--paper-stepper-horizontal-label-wrapper-background, --primary-background-color);
+        border-radius: 1px;
+        overflow: hidden;
+      }
+      .flex {
+        @apply(--layout-flex);
+      }
+      #buttonsWrapper {
+        @apply(--layout-horizontal);
+        margin: 0 24px 24px 24px;
+        overflow: hidden;
+      }
+      #continueButton:not([disabled]) {
+        color: var(--primary-color);
+      }
+      paper-button[disabled] {
+        background-color: transparent;
+      }
+      [hidden] {
+        display: none;
+      }
+      :host(:not[vertical]) #label-wrapper:not(:hover) ::content paper-step[opened] {
+        overflow: visible;
       }
     </style>
+    <template is="dom-if" if="[[vertical]]" restamp>
+      <content select="[[selectable]]"></content>
+    </template>
+    <template is="dom-if" if="[[!vertical]]" restamp>
+      <div id="label-wrapper">
+        <content select="[[selectable]]"></content>
+      </div>
+      <div class="flex"></div>
+      <div id="buttonsWrapper">
+        <paper-button hidden$="[[!hasBackButton]]" disabled=[[!_hasBackStep]] on-tap="back">[[backText]]</paper-button>
+        <span class="flex"></span>
+        <paper-button hidden$="[[!hasSkipButton]]" disabled="[[!_canSkip]]" on-tap="progress">[[skipText]]</paper-button>
+        <paper-button id="continueButton" on-tap="continue">{{_choosePrimaryButtonText(_attrForSelectedStepPrimaryButtonText, finishText, continueText, updateText)}}</paper-button>
+      </div>
+    </template>
   </template>
-</dom-module>
 
-<script>
-  'use strict';
-  Polymer({
+  <script>
+    'use strict';
+    Polymer({
 
-    is: 'paper-stepper',
+      is: 'paper-stepper',
+      behaviors: [
+        Polymer.IronSelectableBehavior
+      ],
+      /**
+       * Fired when the stepper progress.
+       *
+       * @event paper-stepper-progressed
+       */
+      /**
+       * Fired when all the steps are saved.
+       *
+       * @event paper-stepper-completed
+       */
+      properties: {
+        opened: {
+          type: Boolean,
+          computed: '_computeOpened(_selectedIndex)',
+          observer: '_openedChanged',
+          notify: true,
+          reflectToAttribute: true
+        },
+        alternativeLabel: {
+          type: Boolean,
+          value: false
+        },
+        vertical: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+        backText: {
+          type: String,
+          value: 'BACK'
+        },
+        finishText: {
+          type: String,
+          value: 'FINISH'
+        },
+        continueText: {
+          type: String,
+          value: 'CONTINUE'
+        },
+        skipText: {
+          type: String,
+          value: 'SKIP'
+        },
+        optionalText: {
+          type: String,
+          value: 'Optional'
+        },
+        updateText: {
+          type: String,
+          value: 'UPDATE'
+        },
+        linear: {
+          type: Boolean,
+          value: false
+        },
+        completed: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          computed: '_computeCompleted(stepNumber, savedStepNumber)'
+        },
+        hasSkipButton: {
+          type: Boolean,
+          value: false
+        },
+        hasBackButton: {
+          type: Boolean,
+          value: false
+        },
+        stepNumber: {
+          type: Number,
+          notify: true,
+          computed: '_computeStepNumber(items.length)'
+        },
+        savedStepNumber: {
+          type: Number,
+          notify: true,
+          readOnly: true
+        },
+        selectedAttribute: {
+          value: 'opened',
+          readOnly: true
+        },
+        activateEvent: {
+          value: 'select-step',
+          readOnly: true
+        },
+        /**
+         * Note: if you decide to change this attribute, take care to only include `<paper-step>` elements in your `<paper-stepper>`
+         */
+        selectable: {
+          value: 'paper-step'
+        },
+        _skipStepIndex: {
+          type: Number,
+          computed: '_compute_skipStepIndex(_selectedIndex)'
+        },
+        _canSkip: {
+          type: Boolean,
+          notify: true,
+          computed: '_isntNull(_skipStepIndex)'
+        },
+        _backStepIndex: {
+          type: Number,
+          computed: '_compute_backStepIndex(_selectedIndex)'
+        },
+        _hasBackStep: {
+          type: Boolean,
+          computed: '_isntNull(_backStepIndex)'
+        },
+        _selectedIndex: {
+          type: Number,
+          observer: '_selectedIndexChanged',
+          readOnly: true,
+          value: -1
+        },
+        _attrForSelectedStepPrimaryButtonText: {
+          type: String,
+          computed: '_compute__attrForSelectedStepPrimaryButtonText(_selectedIndex, stepNumber)'
+        },
+        _previousAnimatedStep: {
+          type: Object,
+          value: null,
+          readOnly: true
+        },
+        _previousSelected: {
+          type: Object,
+          readOnly: true
+        }
+      },
 
-    properties: {
-      alternativeLabel: {
-        type: Boolean,
-        value: false
+      listeners: {
+        'iron-items-changed': '_initializeSteps',
+        'paper-step-saved': '_stepSaved',
+        'transitionend': '_transitionEnd',
+        'step-horizontal-label-resize': '_updateStepperClosedMaxHeight'
       },
-      vertical: {
-        type: Boolean,
-        value: false
-      },
-      backText: {
-        type: String,
-        value: 'BACK'
-      },
-      continueText: {
-        type: String,
-        value: 'CONTINUE'
-      },
-      skipText: {
-        type: String,
-        value: 'SKIP'
-      },
-      selected: {
-        type: Number,
-        value: 0
-      },
-      optionalText: {
-        type: String,
-        value: 'Optional'
-      },
-      linear: {
-        type: Boolean,
-        value: false
-      },
-      completed: {
-        type: Boolean,
-        value: false
-      },
-      hasSkipButton: {
-        type: Boolean,
-        value: false
-      }
-    },
 
-    ready: function() {
-      var orientedStepper = this.create(
-        this.vertical ? 'paper-vertical-stepper' : 'paper-horizontal-stepper', {
-          backText: this.backText,
-          skipText: this.skipText,
-          continueText: this.continueText,
-          optionalText: this.optionalText,
+      observers: [
+        '_forwardCanSkip(_canSkip, selectedItem)',
+        '_forwardHasBackStep(_hasBackStep, selectedItem)',
+        '_forwardVertical(vertical)',
+        '_forwardAlternativeLabel(alternativeLabel)',
+        '_forwardStepperData(linear, backText, optionalText, finishText, continueText, skipText, updateText, hasSkipButton, hasBackButton)'
+      ],
+
+      /**
+       * Missing Doc
+       */
+      back: function() {
+        this.selectIndex(this._backStepIndex);
+      },
+
+      /**
+       * @return {Boolean} Try to continue the current step (if no step opened, use the first one).
+       */
+      continue: function() {
+        if (this.selectedItem) {
+          if (this.selectedItem.save()) {
+            this.progress();
+          }
+        }
+      },
+
+      /**
+       * Loops around the steps from the current (if no step opened, from the first one)
+       * in order to open the next selectable unsaved step. Returns true if a step has been opened.
+       */
+      progress: function() {
+        if (!this.stepNumber) {
+          return false;
+        }
+        if (this.completed) {
+          this.selected = null;
+          return true;
+        }
+        for (var i = (this._selectedIndex+1)%this.stepNumber; i != this._selectedIndex; i = (i+1)%this.stepNumber) {
+          if (this.items[i].selectable && !this.items[i].saved) {
+            this.selectIndex(i);
+            this.fire('paper-stepper-progressed');
+            return true;
+          }
+        }
+        return false;
+      },
+
+      /* Deselect and set the steps as unsaved*/
+      reset: function() {
+        this._setSavedStepNumber(0);
+        this.selected = null;
+        if (!this.items.length) {
+          return;
+        }
+        this.items.map(function(step) {
+          step._setSaved(false);
+          step._set_previousSaved(false);
+        });
+        this.items[0]._set_previousSaved(true);
+      },
+
+      /**
+       * Work around: Override the method from IronSelectableBehavior to only allow the selection of selectable step. https://github.com/PolymerElements/iron-selector/issues/99
+       */
+      _selectSelected: function(selected) {
+        var item = this._valueToItem(this.selected);
+        if (item) {
+          var selectable = item.selectable;
+          if (selectable == undefined) {
+            // if selectable isn't define it means the step is not yet ready for selection
+            // and this method will be recalled by the initialization method.
+            return;
+          } else if (!selectable) {
+            //reset previous selected if non null and selectable or deselect
+            if (this._previousSelected && this._previousSelected.selectable) {
+              this.selected = this._valueForItem(this.previousSelected);
+            } else {
+              this.selected = null;
+            }
+            this._set_previousSelected(null);
+            return;
+          }
+        }
+        this._selection.select(item);
+        this._set_previousSelected(item);
+        this._set_selectedIndex(this.indexOf(item));
+        // Check for items, since this array is populated only when attached
+        // Since Number(0) is falsy, explicitly check for undefined
+        if (this.fallbackSelection && this.items.length && (this._selection.get() === undefined)) {
+          this.selected = this.fallbackSelection;
+        }
+      },
+
+      _updateStepperClosedMaxHeight: function() {
+        this.debounce('updateStepperClosedMaxHeight', function() {
+          this.customStyle['--label-wrapper-height'] = this.$$('#label-wrapper').clientHeight + 'px';
+          this.updateStyles('--label-wrapper-height');
+        });
+      },
+
+      _openedChanged: function(newValue, oldValue) {
+        if (!this.vertical && oldValue != undefined) {
+          this.toggleClass('collapsing', true);
+        }
+      },
+
+      _transitionEnd: function(e) {
+        // check to ignore event fired by paper-ripple
+        if (e.propertyName == 'max-height') {
+          this.toggleClass('collapsing', false);
+        }
+      },
+
+      _computeOpened: function(_selectedIndex) {
+        return _selectedIndex >= 0;
+      },
+
+      _stepSaved: function(e) {
+        var previousStep = this.items[this.indexOf(e.target)+1];
+        if (previousStep) {
+          previousStep._set_previousSaved(true);
+        }
+        this._setSavedStepNumber(this.savedStepNumber+1);
+      },
+
+      _forwardVertical: function(vertical) {
+        if (this.stepNumber) {
+          this.items.map(function(step) {
+            step._setVertical(vertical);
+          });
+        }
+      },
+
+      _forwardStepperData: function(linear, backText, optionalText, finishText, continueText, skipText, updateText, hasSkipButton, hasBackButton) {
+        if (this.stepNumber) {
+          this.items.map(function(step) {
+            step._set_stepperData({
+              linear: linear,
+              backText: backText,
+              optionalText: optionalText,
+              finishText: finishText,
+              continueText: continueText,
+              skipText: skipText,
+              updateText: updateText,
+              hasSkipButton: hasSkipButton,
+              hasBackButton: hasBackButton,
+              stepNumber: this.stepNumber
+            });
+          }.bind(this));
+        }
+      },
+
+      _forwardAlternativeLabel: function(alternativeLabel) {
+        if (this.stepNumber) {
+          this.items.map(function(step) {
+            step._set_alternativeLabel(alternativeLabel);
+          });
+        }
+      },
+
+      _computeStepNumber: function(length) {
+        return length;
+      },
+
+      _selectedIndexChanged: function(newValue, oldValue) {
+        if (this.vertical) {
+          return;
+        }
+        if (newValue >=0 && oldValue >= 0) {
+          var oldStep = this.items[oldValue], newStep = this.items[newValue];
+          if (oldStep.classList.contains('neon-animating')) {
+            oldStep.cancelAnimation();
+            oldStep.fire('neon-animation-canceled');
+          }
+          if (newStep.classList.contains('neon-animating')) {
+            newStep.cancelAnimation();
+            newStep.fire('neon-animation-canceled');
+          }
+          if (this._previousAnimatedStep && this._previousAnimatedStep.classList.contains('neon-animating')) {
+            this._previousAnimatedStep.cancelAnimation();
+            this._previousAnimatedStep.fire('neon-animation-canceled');
+          }
+          if (newValue - oldValue > 0) {
+            newStep.playAnimation('higher-step-entry');
+            oldStep.playAnimation('lower-step-exit');
+          } else {
+            newStep.playAnimation('lower-step-entry');
+            oldStep.playAnimation('higher-step-exit');
+          }
+          this.toggleClass('neon-animating', true, this.items[newValue]);
+          this.toggleClass('neon-animating', true, this.items[oldValue]);
+          this._set_previousAnimatedStep(oldStep);
+        }
+      },
+
+      _forwardCanSkip: function(_canSkip, selectedItem) {
+        selectedItem._set_canSkip(_canSkip);
+      },
+
+      _forwardHasBackStep: function(_hasBackStep, selectedItem) {
+        selectedItem._set_hasBackStep(_hasBackStep);
+      },
+
+      _compute__attrForSelectedStepPrimaryButtonText: function(selectedIndex) {
+        /* TODO: compute from selectedItem when https://github.com/PolymerElements/iron-selector/issues/118 is fixed*/
+        if (selectedIndex < 0) {
+          return null;
+        }
+        var _attrForPrimaryButtonText = this.selectedItem.saved ? 'updateText' :
+          ( (this.stepNumber - this.savedStepNumber) == 1 ? 'finishText' : 'continueText' );
+        this.selectedItem._set_attrForPrimaryButtonText(_attrForPrimaryButtonText);
+        return _attrForPrimaryButtonText;
+      },
+
+      _initializeSteps: function() {
+        var savedStepNumber = 0;
+        var data = {
           linear: this.linear,
-          selected: this.selected,
+          backText: this.backText,
+          optionalText: this.optionalText,
+          finishText: this.finishText,
+          continueText: this.continueText,
+          skipText: this.skipText,
+          updateText: this.updateText,
           hasSkipButton: this.hasSkipButton,
-          alternativeLabel: this.alternativeLabel
-      });
-      var steps = this.getEffectiveChildren();
-      steps.forEach(function(step) {
-        Polymer.dom(orientedStepper).appendChild(step);
-      }.bind(this));
-      Polymer.dom(this.root).appendChild(orientedStepper);
-    }
-  });
+          hasBackButton: this.hasBackButton,
+          stepNumber: this.stepNumber
+        };
+        this.items.map(function(step, i) {
+          step._setIndex(i + 1);
+          step._set_stepper(this);
+          step._setVertical(this.vertical);
+          step._set_alternativeLabel(this.alternativeLabel);
+          step._set_stepperData(data);
+          // true for index 0
+          step._set_previousSaved(!i);
+          if (step.saved) {
+            savedStepNumber++;
+          }
+        }.bind(this));
+         
+        this._setSavedStepNumber(savedStepNumber);
+        // method from IronSelectableBehavior
+        this._updateSelected();
+      },
 
-</script>
+      _compute_skipStepIndex: function(_selectedIndex) {
+        if (_selectedIndex >= 0 && !this.completed) {
+          for (var i=(_selectedIndex+1)%this.stepNumber; i!=_selectedIndex; i=(i+1)%this.stepNumber) {
+            if (this.items[i].selectable && !this.items[i].saved) {
+              return i;
+            }
+          }
+        }
+        return null;
+      },
+
+      _compute_backStepIndex: function(_selectedIndex) {
+        if (_selectedIndex >= 0) {
+          for (var i=_selectedIndex - 1; i >= 0; i--) {
+            if (this.items[i].selectable) {
+              return i;
+            }
+          }
+        }
+        return null
+      },
+
+      _isntNull: function(n) {
+        return n != null;
+      },
+
+      _computeCompleted: function(savedStepNumber, stepNumber) {
+        var completed = stepNumber == savedStepNumber;
+        if (completed) {
+          this.fire('paper-stepper-completed');
+          return true;
+        }
+        return false;
+      },
+
+      _choosePrimaryButtonText: function(_attrForSelectedStepPrimaryButtonText) {
+        return this[_attrForSelectedStepPrimaryButtonText];
+      }
+    });
+
+  </script>
+</dom-module>

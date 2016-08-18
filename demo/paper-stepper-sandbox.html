@@ -1,0 +1,97 @@
+<link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="../../paper-material/paper-material.html">
+<link rel="import" href="../../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../paper-stepper.html">
+
+<dom-module id="paper-stepper-sandbox">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+  			display: block;
+        box-sizing: border-box;
+      }
+      paper-checkbox {
+        box-sizing: border-box;
+        padding: 4px 0;
+      }
+      paper-material {
+        background: white;
+        margin-top: 24px;
+        padding: 24px 0;
+      }
+      paper-material > * {
+        padding: 0 24px;
+      }
+      paper-button {
+        margin-top: 32px;
+        margin-right: 16px;
+      }
+    </style>
+
+    <paper-stepper id="stepper" continue-text="[[continueText]]" update-text="[[updateText]]" finish-text="[[finishText]]" optional-text="[[optionalText]]" skip-text="[[skipText]]" back-text="[[backText]]" id="stepper" vertical="[[vertical]]" selected="{{selected}}" alternative-label="{{alternativeLabel}}" linear="{{linear}}" has-skip-button="[[hasSkipButton]]" has-back-button="[[hasBackButton]]">
+      <paper-step id="step1" label="Step 1" optional>
+      </paper-step>
+      <paper-step label="Step 2" editable>
+      </paper-step>
+      <paper-step label="Step 3" editable optional>
+      </paper-step>
+      <paper-step label="Step 4">
+      </paper-step>
+    </paper-stepper>
+
+    <paper-material class="layout horizontal">
+      <div class="layout vertical flex">
+        <paper-input label="Selected step" value="{{selected}}" type="number"></paper-input>
+        <paper-checkbox checked="{{alternativeLabel}}">alternative-label</paper-checkbox>
+        <paper-checkbox checked="{{vertical}}">vertical</paper-checkbox>
+        <paper-checkbox checked="{{linear}}">linear</paper-checkbox>
+        <paper-checkbox checked="{{hasSkipButton}}">has-skip-button</paper-checkbox>
+        <paper-checkbox checked="{{hasBackButton}}">has-back-button</paper-checkbox>
+        <div class="layout horizontal wrap"><paper-button raised on-tap="reset">Reset</paper-button>
+        <paper-button raised on-tap="progress">Progress</paper-button>
+        <paper-button raised on-tap="back">Back</paper-button>
+        <paper-button raised on-tap="continue">Continue</paper-button></div>
+        
+      </div>
+      <div class="layout vertical flex">
+        <paper-input label="Continue button text" value="{{continueText}}"></paper-input>
+        <paper-input label="Update button text" value="{{updateText}}"></paper-input>
+        <paper-input label="Finish button text" value="{{finishText}}"></paper-input>
+        <paper-input label="Optional button text" value="{{optionalText}}"></paper-input>
+        <paper-input label="Skip button text" value="{{skipText}}"></paper-input>
+        <paper-input label="Back button text" value="{{backText}}"></paper-input>
+      </div>
+    </paper-material>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'paper-stepper-sandbox',
+
+      reset: function() {
+        this.$.stepper.reset();
+      },
+      progress: function() {
+        this.$.stepper.progress();
+      },
+      back: function() {
+        this.$.stepper.back();
+      },
+      continue: function() {
+        this.$.stepper.continue();
+      },
+
+      attached: function() {
+        this.selected = -1;
+        this.continueText = 'Continue';
+        this.updateText = 'Update';
+        this.finishText = 'Finish';
+        this.optionalText = 'Optional';
+        this.skipText = 'Skip';
+        this.backText = 'Back';
+      }
+     });
+  </script>
+</dom-module>
