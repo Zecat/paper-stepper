@@ -4,6 +4,7 @@
 <link rel="import" href="../paper-styles/default-theme.html">
 <link rel="import" href="../paper-styles/shadow.html">
 <link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="paper-step.html">
 
@@ -25,6 +26,10 @@ Missing Doc
         @apply(--shadow-elevation-2dp);
         background: white;
         border-radius: 1px;
+      }
+      #verticalResponsiveWidth {
+        width: var(--paper-stepper-vertical-responsive-width, 0px);
+        visibility: hidden;
       }
       /* Horizontal layout styles */
       :host([vertical]) {
@@ -78,6 +83,7 @@ Missing Doc
         overflow: visible;
       }
     </style>
+    <div id="verticalResponsiveWidth"></div>
     <template is="dom-if" if="[[vertical]]" restamp>
       <content select="[[selectable]]"></content>
     </template>
@@ -100,9 +106,12 @@ Missing Doc
     Polymer({
 
       is: 'paper-stepper',
+
       behaviors: [
-        Polymer.IronSelectableBehavior
+        Polymer.IronSelectableBehavior,
+        Polymer.IronResizableBehavior
       ],
+
       /**
        * Fired when the stepper progress.
        *
@@ -196,6 +205,10 @@ Missing Doc
         selectable: {
           value: 'paper-step'
         },
+        responsiveCheckFrequence: {
+          type: Number,
+          value: 200
+        },
         _skipStepIndex: {
           type: Number,
           computed: '_compute_skipStepIndex(_selectedIndex)'
@@ -238,7 +251,8 @@ Missing Doc
         'iron-items-changed': '_initializeSteps',
         'paper-step-saved': '_stepSaved',
         'transitionend': '_transitionEnd',
-        'step-horizontal-label-resize': '_updateStepperClosedMaxHeight'
+        'step-horizontal-label-resize': '_updateStepperClosedMaxHeight',
+        'iron-resize': '_resizeHandler'
       },
 
       observers: [
@@ -248,6 +262,10 @@ Missing Doc
         '_forwardAlternativeLabel(alternativeLabel)',
         '_forwardStepperData(linear, backText, optionalText, finishText, continueText, skipText, updateText, hasSkipButton, hasBackButton)'
       ],
+
+      attached: function() {
+        this._responsiveCheck();
+      },
 
       /**
        * Missing Doc
@@ -525,7 +543,21 @@ Missing Doc
 
       _choosePrimaryButtonText: function(_attrForSelectedStepPrimaryButtonText) {
         return this[_attrForSelectedStepPrimaryButtonText];
-      }
+      },
+
+      _resizeHandler: function() {
+        this.debounce('paper-stepper-responsive-check', function() {
+          this._responsiveCheck();
+        }, this.responsiveCheckFrequence);
+      },
+
+      _responsiveCheck: function() {
+        var verticalResponsiveWidth = this.$.verticalResponsiveWidth.clientWidth;
+        if (verticalResponsiveWidth) {
+          this.vertical = !(this.clientWidth > verticalResponsiveWidth);
+        }
+      },
+
     });
 
   </script>

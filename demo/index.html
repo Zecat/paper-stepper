@@ -217,7 +217,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
       <div>
         <h2>Validation</h2>
-        <p>Paper-step implement <a href="" target="_blank">IronValidatableBehavior</a>. Override <strong>_getValidity()</strong> method on a step and it will be called before the step is saved.</p>
+        <p>Paper-step implement <a href="https://elements.polymer-project.org/elements/iron-validatable-behavior" target="_blank">IronValidatableBehavior</a>. Override <strong>_getValidity()</strong> method on a step to create your own validation logique.</p>
          <demo-snippet>
           <template>
             <template is="dom-bind" id="validationScope">
@@ -258,7 +258,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-stepper>
         </template>
       </demo-snippet>
-      <p>Use the <strong>vertical</strong> layout for narrow screen sizes, when your labels are too long or when you have too many steps. It is are ideal for mobile.</p>
+      <p>Use the <strong>vertical</strong> layout for narrow screen sizes, when your labels are too long or when you have too many steps. It is ideal for mobile.</p>
       <demo-snippet>
         <template>
           <paper-stepper vertical>
@@ -269,21 +269,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-stepper>
         </template>
       </demo-snippet>
-      <!-- Missing feature -->
-      <!-- <p>When the stepper width (not the viewport width) is inferior to <strong>--paper-stepper-vertical-responsive-width</strong>, the stepper become vertical.</p>
+      <p>If you specify <strong>--paper-stepper-vertical-responsive-width</strong>, the stepper manage the <strong>vertical</strong> attribute itself. When the width of the stepper (not the viewport width!) is inferior to the variable, the vertical layout is use.</p>
+      <p>For performance reason, the responsive check is debounced according to <strong>responsive-check-frequence</strong> which default to 200ms.</p>
+      <p>Resize your window to see the effect.</p>
       <demo-snippet>
         <template>
-          <style>
-            paper-stepper {
-              --paper-stepper-vertical-responsive-width: 600px;
+          <style is="custom-style">
+            #visualResponsiveWidth {
+              width: 500px;
+              max-width: 100%;
+              height: 4px;
+              background: var(--primary-color);
+            }
+            #responsiveStepper {
+              --paper-stepper-vertical-responsive-width: 500px;
             }
           </style>
-          <paper-stepper>
-            <paper-step label="step 3"></paper-step>
-            <paper-step label="step 4"></paper-step>
+          
+          <div id="visualResponsiveWidth"></div>
+
+          <paper-stepper id="responsiveStepper" responsive-check-frequence="500">
+            <paper-step label="step 1"></paper-step>
+            <paper-step label="step 2"></paper-step>
           </paper-stepper>
         </template>
-      </demo-snippet> -->
+      </demo-snippet>
       </div>
        <div>
         <h2>Buttons</h2>
@@ -300,7 +310,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-stepper>
         </template>
         </demo-snippet>
-        <p>The text of the primary button correspond to <strong>continue-text</strong> attribute by default, <strong>update-text</strong> if the step is saved and <strong>finish-text</strong> if it is the last unsaved step. The texts within buttons will be capitalized within the button.</p>
+        <p>You can configure the text of the above buttons with <strong>back-text</strong> and <strong>skip-text</strong> attributes.</p>
+        <p>The text of the primary button correspond to <strong>continue-text</strong> attribute by default, <strong>update-text</strong> if the step is saved and <strong>finish-text</strong> if it is the last unsaved step. Texts are capitalized within the buttons.</p>
         <demo-snippet>
         <template>
           <paper-stepper has-back-button has-skip-button continue-text="continuer" back-text="retour" skip-text="passer" update-text="mettre à jour" finish-text="terminer">
@@ -352,7 +363,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <demo-snippet>
         <template is="dom-bind">
           <style is="custom-style">
-            #vertical-stepper paper-step{
+            #vertical-stepper paper-step {
               --paper-vertical-step-max-height: 300px;
               --paper-vertical-step-transition-duration: 1s;
             }
