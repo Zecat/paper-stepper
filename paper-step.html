@@ -34,7 +34,7 @@ Missing Doc
       }
       #slideshowViewport {
         position: absolute;
-        bottom: 84px;
+        bottom: 70px;
         left: 0;
         right: 0;
         overflow: hidden;
@@ -132,7 +132,8 @@ Missing Doc
          */
         optional: {
           type: Boolean,
-          value: false
+          value: false,
+          observer: 'optionalChanged'
         },
         /**
          * Missing Doc
@@ -287,12 +288,20 @@ Missing Doc
         this.toggleClass('neon-animating', false);
       },
 
-      _updateSlideshowViewportTop: function(optional, _alternativeLabel, vertical) {
-        if (!vertical) {
-          this.async(function() {
+      _updateSlideshowViewportTop: function() {
+        // fix issue where this function is called before the element is finished initializing
+        if (this.vertical === undefined) {
+          this.async(this._updateSlideshowViewportTop, 200);
+          return;
+        }
+        if (!this.vertical) {
+          var setTop = function() {
             this.$$('#slideshowViewport').style.top = this.clientHeight+'px';
             this.fire('step-horizontal-label-resize');
-          })
+          };
+          this.async(setTop);
+          // fix bug where top is incorrect if optional is set
+          this.async(setTop, 200);
         }
       },
 
@@ -327,6 +336,10 @@ Missing Doc
       _computeSelectable: function(linear, saved, editable, previousSaved) {
         // TODO: factorize the expression
         return (!linear || previousSaved) && (!saved || editable) || (editable && saved);
+      },
+
+      optionalChanged: function() {
+        this.fire('optional-changed');
       }
 
     });
