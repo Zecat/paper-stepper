@@ -252,7 +252,8 @@ Missing Doc
         'paper-step-saved': '_stepSaved',
         'transitionend': '_transitionEnd',
         'step-horizontal-label-resize': '_updateStepperClosedMaxHeight',
-        'iron-resize': '_resizeHandler'
+        'iron-resize': '_resizeHandler',
+        'optional-changed': '_updateSlideshowViewportTops',
       },
 
       observers: [
@@ -557,6 +558,12 @@ Missing Doc
           this.vertical = !(this.clientWidth > verticalResponsiveWidth);
         }
       },
+
+      _updateSlideshowViewportTops: function() {
+        this.items.map(function(step) {
+          step._updateSlideshowViewportTop();
+        });
+      }
 
     });
 
