@@ -31,7 +31,9 @@ Missing Doc
         width: var(--paper-stepper-vertical-responsive-width, 0px);
         visibility: hidden;
       }
+
       /* Horizontal layout styles */
+
       :host([vertical]) {
         padding: 4px 0;
         @apply(--layout-scroll);
@@ -39,8 +41,8 @@ Missing Doc
       }
       :host(:not([vertical])) {
         position: relative;
-        height: var(--label-wrapper-height);
         /* Note: this variable is updated by the stepper itself, don't use it on user side */
+        height: var(--label-wrapper-height);
         max-height: var(--label-wrapper-height);
         transition: max-height var(--paper-stepper-horizontal-opening-transition-duration, 300ms), box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
       }
@@ -53,7 +55,7 @@ Missing Doc
       :host(:not([vertical])[opened]), :host(:not([vertical]).collapsing) {
         height: var(--paper-stepper-horizontal-opened-height, 450px);
       }
-      #label-wrapper {
+      :host(:not([vertical])) #content-wrapper {
         @apply(--shadow-elevation-2dp);
         @apply(--layout-horizontal);
         @apply(--layout-flex-none);
@@ -79,18 +81,21 @@ Missing Doc
       [hidden] {
         display: none;
       }
-      :host(:not[vertical]) #label-wrapper:not(:hover) ::content paper-step[opened] {
+      :host(:not[vertical]) #content-wrapper:not(:hover) ::content paper-step[opened] {
         overflow: visible;
       }
     </style>
+    
+    <!-- Hidden block with width equals to the responsive threshold -->
     <div id="verticalResponsiveWidth"></div>
-    <template is="dom-if" if="[[vertical]]" restamp>
+    
+    <!-- This wrapper contains the horizontal stepper header or the full vertical stepper -->
+    <div id="content-wrapper">
       <content select="[[selectable]]"></content>
-    </template>
-    <template is="dom-if" if="[[!vertical]]" restamp>
-      <div id="label-wrapper">
-        <content select="[[selectable]]"></content>
-      </div>
+    </div>
+
+    <!-- Slideshow and buttons area for horizontal layout -->
+    <template is="dom-if" if="[[!vertical]]">
       <div class="flex"></div>
       <div id="buttonsWrapper">
         <paper-button hidden$="[[!hasBackButton]]" disabled=[[!_hasBackStep]] on-tap="back">[[backText]]</paper-button>
@@ -99,6 +104,7 @@ Missing Doc
         <paper-button id="continueButton" on-tap="continue">{{_choosePrimaryButtonText(_attrForSelectedStepPrimaryButtonText, finishText, continueText, updateText)}}</paper-button>
       </div>
     </template>
+
   </template>
 
   <script>
@@ -355,7 +361,7 @@ Missing Doc
 
       _updateStepperClosedMaxHeight: function() {
         this.debounce('updateStepperClosedMaxHeight', function() {
-          this.customStyle['--label-wrapper-height'] = this.$$('#label-wrapper').clientHeight + 'px';
+          this.customStyle['--label-wrapper-height'] = this.$$('#content-wrapper').clientHeight + 'px';
           this.updateStyles('--label-wrapper-height');
         });
       },
