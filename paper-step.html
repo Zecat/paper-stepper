@@ -53,7 +53,8 @@ Missing Doc
       <step-horizontal-label id="stepLabel" editable="[[editable]]" label="[[label]]"
         alternative-label="[[_alternativeLabel]]" optional="[[optional]]"
         opened="[[opened]]" selectable="[[selectable]]" index="[[index]]"
-        saved="[[saved]]" stepper-data="[[_stepperData]]">
+        saved="[[saved]]" stepper-data="[[_stepperData]]"
+        icon-done="[[iconDone]]" icon-edit="[[iconEdit]]">
       </step-horizontal-label>
       <div id="slideshowViewport">
         <div id="contentWrapper">
@@ -69,7 +70,8 @@ Missing Doc
         optional="[[optional]]" opened="[[opened]]"
         selectable="[[selectable]]" stepper-data="[[_stepperData]]" index="[[index]]"
         saved="[[saved]]" _attr-for-primary-button-text="[[_attrForPrimaryButtonText]]"
-        can-skip="[[_canSkip]]" has-back-step="[[_hasBackStep]]">
+        can-skip="[[_canSkip]]" has-back-step="[[_hasBackStep]]"
+        icon-done="[[iconDone]]" icon-edit="[[iconEdit]]">
         <content></content>
       </step-vertical>
     </template>
@@ -102,8 +104,8 @@ Missing Doc
         saved: {
           type: Boolean,
           value: false,
-          notify: true,
-          readOnly: true
+          notify: true
+          // readOnly: true
         },
         /**
          * Missing Doc
@@ -168,6 +170,23 @@ Missing Doc
           readOnly: true,
           reflectToAttribute: true
         },
+
+        /**
+         * `iconEdit` the icon to display saved and editable steps
+         */
+        iconEdit: {
+          type: String,
+          value: 'editor:mode-edit'
+        },
+
+        /**
+         * `iconDone` the icon to display saved (but not editable) steps
+         */
+        iconDone: {
+          type: String,
+          value: 'done'
+        },
+
         /**
          * Missing Doc
          */
@@ -253,7 +272,8 @@ Missing Doc
           if (this.saved) {
             this.fire('paper-step-updated');
           } else {
-            this._setSaved(true);
+            // this._setSaved(true);
+            this.set('saved',true);
             this.fire('paper-step-saved');
           }
           return true;
