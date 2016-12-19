@@ -125,7 +125,7 @@ Missing Doc
        /**
        * Fired when continue button is pressed. Firing this event from a paper-step will also attempt to continue the step process
        *
-       * @event paper-step-continue
+       * @event paper-stepper-continue
        */
       properties: {
         opened: {
@@ -266,7 +266,7 @@ Missing Doc
         'transitionend': '_transitionEnd',
         'step-horizontal-label-resize': '_updateStepperClosedMaxHeight',
         'iron-resize': '_resizeHandler',
-        'paper-step-continue': 'onContinue'
+        'paper-stepper-continue': 'onContinue'
       },
 
       observers: [
@@ -292,7 +292,7 @@ Missing Doc
        * @return {Boolean} Try to continue the current step (if no step opened, use the first one).
        */
       continue: function() {
-        this.fire('paper-step-continue');
+        this.fire('paper-stepper-continue');
       },
 
       onContinue: function() {
