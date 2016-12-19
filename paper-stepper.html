@@ -96,7 +96,7 @@ Missing Doc
         <paper-button hidden$="[[!hasBackButton]]" disabled=[[!_hasBackStep]] on-tap="back">[[backText]]</paper-button>
         <span class="flex"></span>
         <paper-button hidden$="[[!hasSkipButton]]" disabled="[[!_canSkip]]" on-tap="progress">[[skipText]]</paper-button>
-        <paper-button id="continueButton" on-tap="continue">{{_choosePrimaryButtonText(_attrForSelectedStepPrimaryButtonText, finishText, continueText, updateText)}}</paper-button>
+        <paper-button id="continueButton" hidden$="[[hideContinueButton]]" on-tap="continue">{{_choosePrimaryButtonText(_attrForSelectedStepPrimaryButtonText, finishText, continueText, updateText)}}</paper-button>
       </div>
     </template>
   </template>
@@ -121,6 +121,11 @@ Missing Doc
        * Fired when all the steps are saved.
        *
        * @event paper-stepper-completed
+       */
+       /**
+       * Fired when continue button is pressed. Firing this event from a paper-step will also attempt to continue the step process
+       *
+       * @event paper-step-continue
        */
       properties: {
         opened: {
@@ -181,6 +186,14 @@ Missing Doc
           type: Boolean,
           value: false
         },
+        /**
+         * `hideContinueButton` set to true if you want to hide continue button and rely on your own implementation to trigger continue event
+         */
+        hideContinueButton: {
+          type: Boolean,
+          value: false
+        },
+
         stepNumber: {
           type: Number,
           notify: true,
@@ -252,7 +265,8 @@ Missing Doc
         'paper-step-saved': '_stepSaved',
         'transitionend': '_transitionEnd',
         'step-horizontal-label-resize': '_updateStepperClosedMaxHeight',
-        'iron-resize': '_resizeHandler'
+        'iron-resize': '_resizeHandler',
+        'paper-step-continue': 'onContinue'
       },
 
       observers: [
@@ -278,6 +292,10 @@ Missing Doc
        * @return {Boolean} Try to continue the current step (if no step opened, use the first one).
        */
       continue: function() {
+        this.fire('paper-step-continue');
+      },
+
+      onContinue: function() {
         if (this.selectedItem) {
           if (this.selectedItem.save()) {
             this.progress();
