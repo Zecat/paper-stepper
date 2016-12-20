@@ -65,8 +65,8 @@
       }
       #continueButton {
         --paper-button: {
-          background: var(--default-primary-color, paper-blue-500);
-          color: white;
+          background: var(--paper-vertical-step-continue-button-background, --primary-color);
+          color: var(--paper-vertical-step-continue-button-color, --dark-theme-text-color);
         };
       }
       /**
@@ -86,7 +86,7 @@
       }
       #beforeConnectorLine, #afterConnectorLine {
         width: 1px;
-        background: var(--divider-color, --paper-grey-300);
+        background: var(--paper-step-connector-line-color, --divider-color);
       }
       #beforeConnectorLine {
         height: 10px;

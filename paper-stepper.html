@@ -12,6 +12,84 @@
 Missing Doc
 
 
+## Styling
+
+The default color values respect the material specifications. For basic configuration, just defines the `--primary-color` for your app.
+
+The stepper has a complexe interface so many custom properties are available, use them this way :
+
+```html
+<style is="custom-style">
+
+  paper-stepper {
+    --paper-stepper-custom-property: value;
+  }
+
+  paper-step {
+    --paper-step-custom-property: value;
+  }
+
+</style>
+
+<paper-stepper>
+  <paper-step></paper-step>
+  <paper-step></paper-step>
+</paper-stepper>
+```
+
+Note, for sizing the stepper and steps depending on the layout, use the following instead of setting 'height' and 'max-height' :
+- `--paper-stepper-horizontal-opened-height`
+- `--paper-stepper-vertical-max-height`
+- `--paper-vertical-step-max-height`
+
+### Stepper
+
+Custom property | Description | Default
+------|-------------|----------
+`--paper-stepper-horizontal-opened-height` | The horizontal opened stepper height | 450px
+`--paper-stepper-horizontal-opening-transition-duration`| The horizontal stepper opening transition duration (ms) | 500
+`--paper-stepper-vertical-max-height`| The vertical stepper max height so it has a scrollable area | undefined
+
+### Step
+
+Custom property | Description | Default
+------|-------------|----------
+`--paper-step-connector-line-background` | The connector lines background color. | `--divider-color`
+`--paper-step-label-hover-background` | The steps label background when hovered. | rgba(0,0,0,0.04)
+`--paper-step-ink-color` | The steps ripple effect ink color. | `--divider-color`
+
+### Step text label
+
+Custom property | Description | Default
+------|-------------|----------
+`--paper-step-disabled-label-text-color` | The no-selectable steps label text color. | `--paper-grey-400`
+`--paper-step-selectable-label-text-color` | The selectable steps label text color. | `--paper-grey-600`
+`--paper-step-opened-label-text-color` | The opened steps label text color. | `--light-theme-text-color`
+`--paper-step-label-text-font-size` | The steps label text font size. | 14px
+`--paper-step-label-optional-text-font-size` | The steps label optional text font size. | 12px
+
+### Step badge
+
+Custom property | Description | Default
+------|-------------|----------
+`--paper-step-badge-background` | The badge background. | `--paper-grey-300`
+`--paper-step-badge-color` | The badge color. | `--dark-theme-text-color`
+`--paper-step-badge-icon-width` | The badge icon width. | 16px
+`--paper-step-badge-icon-height` | The badge icon height. | 16px
+`--paper-step-opened-badge-background` | The opened steps badge background. | `--primary-color`
+`--paper-step-saved-badge-background` | The saved steps badge background. | `--primary-color`
+`--paper-step-selectable-hovered-badge-background` | The no-opened no-saved selectable steps badge background. | `--paper-grey-500`
+
+### Vertical step
+
+Custom property | Description | Default
+------|-------------|----------
+`--paper-vertical-step-continue-button-background` | The continue button background. | `--primary-color`
+`--paper-vertical-step-continue-button-color` | The continue button background. | `--dark-theme-text-color`
+`--paper-vertical-step-max-height` | The unrolled step content max-height. | 400px
+`--paper-vertical-step-transition-duration` | The step opening transition duration | 500ms
+
+
 @element paper-stepper
 @demo demo/index.html
 @hero hero.svg
