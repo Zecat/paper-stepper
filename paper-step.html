@@ -104,7 +104,8 @@ Missing Doc
         saved: {
           type: Boolean,
           value: false,
-          notify: true
+          notify: true,
+          observer: '_savedObserver'
         },
         /**
          * Missing Doc
@@ -268,11 +269,8 @@ Missing Doc
        */
       save: function() {
         if ((!this.saved || this.editable) && this.validate()) {
-          if (this.saved) {
-            this.fire('paper-step-updated');
-          } else {
+          if (!this.editable) {
             this.set('saved',true);
-            this.fire('paper-step-saved');
           }
           return true;
         }
@@ -280,7 +278,20 @@ Missing Doc
       },
 
       /**
-       * Atempte to save the step and select and to progress into the stepper.
+       * `_savedObserver` observe changes on `saved`. Fires `paper-step-updated` when the step is editable, `papee-step-saved` otherwise
+       */
+      _savedObserver: function(saved) {
+        if (saved) {
+          if(this.editable) {
+            this.fire('paper-step-updated');
+          } else {
+            this.fire('paper-step-saved'); 
+          }
+        }
+      },
+
+      /**
+       * Attempt to save the step and select and to progress into the stepper.
        * @return {Boolean} True if the step is valid for saving.
        */
       continue: function() {
