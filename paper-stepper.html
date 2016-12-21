@@ -209,6 +209,14 @@ Missing Doc
           type: Number,
           value: 200
         },
+        /**
+         * `noFocusOnUnsave`. The default behavior is that the stepper select a step recently unsaved. Setting `noFocusOnUnsave` cancel this behavior.
+         */
+        noFocusOnUnsave: {
+          type: Boolean,
+          value: false
+        },
+
         _skipStepIndex: {
           type: Number,
           computed: '_compute_skipStepIndex(_selectedIndex)'
@@ -387,11 +395,21 @@ Missing Doc
       },
 
       _stepUnsaved: function(e) {
-        var previousStep = this.items[this.indexOf(e.target)+1];
+        var index = this.indexOf(e.target);
+        var previousStep = this.items[index+1];
         if (previousStep) {
           previousStep._set_previousSaved(false);
         }
         this._setSavedStepNumber(this.savedStepNumber-1);
+
+        // focus on last unsaved item
+        if (!this.noFocusOnUnsave) {
+          this.__lastIndex = index;
+          this.debounce('paper-setpper-unsave-focus', function(){
+            this.selected = this.__lastIndex;
+            delete this.__lastIndex;
+          }, 100)
+        }
       },
 
       _forwardVertical: function(vertical) {
