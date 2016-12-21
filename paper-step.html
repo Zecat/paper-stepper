@@ -92,6 +92,11 @@ Missing Doc
        *
        * @event paper-step-saved
        */
+       /**
+       * Fired when a saved step is reverted to not saved.
+       *
+       * @event paper-step-unsaved
+       */
       /**
        * Fired when the step has been updated
        *
@@ -282,9 +287,12 @@ Missing Doc
       /**
        * `_savedObserver` observe changes on `saved`. Fires `paper-step-saved` when the step is saved.
        */
-      _savedObserver: function(saved) {
+      _savedObserver: function(saved, old) {
         if (saved) {
-          this.fire('paper-step-saved'); 
+          return this.fire('paper-step-saved'); 
+        }
+        if(old) {
+          this.fire('paper-step-unsaved'); 
         }
       },
 
@@ -319,7 +327,7 @@ Missing Doc
           this.async(function() {
             this.$$('#slideshowViewport').style.top = this.clientHeight+'px';
             this.fire('step-horizontal-label-resize');
-          })
+          });
         }
       },
 

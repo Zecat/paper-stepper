@@ -250,6 +250,7 @@ Missing Doc
       listeners: {
         'iron-items-changed': '_initializeSteps',
         'paper-step-saved': '_stepSaved',
+        'paper-step-unsaved': '_stepUnsaved',
         'transitionend': '_transitionEnd',
         'step-horizontal-label-resize': '_updateStepperClosedMaxHeight',
         'iron-resize': '_resizeHandler'
@@ -315,7 +316,7 @@ Missing Doc
           return;
         }
         this.items.map(function(step) {
-          step._setSaved(false);
+          step.set('saved',false);
           step._set_previousSaved(false);
         });
         this.items[0]._set_previousSaved(true);
@@ -383,6 +384,14 @@ Missing Doc
           previousStep._set_previousSaved(true);
         }
         this._setSavedStepNumber(this.savedStepNumber+1);
+      },
+
+      _stepUnsaved: function(e) {
+        var previousStep = this.items[this.indexOf(e.target)+1];
+        if (previousStep) {
+          previousStep._set_previousSaved(false);
+        }
+        this._setSavedStepNumber(this.savedStepNumber-1);
       },
 
       _forwardVertical: function(vertical) {
