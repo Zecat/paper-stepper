@@ -50,28 +50,26 @@ Missing Doc
 
     <!-- horizontal step layout -->
 
-    <template is="dom-if" if="[[!vertical]]" restamp on-dom-change="_updateAnimationConfig">
-      <step-horizontal-label id="stepLabel" editable="[[editable]]" label="[[label]]"
+    <template is="dom-if" if="[[!vertical]]" on-dom-change="_updateAnimationConfig">
+      <step-horizontal-label id="horizontalStepLabel" editable="[[editable]]" label="[[label]]"
         alternative-label="[[_alternativeLabel]]" optional="[[optional]]"
         opened="[[opened]]" selectable="[[selectable]]" index="[[index]]"
         saved="[[saved]]" stepper-data="[[_stepperData]]">
       </step-horizontal-label>
       <div id="slideshowViewport">
         <div id="contentWrapper">
-          <content></content>
         </div>
       </div>
     </template>
 
     <!-- vertical step layout -->
 
-    <template is="dom-if" if="[[vertical]]" restamp>
-      <step-vertical id="stepLabel" editable="[[editable]]" label="[[label]]"
+    <template is="dom-if" if="[[vertical]]">
+      <step-vertical id="verticalStepLabel" editable="[[editable]]" label="[[label]]"
         optional="[[optional]]" opened="[[opened]]"
         selectable="[[selectable]]" stepper-data="[[_stepperData]]" index="[[index]]"
         saved="[[saved]]" _attr-for-primary-button-text="[[_attrForPrimaryButtonText]]"
         can-skip="[[_canSkip]]" has-back-step="[[_hasBackStep]]">
-        <content></content>
       </step-vertical>
     </template>
   </template>
@@ -226,7 +224,8 @@ Missing Doc
 
       observers: [
         '_toggleClassPosition(index, _stepperData.stepNumber, vertical)',
-        '_updateSlideshowViewportTop(optional, _alternativeLabel, vertical)'
+        '_updateSlideshowViewportTop(optional, _alternativeLabel, vertical)',
+        '_verticalChange(vertical)'
       ],
 
       /**
@@ -297,10 +296,11 @@ Missing Doc
         }
       },
 
-      _toggleClassPosition: function(index, stepNumber) {
+      _toggleClassPosition: function(index, stepNumber, vertical) {
         this.async(function() {
-          this.toggleClass('first-step', (index == 1), this.$$('#stepLabel'));
-          this.toggleClass('last-step', (index == stepNumber), this.$$('#stepLabel'));
+          var stepLabel = this.$$(vertical ? '#verticalStepLabel' : '#horizontalStepLabel');
+          this.toggleClass('first-step', (index == 1), stepLabel);
+          this.toggleClass('last-step', (index == stepNumber), stepLabel);
         });
       },
 
@@ -323,6 +323,12 @@ Missing Doc
             node: this.$$('#contentWrapper')
           }
         });
+      },
+
+      _verticalChange: function(vertical) {
+        this.async(function() {
+          Polymer.dom(this.$$(this.vertical ? '#verticalStepLabel' : '#contentWrapper')).appendChild(this.$$('content') || this.create('content'));
+        }.bind(this));
       },
 
       _computeSelectable: function(linear, saved, editable, previousSaved) {
