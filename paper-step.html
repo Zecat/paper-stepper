@@ -269,8 +269,10 @@ Missing Doc
        */
       save: function() {
         if ((!this.saved || this.editable) && this.validate()) {
-          if (!this.editable) {
+          if (!this.saved) {
             this.set('saved',true);
+          } else {
+            this.fire('paper-step-updated');
           }
           return true;
         }
@@ -278,15 +280,11 @@ Missing Doc
       },
 
       /**
-       * `_savedObserver` observe changes on `saved`. Fires `paper-step-updated` when the step is editable, `papee-step-saved` otherwise
+       * `_savedObserver` observe changes on `saved`. Fires `paper-step-saved` when the step is saved.
        */
       _savedObserver: function(saved) {
         if (saved) {
-          if(this.editable) {
-            this.fire('paper-step-updated');
-          } else {
-            this.fire('paper-step-saved'); 
-          }
+          this.fire('paper-step-saved'); 
         }
       },
 
