@@ -1,5 +1,6 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-selector/iron-selectable.html">
+<link rel="import" href="../iron-menu-behavior/iron-menu-behavior.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-styles/default-theme.html">
 <link rel="import" href="../paper-styles/shadow.html">
@@ -192,7 +193,7 @@ Custom property | Description | Default
       is: 'paper-stepper',
 
       behaviors: [
-        Polymer.IronSelectableBehavior,
+        Polymer.IronMenuBehavior,
         Polymer.IronResizableBehavior
       ],
 
@@ -279,15 +280,18 @@ Custom property | Description | Default
           value: 'opened',
           readOnly: true
         },
-        activateEvent: {
-          value: 'select-step',
-          readOnly: true
-        },
         /**
          * Note: if you decide to change this attribute, take care to only include `<paper-step>` elements in your `<paper-stepper>`
          */
         selectable: {
           value: 'paper-step'
+        },
+        /**
+         * Multi mode is not allowed for now in paper-stepper.
+         */
+        mutli: {
+          value: false,
+          readOnly: true
         },
         responsiveCheckFrequence: {
           type: Number,
@@ -329,6 +333,11 @@ Custom property | Description | Default
           type: Object,
           readOnly: true
         }
+      },
+
+      keyBindings: {
+        'left': '_onLeftKey',
+        'right': '_onRightKey'
       },
 
       listeners: {
@@ -405,6 +414,28 @@ Custom property | Description | Default
         this.items[0]._set_previousSaved(true);
       },
 
+      get _isRTL() {
+        return window.getComputedStyle(this)['direction'] === 'rtl';
+      },
+
+      _onLeftKey: function(event) {
+        if (this._isRTL) {
+          this._focusNext();
+        } else {
+          this._focusPrevious();
+        }
+        event.detail.keyboardEvent.preventDefault();
+      },
+      
+      _onRightKey: function(event) {
+        if (this._isRTL) {
+          this._focusPrevious();
+        } else {
+          this._focusNext();
+        }
+        event.detail.keyboardEvent.preventDefault();
+      },
+
       /**
        * Work around: Override the method from IronSelectableBehavior to only allow the selection of selectable step. https://github.com/PolymerElements/iron-selector/issues/99
        */
@@ -475,6 +506,7 @@ Custom property | Description | Default
             step._setVertical(vertical);
           });
         }
+        this.setAttribute('role', vertical ? 'menu': 'menubar');
       },
 
       _forwardStepperData: function(linear, backText, optionalText, finishText, continueText, skipText, updateText, hasSkipButton, hasBackButton) {

@@ -4,7 +4,6 @@
 <link rel="import" href="../paper-styles/color.html">
 <link rel="import" href="../paper-styles/typography.html">
 <link rel="import" href="../paper-styles/default-theme.html">
-<link rel="import" href="../paper-ripple/paper-ripple.html">
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="step-label-behavior.html">
 <link rel="import" href="step-label-shared-styles.html">
@@ -32,6 +31,7 @@
         margin: 0 8px;
       }
       #badgeWrapper, #textWrapper {
+        pointer-events: none;
         /* to be above paper-ripple*/
         z-index: 1;
       }
@@ -88,8 +88,7 @@
       }
     </style>
     <!-- use a "label" wrapper to use the same shared css rules with step-vertical -->
-    <div id="label" on-tap="_labelTapped">
-      <paper-ripple></paper-ripple>
+    <div id="label">
       <div id="badgeWrapper">
         <div id="badge">
           <iron-icon hidden$="{{!_computeIsIconBadge(icon)}}" icon="{{icon}}"></iron-icon>
