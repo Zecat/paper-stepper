@@ -8,6 +8,10 @@
 <link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="animations/fade-in-slide-from-right-animation.html">
+<link rel="import" href="animations/fade-out-slide-right-animation.html">
+<link rel="import" href="animations/fade-in-slide-from-left-animation.html">
+<link rel="import" href="animations/fade-out-slide-left-animation.html">
 <link rel="import" href="paper-step.html">
 
 <!--
@@ -304,16 +308,20 @@ Custom property | Description | Default
           value: false
         },
         horizontalHigherEntryAnimation: {
-          type: String
+          type: String,
+          value: 'fade-in-slide-from-right-animation'
         },
         horizontalHigherExitAnimation: {
-          type: String
+          type: String,
+          value: 'fade-out-slide-right-animation'
         },
         horizontalLowerEntryAnimation: {
-          type: String
+          type: String,
+          value: 'fade-in-slide-from-left-animation'
         },
         horizontalLowerExitAnimation: {
-          type: String
+          type: String,
+          value: 'fade-out-slide-left-animation'
         },
         _skipStepIndex: {
           type: Number,
