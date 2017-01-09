@@ -2,6 +2,10 @@
 <link rel="import" href="../../../paper-material/paper-material.html">
 <link rel="import" href="../../../paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../../iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../../../neon-animation/animations/slide-from-right-animation.html">
+<link rel="import" href="../../../neon-animation/animations/slide-left-animation.html">
+<link rel="import" href="../../../neon-animation/animations/slide-right-animation.html">
 <link rel="import" href="../../../polymer/polymer.html">
 <link rel="import" href="../../paper-stepper.html">
 
@@ -30,7 +34,7 @@
       }
     </style>
 
-    <paper-stepper id="stepper" continue-text="[[continueText]]" update-text="[[updateText]]" finish-text="[[finishText]]" optional-text="[[optionalText]]" skip-text="[[skipText]]" back-text="[[backText]]" id="stepper" vertical="[[vertical]]" selected="{{selected}}" alternative-label="{{alternativeLabel}}" linear="{{linear}}" has-skip-button="[[hasSkipButton]]" has-back-button="[[hasBackButton]]">
+    <paper-stepper id="stepper" continue-text="[[continueText]]" update-text="[[updateText]]" finish-text="[[finishText]]" optional-text="[[optionalText]]" skip-text="[[skipText]]" back-text="[[backText]]" id="stepper" vertical="[[vertical]]" selected="{{selected}}" alternative-label="{{alternativeLabel}}" linear="{{linear}}" has-skip-button="[[hasSkipButton]]" has-back-button="[[hasBackButton]]" horizontal-higher-entry-animation="slide-from-right-animation" horizontal-lower-entry-animation="slide-from-left-animation" horizontal-higher-exit-animation="slide-right-animation" horizontal-lower-exit-animation="slide-left-animation">
       <paper-step id="step1" label="Step 1" optional>
         <h1>Step 1 content</h1>
       </paper-step>

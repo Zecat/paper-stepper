@@ -29,6 +29,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <link rel="import" href="../../paper-item/paper-item.html">
     <link rel="import" href="../../paper-toast/paper-toast.html">
     <link rel="import" href="../../iron-scroll-spy/iron-auto-scroll-spy.html">
+    <link rel="import" href="../../neon-animation/animations/slide-from-left-animation.html">
+    <link rel="import" href="../../neon-animation/animations/slide-from-right-animation.html">
+    <link rel="import" href="../../neon-animation/animations/slide-left-animation.html">
+    <link rel="import" href="../../neon-animation/animations/slide-right-animation.html">
+    <link rel="import" href="../../neon-animation/animations/fade-out-animation.html">
     <link rel="import" href="../paper-stepper.html">
     <link rel="import" href="paper-stepper-sandbox/paper-stepper-sandbox.html">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:300" rel="stylesheet" type="text/css">
@@ -135,6 +140,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-item>Buttons</paper-item>
         <paper-item>Styling</paper-item>
         <paper-item>Selection</paper-item>
+        <paper-item>Animations</paper-item>
         <paper-item>Events</paper-item>
         <paper-item>Methods</paper-item>
         <paper-item>Binding</paper-item>
@@ -413,6 +419,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </template>
         </demo-snippet>
       </div>
+      <div>
+        <h2>Animations</h2>
+        <p>You can define animations between steps in horizontal layout. Import your animations and set</p>
+        <ul>
+          <li>horizontal-higher-entry-animation</li>
+          <li>horizontal-lower-entry-animation</li>
+          <li>horizontal-higher-exit-animation</li>
+          <li>horizontal-lower-exit-animation</li>
+        </ul>
+        <p>to the name of the wanted animation, directly on paper-stepper or on a specific paper-step.</p>
+         <demo-snippet>
+          <template is="dom-bind">
+            <paper-stepper
+              selected="0"
+              horizontal-higher-entry-animation="slide-from-right-animation"
+              horizontal-lower-entry-animation="slide-from-left-animation"
+              horizontal-higher-exit-animation="slide-right-animation"
+              horizontal-lower-exit-animation="slide-left-animation">
+              <paper-step label="step 1">Step 1</paper-step>
+              <paper-step label="step 2" horizontal-higher-exit-animation="fade-out-animation">Step 2</paper-step>
+              <paper-step label="step 3">Step 3</paper-step>
+              <paper-step label="step 4">Step 4</paper-step>
+            </paper-stepper>
+          </template>
+        </demo-snippet>
+        </div>
       <div>
       <h2>Events</h2>
       <ul>

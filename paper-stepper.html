@@ -1,6 +1,7 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-selector/iron-selectable.html">
 <link rel="import" href="../iron-menu-behavior/iron-menu-behavior.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-styles/default-theme.html">
 <link rel="import" href="../paper-styles/shadow.html">
@@ -194,6 +195,7 @@ Custom property | Description | Default
 
       behaviors: [
         Polymer.IronMenuBehavior,
+        Polymer.NeonAnimationRunnerBehavior,
         Polymer.IronResizableBehavior
       ],
 
@@ -297,6 +299,22 @@ Custom property | Description | Default
           type: Number,
           value: 200
         },
+        animateInitialSelection: {
+          type: Boolean,
+          value: false
+        },
+        horizontalHigherEntryAnimation: {
+          type: String
+        },
+        horizontalHigherExitAnimation: {
+          type: String
+        },
+        horizontalLowerEntryAnimation: {
+          type: String
+        },
+        horizontalLowerExitAnimation: {
+          type: String
+        },
         _skipStepIndex: {
           type: Number,
           computed: '_compute_skipStepIndex(_selectedIndex)'
@@ -345,7 +363,8 @@ Custom property | Description | Default
         'paper-step-saved': '_stepSaved',
         'transitionend': '_transitionEnd',
         'step-horizontal-label-resize': '_updateStepperClosedMaxHeight',
-        'iron-resize': '_resizeHandler'
+        'iron-resize': '_resizeHandler',
+        'neon-animation-finish': '_onNeonAnimationFinish'
       },
 
       observers: [
@@ -541,33 +560,48 @@ Custom property | Description | Default
       },
 
       _selectedIndexChanged: function(newValue, oldValue) {
-        if (this.vertical) {
-          return;
-        }
-        if (newValue >=0 && oldValue >= 0) {
+        if (!this.vertical && newValue >=0 && oldValue >= 0) {
           var oldStep = this.items[oldValue], newStep = this.items[newValue];
-          if (oldStep.classList.contains('neon-animating')) {
-            oldStep.cancelAnimation();
-            oldStep.fire('neon-animation-canceled');
-          }
           if (newStep.classList.contains('neon-animating')) {
-            newStep.cancelAnimation();
-            newStep.fire('neon-animation-canceled');
+            this.cancelAnimation();
           }
           if (this._previousAnimatedStep && this._previousAnimatedStep.classList.contains('neon-animating')) {
-            this._previousAnimatedStep.cancelAnimation();
-            this._previousAnimatedStep.fire('neon-animation-canceled');
+            this.cancelAnimation();
+            this.toggleClass('neon-animating', false, this._previousAnimatedStep);
           }
-          if (newValue - oldValue > 0) {
-            newStep.playAnimation('higher-step-entry');
-            oldStep.playAnimation('lower-step-exit');
-          } else {
-            newStep.playAnimation('lower-step-entry');
-            oldStep.playAnimation('higher-step-exit');
+          var forward = newValue - oldValue > 0;
+
+          this.animationConfig = {
+            'new-step-entry': {
+              animatable: newStep,
+              type: forward ?
+                newStep.horizontalHigherEntryAnimation && 'higher-step-entry' :
+                newStep.horizontalLowerEntryAnimation && 'lower-step-entry'
+            },
+            'old-step-exit': {
+              animatable: oldStep,
+              type: forward ?
+                oldStep.horizontalLowerExitAnimation && 'lower-step-exit' :
+                oldStep.horizontalHigherExitAnimation && 'higher-step-exit'
+            }
+          };
+          if (this.animationConfig['new-step-entry'].type) {
+            this.playAnimation('new-step-entry', {step: newStep});
+            this.toggleClass('neon-animating', true, newStep);
           }
-          this.toggleClass('neon-animating', true, this.items[newValue]);
-          this.toggleClass('neon-animating', true, this.items[oldValue]);
+          if (this.animationConfig['old-step-exit'].type) {
+            this.playAnimation('old-step-exit', {step: oldStep});
+            this.toggleClass('neon-animating', true, oldStep);
+          }
+
           this._set_previousAnimatedStep(oldStep);
+        }
+      },
+
+      _onNeonAnimationFinish: function(event) {
+        var step = event.detail.step;
+        if (step) {
+          this.toggleClass('neon-animating', false, step);
         }
       },
 
@@ -605,6 +639,18 @@ Custom property | Description | Default
           stepNumber: this.stepNumber
         };
         this.items.map(function(step, i) {
+          if (this.horizontalHigherEntryAnimation && !step.horizontalHigherEntryAnimation) {
+            step.horizontalHigherEntryAnimation = this.horizontalHigherEntryAnimation;
+          }
+          if (this.horizontalHigherExitAnimation && !step.horizontalHigherExitAnimation) {
+            step.horizontalHigherExitAnimation = this.horizontalHigherExitAnimation;
+          }
+          if (this.horizontalLowerEntryAnimation && !step.horizontalLowerEntryAnimation) {
+            step.horizontalLowerEntryAnimation = this.horizontalLowerEntryAnimation;
+          }
+          if (this.horizontalLowerExitAnimation && !step.horizontalLowerExitAnimation) {
+            step.horizontalLowerExitAnimation = this.horizontalLowerExitAnimation;
+          }
           step._setIndex(i + 1);
           step._set_stepper(this);
           step._setVertical(this.vertical);
@@ -672,7 +718,7 @@ Custom property | Description | Default
         if (verticalResponsiveWidth) {
           this.vertical = !(this.clientWidth > verticalResponsiveWidth);
         }
-      },
+      }
 
     });
 
