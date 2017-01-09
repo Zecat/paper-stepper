@@ -1,0 +1,121 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-selector/iron-selectable.html">
+<link rel="import" href="../iron-scroll-target-behavior/iron-scroll-target-behavior.html">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+
+<script>
+  /** @polymerBehavior Polymer.IronScrollSpyBehavior */
+  Polymer.IronScrollSpyBehaviorImpl = {
+
+    properties: {
+      /**
+       * When true, the selection is not updated anymore from the scroll event. When disabled became false again, 'selected' updates itself.
+       */
+      spyDisabled: {
+        type: Boolean,
+        value: false,
+        observer: '_spyDisableChanged'
+      },
+      /**
+       * For performance reason, calls to the `spyCheck` method are debounced according to `spyCheckFrequence`'s value (ms).
+       */
+      spyCheckFrequence: {
+        type: Number,
+        value: 300
+      }
+    },
+
+    listeners: {
+      'iron-items-changed': '_resetDebounced',
+      'iron-resize': '_resetDebounced'
+    },
+
+    observers: [
+      '_resetDebounced(scrollTarget)'
+    ],
+
+    _spyImmediateSelectedIndex: null,
+
+    reset: function() {
+      this._spyImmediateSelectedIndex = this._findSpiedIndex();
+      this._updateTriggers();
+      this._applySpySelection();
+    },
+
+    /**
+     * Check if an item as been reach by the scroll and should be selected. This method will be called automatically as the scroll-target is scrolled.
+     */
+    spyCheck: function() {
+      var progress = (this.lowerThreshold != null && this._scrollTop > this.lowerThreshold) ? 1 :
+      ( (this.upperThreshold != null && this._scrollTop < this.upperThreshold) ? -1 : 0 );
+      if (progress) {
+        this._spyImmediateSelectedIndex += progress;
+        this._updateTriggers();
+        this.spyCheck();
+        return;
+      }
+      this._applySpySelection();
+    },
+    _applySpySelection: function() {
+      if (this.indexOf(this.selectedItem) != this._spyImmediateSelectedIndex) {
+        this.fire('iron-scroll-spy-activate');
+        this.selectIndex(this._spyImmediateSelectedIndex);
+      }
+    },
+    _updateTriggers: function() {
+      var immediateItem = this.items[this._spyImmediateSelectedIndex];
+      if (!immediateItem) {
+        return;
+      }
+      var immediateTop = immediateItem.offsetTop;
+      var scrollTargetHalfHeight = this.scrollTarget.clientHeight/2;
+      this.upperThreshold = this._spyImmediateSelectedIndex ? immediateTop - scrollTargetHalfHeight: null;
+      this.lowerThreshold = (this._spyImmediateSelectedIndex != this.items.length - 1) ? 
+        immediateTop + immediateItem.clientHeight - scrollTargetHalfHeight: null;
+    },
+    _resetDebounced: function() {
+      this.debounce('iron-scroll-spy-reset', this.reset);
+    },
+    _findSpiedIndex: function() {
+      var scrollTargetHalfHeight = this.scrollTarget.clientHeight/2;
+      for (item of this.items) {
+        var top = item.offsetTop;
+        var height = item.clientHeight;
+        if ( (this._scrollTop > top - scrollTargetHalfHeight)
+          && (this._scrollTop < top + height - scrollTargetHalfHeight) ) {
+          return this.indexOf(item);
+        }
+      }
+    },
+
+    _spyDisableChanged: function(newValue, oldValue) {
+      if (oldValue && !newValue) {
+        this.reset();
+      }
+    },
+
+    _scrollHandler: function() {
+      if (!this.spyDisabled && !this.isDebouncerActive('spyCheck')) {
+        this.debounce('spyCheck', function() { 
+          this.spyCheck();
+        }, this.spyCheckFrequence);
+      } 
+    },
+
+    /**
+     * The default scroll target is defined as the element it-self.
+     */
+    get _defaultScrollTarget() {
+      return this;
+    },
+  }
+
+  /** @polymerBehavior */
+  Polymer.IronScrollSpyBehavior = [
+    Polymer.IronSelectableBehavior,
+    Polymer.IronResizableBehavior,
+    Polymer.IronScrollTargetBehavior,
+    Polymer.IronScrollSpyBehaviorImpl
+  ];
+
+</script>

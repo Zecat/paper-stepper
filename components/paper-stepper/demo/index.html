@@ -1,0 +1,581 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>Paper-stepper Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../../paper-input/paper-input.html">
+    <link rel="import" href="../../paper-toggle-button/paper-toggle-button.html">
+    <link rel="import" href="../../paper-input/paper-textarea.html">
+    <link rel="import" href="../../paper-styles/shadow.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-form/iron-form.html">
+    <link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
+    <link rel="import" href="../../app-layout/app-drawer/app-drawer.html">
+    <link rel="import" href="../../app-layout/app-drawer-layout/app-drawer-layout.html">
+    <link rel="import" href="../../paper-menu/paper-menu.html">
+    <link rel="import" href="../../paper-menu/paper-submenu.html">
+    <link rel="import" href="../../paper-item/paper-item.html">
+    <link rel="import" href="../../paper-toast/paper-toast.html">
+    <link rel="import" href="../../iron-scroll-spy/iron-auto-scroll-spy.html">
+    <link rel="import" href="../../neon-animation/animations/slide-from-left-animation.html">
+    <link rel="import" href="../../neon-animation/animations/slide-from-right-animation.html">
+    <link rel="import" href="../../neon-animation/animations/slide-left-animation.html">
+    <link rel="import" href="../../neon-animation/animations/slide-right-animation.html">
+    <link rel="import" href="../../neon-animation/animations/fade-out-animation.html">
+    <link rel="import" href="../paper-stepper.html">
+    <link rel="import" href="paper-stepper-sandbox/paper-stepper-sandbox.html">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:300" rel="stylesheet" type="text/css">
+  </head>
+  <body unresolved>
+
+  <style is="custom-style" include="demo-pages-shared-styles iron-flex">
+    body {
+      padding:0;
+    }
+    :root {
+      --primary-color: var(--paper-blue-500);
+    }
+    demo-snippet {
+      margin: 24px 24px 42px 24px;
+      --demo-snippet-demo: {
+        padding: 0;
+      };
+    }
+    app-drawer {
+      z-index: 1;
+      --app-drawer-content-container: {
+        background: var(--primary-color);
+      };
+    }
+    iron-auto-scroll-spy {
+      padding: 0 24px;
+      height: 100vh;
+    }
+    iron-auto-scroll-spy > * {
+      padding-bottom: 48px;
+    }
+    iron-auto-scroll-spy > * > :not(h2){
+      margin-left: 24px;
+      margin-right: 24px;
+    }
+    paper-item {
+      cursor: pointer;
+      font-family: 'Roboto Slab', serif;
+      color: white;
+      font-size: 18px;
+      --paper-item-focused-before: {
+        opacity: 0.005;
+      };
+      --paper-item-selected: {
+        background: rgba(255, 255, 255, 0.2);
+      };
+    }
+    paper-menu {
+      background: var(--primary-color);
+      -webkit-overflow-scrolling: touch;
+      overflow: auto;
+      height: 100%;
+    }
+    h3, li, p {
+      color: var(--paper-grey-800);
+    }
+    h2 {
+      margin: 0;
+      padding: 24px 24px 48px 0;
+      font-size: 30px;
+      color: var(--primary-color);
+      font-family: 'Roboto Slab', serif;
+    }
+    h2:after {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 1px;
+      background: var(--primary-color);
+      margin-top: 2px;
+    }
+    h3 {
+      padding-top: 24px;
+    }
+    li {
+      padding: 5px 0;
+    }
+    ul {
+      margin: 0;
+    }
+    a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 1000px) {
+      iron-auto-scroll-spy > * > :not(h2){
+        margin-left: 0;
+        margin-right: 0;
+      }
+    }
+  </style>
+
+  <app-drawer-layout fullbleed id="drawerLayout">
+    <app-drawer swipe-open>
+      <paper-menu id="paperMenu">
+        <paper-item>Description</paper-item>
+        <paper-item>Configuration</paper-item>
+        <paper-item>Validation</paper-item>
+        <paper-item>Layout</paper-item>
+        <paper-item>Buttons</paper-item>
+        <paper-item>Styling</paper-item>
+        <paper-item>Selection</paper-item>
+        <paper-item>Animations</paper-item>
+        <paper-item>Events</paper-item>
+        <paper-item>Methods</paper-item>
+        <paper-item>Binding</paper-item>
+        <paper-item>Extra</paper-item>
+        <paper-item>Sandbox</paper-item>
+        <paper-submenu>
+          <paper-item></paper-item>
+          <paper-item></paper-item>
+        </paper-submenu>
+      </paper-menu>
+    </app-drawer>
+    <iron-auto-scroll-spy id="scrollSpy" activate-event="" no-scroll-for-initial-selection>
+      <div>
+        <h2>Description</h2>
+        <p>Paper-stepper is an element made with <a href="https://www.polymer-project.org/1.0/" target="_blank">Polymer</a> with respect to the <a href="https://www.google.com/design/spec/components/steppers.html" target="_blank">material specifications</a>.</p>
+        <p>Steppers display progress through a sequence by breaking it up into multiple logical and numbered steps. They may also be used for navigation.</p>
+        <p>Spec recommendation: Avoid using steppers to break up sections in a short form, or multiple times on one page and don’t embed steppers within steppers.</p>
+        <p>Start using now <strong>bower install -S Zecat/paper-stepper#v2.0-beta.5</strong></p>
+        <p>Note, it is still a beta release, attributes and methods might change suddenly.</p>  
+      </div>
+      <div>
+        <h2>Configuration</h2>
+        <p>Paper-stepper is a container for paper-step's. Give a <strong>label</strong> to your steps, once the user tap the primary button, the step is saved and the stepper progress. He can come back to update a saved step if it has <strong>editable</strong> attribute set.</p>
+        <ul>
+          <li>Editable steps allow users to return later to edit a step. These are ideal for workflows that involve editing steps within a session.</li>
+          <li>Non-editable steps should be used when the users cannot edit a step later and when step editing poses a distraction risk to form completion.</li>
+        </ul>
+        <demo-snippet>
+          <template>
+            <paper-stepper>
+              <paper-step label="step 1"></paper-step>
+              <paper-step label="step 2"></paper-step>
+              <paper-step label="step 3" editable></paper-step>
+              <paper-step label="step 4"></paper-step>
+            </paper-stepper>
+          </template>
+        </demo-snippet>
+        <p>Include any content you want in a step, simply ensure that the contents for each step are responsive and don’t embed steppers within steppers. If the content overflow, the step will be scrollable.</p>
+        <demo-snippet>
+          <template>
+            <style>
+              iframe {
+                width: 100%;
+                height: 100%;
+              }
+            </style>
+            <paper-stepper>
+              <paper-step label="Listen to music" editable>
+                <iframe src="https://www.youtube.com/embed/QPuU-iTIFoI?list=PL-su_cs7W8Vqhoy03LlE4nviUll_qSyPZ" frameborder="0" allowfullscreen></iframe>
+              </paper-step>
+              <paper-step label="Leave a comment">
+                <paper-input label="Name"></paper-input>
+                <paper-textarea label="Your message" rows="12"></paper-textarea>
+              </paper-step>
+            </paper-stepper>
+          </template>
+        </demo-snippet>
+        <p>The stepper is non-linear by default, which allow users to enter a multi-step flow at any point whereas a <strong>linear</strong> stepper requires users to complete one step in order to move on to the next.</p>
+        <demo-snippet>
+          <template>
+            <paper-stepper linear>
+              <paper-step label="step 1"></paper-step>
+              <paper-step label="step 2"></paper-step>
+              <paper-step label="step 3" editable></paper-step>
+              <paper-step label="step 4"></paper-step>
+            </paper-stepper>
+          </template>
+        </demo-snippet>
+        <p><strong>optional</strong> steps don't bloc the progression in linear stepper [<strong>Missing feature</strong>]. You can configure the text displayed which default to "optional" with <strong>optional-text</strong> attribute.</p>
+        <demo-snippet>
+          <template>
+            <paper-stepper linear optional-text="opcional">
+              <paper-step label="etapa 1"></paper-step>
+              <paper-step label="etapa 2" optional></paper-step>
+              <paper-step label="etapa 3"></paper-step>
+              <paper-step label="etapa 4"></paper-step>
+            </paper-stepper>
+          </template>
+        </demo-snippet>
+      </div>
+      <div>
+        <h2>Validation</h2>
+        <p>Paper-step implement <a href="https://elements.polymer-project.org/elements/iron-validatable-behavior" target="_blank">IronValidatableBehavior</a>. Override <strong>_getValidity()</strong> method on a step to create your own validation logique.</p>
+         <demo-snippet>
+          <template>
+            <template is="dom-bind" id="validationScope">
+
+              <paper-stepper linear>
+                <paper-step label="step 1" id="stepToValidate">
+                  <form is="iron-form" id="formStep1">
+                    <paper-input label="Enter something to continue" required error-message="Field required"></paper-input>
+                  </form>
+                </paper-step>
+                <paper-step label="step 2"></paper-step>
+              </paper-stepper>
+
+              <script>
+                var scope = document.getElementById('validationScope');
+                var step = scope.$.stepToValidate;
+                var form = scope.$.formStep1;
+                step._getValidity = function() {
+                  return form.validate();
+                };
+              </script>
+
+            </template>
+          </template>
+        </demo-snippet>
+      </div>
+      <div>
+      <h2>Layout</h2>
+      <p>Paper-stepper is horizontal by default. Horizontal steppers are ideal when the contents of one step depend on an earlier step. Avoid using long step names in horizontal steppers.</p>
+      <p>The <strong>alternative label</strong> take effect in horizontal layout and allows slightly longer labels.</p>
+      <demo-snippet>
+        <template>
+          <paper-stepper alternative-label>
+            <paper-step label="step 1"></paper-step>
+            <paper-step label="step 2"></paper-step>
+            <paper-step label="step 3" editable></paper-step>
+            <paper-step label="step 4"></paper-step>
+          </paper-stepper>
+        </template>
+      </demo-snippet>
+      <p>Use the <strong>vertical</strong> layout for narrow screen sizes, when your labels are too long or when you have too many steps. It is ideal for mobile.</p>
+      <demo-snippet>
+        <template>
+          <paper-stepper vertical>
+            <paper-step label="step 1"></paper-step>
+            <paper-step label="step 2"></paper-step>
+            <paper-step label="step 3" editable></paper-step>
+            <paper-step label="step 4"></paper-step>
+          </paper-stepper>
+        </template>
+      </demo-snippet>
+      <p>If you specify <strong>--paper-stepper-vertical-responsive-width</strong>, the stepper manage the <strong>vertical</strong> attribute itself. When the width of the stepper (not the viewport width!) is inferior to the variable, the vertical layout is use.</p>
+      <p>For performance reason, the responsive check is debounced according to <strong>responsive-check-frequence</strong> which default to 200ms.</p>
+      <p>Resize your window to see the effect.</p>
+      <demo-snippet>
+        <template>
+          <style is="custom-style">
+            #visualResponsiveWidth {
+              width: 500px;
+              max-width: 100%;
+              height: 4px;
+              background: var(--primary-color);
+            }
+            #responsiveStepper {
+              --paper-stepper-vertical-responsive-width: 500px;
+            }
+          </style>
+          
+          <div id="visualResponsiveWidth"></div>
+
+          <paper-stepper id="responsiveStepper" responsive-check-frequence="500">
+            <paper-step label="step 1"></paper-step>
+            <paper-step label="step 2"></paper-step>
+          </paper-stepper>
+        </template>
+      </demo-snippet>
+      </div>
+       <div>
+        <h2>Buttons</h2>
+        <ul>
+          <li>Set <strong>has-back-button</strong> if you want a back button, the back action send you to the previous sibling selectable step and is disabled if this step doesn't exist.</li>
+          <li>Set <strong>has-skip-button</strong> if you want a skip button. The skip action loops around the steps to find the next selectable unsaved step. If this step doesn't exist, the button is disabled.</li>
+        </ul>
+        <demo-snippet>
+        <template>
+          <paper-stepper vertical has-skip-button has-back-button>
+            <paper-step label="step 1"></paper-step>
+            <paper-step label="step 3" editable></paper-step>
+            <paper-step label="step 4"></paper-step>
+          </paper-stepper>
+        </template>
+        </demo-snippet>
+        <p>You can configure the text of the above buttons with <strong>back-text</strong> and <strong>skip-text</strong> attributes.</p>
+        <p>The text of the primary button correspond to <strong>continue-text</strong> attribute by default, <strong>update-text</strong> if the step is saved and <strong>finish-text</strong> if it is the last unsaved step. Texts are capitalized within the buttons.</p>
+        <demo-snippet>
+        <template>
+          <paper-stepper has-back-button has-skip-button continue-text="continuer" back-text="retour" skip-text="passer" update-text="mettre à jour" finish-text="terminer">
+            <paper-step label="étape 1"></paper-step>
+            <paper-step label="étape 2" editable></paper-step>
+            <paper-step label="étape 4"></paper-step>
+          </paper-stepper>
+        </template>
+      </demo-snippet>
+      </div>
+      <div>
+        <h2>Styling</h2>
+        <p>In vertical layout, the height of the stepper depends on his steps and in an opened horizontal stepper, it defaults to 450px.</p>
+        <p>Use the following variables instead of setting 'height' and 'max-height', they allow to configure the stepper and its steps depending on the layout.</p>
+        <h3>Stepper CSS variables</h3>
+        <ul>
+          <li><strong>--paper-stepper-horizontal-opened-height</strong> : the height of paper stepper in horizontal layout when it is opened, default to 450px.</li>
+          <li><strong>--paper-stepper-vertical-max-height</strong>: the max height of the vertical stepper, not defined by default.</li>
+          <li><strong>--paper-stepper-horizontal-opening-transition-duration</strong>: the horizontal stepper opening transition duration, default to 500ms.</li>
+        </ul>
+        <demo-snippet>
+        <template is="dom-bind">
+          <style is="custom-style">
+            #stepper {
+              --paper-stepper-horizontal-opened-height: 300px;
+              --paper-stepper-vertical-max-height: 200px;
+              --paper-stepper-horizontal-opening-transition-duration: 800ms;
+            }
+            paper-toggle-button {
+              padding: 24px;
+            }
+          </style>
+
+          <paper-stepper id="stepper" vertical="[[vertical]]">
+            <paper-step label="step 1"></paper-step>
+            <paper-step label="step 2"></paper-step>
+            <paper-step label="step 3"></paper-step>
+            <paper-step label="step 4"></paper-step>
+          </paper-stepper>
+
+          <paper-toggle-button checked="{{vertical}}">Vertical</paper-toggle-button>
+        </template>
+      </demo-snippet>
+      <h3>Steps CSS variables</h3>
+      <ul>
+        <li><strong>--paper-vertical-step-transition-duration</strong>: the vertical step opening transition duration, default to 500ms.</li>
+        <li><strong>--paper-vertical-step-max-height</strong>: the max-height of the content of your step, default to 400px.</li>
+      </ul>
+      <demo-snippet>
+        <template is="dom-bind">
+          <style is="custom-style">
+            #vertical-stepper paper-step {
+              --paper-vertical-step-max-height: 300px;
+              --paper-vertical-step-transition-duration: 1s;
+            }
+          </style>
+          <paper-stepper id="vertical-stepper" vertical>
+            <paper-step label="step 1">
+              <paper-textarea rows="8"></paper-textarea>
+            </paper-step>
+            <paper-step label="step 2"></paper-step>
+            <paper-step label="step 3"></paper-step>
+            <paper-step label="step 4"></paper-step>
+          </paper-stepper>
+        </template>
+      </demo-snippet>
+      </div>
+      <div>
+        <h2>Selection</h2>
+        <p>Paper-stepper implement <a href="https://elements.polymer-project.org/elements/iron-selector?active=Polymer.IronSelectableBehavior" target="_blank">IronSelectableBehavior</a>. By default, selected reflet the selected index (the first step has index 0). Give a default value to <strong>selected</strong> for the step to be opened when the user land on the stepper.</p>
+        <p>Note: The behavior is slightly modified to only allow the selection of selectable steps.</p>
+         <demo-snippet>
+          <template is="dom-bind">
+            <paper-stepper vertical selected="0">
+              <paper-step label="step 1"></paper-step>
+              <paper-step label="step 2"></paper-step>
+              <paper-step label="step 3"></paper-step>
+              <paper-step label="step 4"></paper-step>
+            </paper-stepper>
+          </template>
+        </demo-snippet>
+        <p>You can use <strong>attr-for-selected</strong> for selected to reflect an attribute on your step.</p>
+        <demo-snippet>
+          <template is="dom-bind">
+            <style>
+              #select-input {
+                width: 100px;
+                padding-left: 24px;
+              }
+            </style>
+
+            <paper-input id="select-input" label="Selected step" value="{{selected}}"></paper-input>
+            <paper-stepper selected="{{selected}}" attr-for-selected="label">
+              <paper-step label="step 1"></paper-step>
+              <paper-step label="step 2" editable></paper-step>
+              <paper-step label="step 3" editable></paper-step>
+              <paper-step label="step 4" editable></paper-step>
+            </paper-stepper>
+          </template>
+        </demo-snippet>
+      </div>
+      <div>
+        <h2>Animations</h2>
+        <p>You can define animations between steps in horizontal layout. Import your animations and set</p>
+        <ul>
+          <li>horizontal-higher-entry-animation</li>
+          <li>horizontal-lower-entry-animation</li>
+          <li>horizontal-higher-exit-animation</li>
+          <li>horizontal-lower-exit-animation</li>
+        </ul>
+        <p>to the name of the wanted animation, directly on paper-stepper or on a specific paper-step.</p>
+         <demo-snippet>
+          <template is="dom-bind">
+            <paper-stepper
+              selected="0"
+              horizontal-higher-entry-animation="slide-from-right-animation"
+              horizontal-lower-entry-animation="slide-from-left-animation"
+              horizontal-higher-exit-animation="slide-right-animation"
+              horizontal-lower-exit-animation="slide-left-animation">
+              <paper-step label="step 1">Step 1</paper-step>
+              <paper-step label="step 2" horizontal-higher-exit-animation="fade-out-animation">Step 2</paper-step>
+              <paper-step label="step 3">Step 3</paper-step>
+              <paper-step label="step 4">Step 4</paper-step>
+            </paper-stepper>
+          </template>
+        </demo-snippet>
+        </div>
+      <div>
+      <h2>Events</h2>
+      <ul>
+        <li><strong>paper-stepper-completed</strong> is fired from the stepper when all the steps are saved.</li>
+        <li><strong>paper-step-saved</strong> is fired from a step when it become saved.</li>
+        <li><strong>paper-step-updated</strong> is fired from a step it is saved again.</li>
+      </ul>
+      <demo-snippet>
+      <template>
+        <template is="dom-bind" id="eventScope">
+
+          <paper-stepper on-paper-stepper-completed="completed">
+            <paper-step label="step 1" on-paper-step-saved="saved" editable on-paper-step-updated="updated"></paper-step>
+            <paper-step label="step 2" ></paper-step>
+          </paper-stepper>
+          <paper-toast id="toast"></paper-toast>
+          
+          <script>
+            scope = document.getElementById('eventScope');
+            scope.completed = function() { this.$.toast.show('Stepper completed'); }
+            scope.saved = function() { this.$.toast.show('Step 1 saved'); }
+            scope.updated = function() { this.$.toast.show('Step 1 updated'); }
+          </script>
+
+        </template>
+      </template>
+      </demo-snippet>
+      </div>
+      <div>
+        <h2>Methods</h2>
+        <demo-snippet>
+        <template>
+        <template is="dom-bind" id="methodScope">
+
+          <style>
+            #button-container {
+              padding: 24px;
+            }
+          </style>
+          <div id="button-container">
+            <paper-button raised on-tap="progress">Progress</paper-button>
+            <paper-button raised on-tap="back">Back</paper-button>
+            <paper-button raised on-tap="continue">Continue</paper-button>
+            <paper-button raised on-tap="save">Save step 2</paper-button>
+            <paper-button raised on-tap="reset">Reset</paper-button>
+          </div>
+
+          <paper-stepper id="controledStepper">
+            <paper-step label="step 1"></paper-step>
+            <paper-step label="step 2" id="step2"></paper-step>
+            <paper-step label="step 3"></paper-step>
+          </paper-stepper>
+          
+          <script>
+            scope = document.getElementById('methodScope');
+            scope.progress = function() { this.$.controledStepper.progress()};
+            scope.back = function() { this.$.controledStepper.back()};
+            scope.continue = function() { this.$.controledStepper.continue()};
+            scope.save = function() { this.$.step2.save()};
+            scope.reset = function() { this.$.controledStepper.reset();};
+          </script>
+
+        </template>
+        </template>
+      </demo-snippet>
+      </div>
+      <div>
+        <h2>Binding</h2>
+        <p>You can bind these attributes to be notified of changes about the stepper and its steps.</p>
+        <demo-snippet>
+        <template is="dom-bind">
+          <style>
+            ul {
+              padding: 24px 42px;
+            }
+          </style>
+
+          <ul>
+            <li>Stepper opened: [[opened]]</li>
+            <li>Stepper completed: [[completed]]</li>
+            <li>Stepper step number: [[stepNumber]]</li>
+            <li>Stepper saved step number: [[savedStepNumber]]</li>
+            <li>Step 1 saved: [[saved]]</li>
+            <li>Step 2 index: [[index]]</li>
+            <li>Step 3 selectable: [[selectable]]</li>
+          </ul>
+          <paper-stepper linear opened="{{opened}}" completed="{{completed}}" step-number="{{stepNumber}}" saved-step-number="{{savedStepNumber}}">
+            <paper-step label="step 1" saved="{{saved}}"></paper-step>
+            <paper-step label="step 2" editable index="{{index}}"></paper-step>
+            <paper-step label="step 3" selectable="{{selectable}}"></paper-step>
+          </paper-stepper>
+        </template>
+      </demo-snippet>
+      </div>
+      <div>
+        <h2>Extra</h2>
+        <p>In horizontal layout, labels are overflow ellipsis and will be revealed on hover. For long labels, prefer use alternative label or vertical layout.</p>
+        <demo-snippet>
+        <template>
+          <paper-stepper>
+            <paper-step label="step 1"></paper-step>
+            <paper-step label="A loooooooooooooooooooooooooooooooooooooong label"></paper-step>
+            <paper-step label="A loooooooooooooooooooooooooooooooooooooong label"></paper-step>
+            <paper-step label="step 3"></paper-step>
+          </paper-stepper>
+        </template>
+      </demo-snippet>
+
+      <p>By-product: This demo is made with <a href="https://github.com/Zecat/iron-scroll-spy" target="_blank">iron-scroll-spy</a>, fork!</p>
+      
+      </div>
+      <div>
+      <h2>Sandbox</h2>
+      <p>Change on an attribute will be immediately reflected.</p>
+
+        <paper-stepper-sandbox class="flex"></paper-stepper-sandbox>
+      </div>
+    </iron-auto-scroll-spy>
+  </app-drawer-layout>
+  <script>
+    var scrollSpy = document.getElementById('scrollSpy');
+    var paperMenu = document.getElementById('paperMenu');
+    var drawerLayout = document.getElementById('drawerLayout');
+    /* manual binding because demo-snippet can't be wrapped by a <template> see https://github.com/PolymerElements/iron-demo-helpers/issues/29 */
+    scrollSpy.addEventListener('selected-changed', function(e) {
+      paperMenu.selected = e.detail.value;
+    });
+    paperMenu.addEventListener('selected-changed', function(e) {
+      scrollSpy.selected = e.detail.value;
+    });
+  </script>
+
+  </body>
+</html>

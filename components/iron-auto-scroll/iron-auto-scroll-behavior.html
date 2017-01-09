@@ -1,0 +1,127 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-selector/iron-selectable.html">
+<link rel="import" href="../iron-scroll-target-behavior/iron-scroll-target-behavior.html">
+
+<!--
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<script>
+  /** @polymerBehavior Polymer.IronAutoScrollBehavior */
+  Polymer.IronAutoScrollBehaviorImpl = {
+
+    properties: {
+      /**
+       * When true, the scroll target will not scroll automatically to the selected item.
+       */
+      autoScrollDisabled: {
+        type: Boolean,
+        value: false
+      },
+      /**
+       * When true, the scroll feature is disabled for initial selection.
+       */
+      noScrollForInitialSelection: {
+        type: Boolean,
+        value: false
+      },
+      /**
+       * The scroll duration (ms) when selected change.
+       */
+      scrollDuration: {
+        type: Number,
+        value: 300
+      },
+      /**
+       * Become true during auto-scroll.
+       */
+      autoScrolling: {
+        type: Boolean,
+        value: false,
+        notify: true,
+        readOnly: true
+      },
+      selected: {
+        observer: '_selectedChanged'
+      },
+      /**
+       * When true, the scroll will occure with smooth animation for initial selection. Note: If this attribute is false
+       * `scrolling` will note become true during the initial scroll to fake the scroll-target was already in this position
+       * when the selection start.
+       */
+      smoothScrollForInitialSelection: {
+        type: Boolean,
+        value: false
+      },
+    },
+
+    _selectedChanged: function(newValue, oldValue) {
+      if (this.autoScrollDisabled) {
+        return;
+      }
+      
+      // Convert key to index when needed
+      newValue = this._valueToIndex(newValue);
+
+      // if it's the initial selection
+      if (oldValue == undefined) {
+        if (!this.noScrollForInitialSelection) {
+          this.smoothScrollForInitialSelection ? this.smoothScroll(this.items[newValue].offsetTop, this.scrollDuration) :
+          this.scroll(0, this.items[newValue].offsetTop);
+        }
+      } else {
+        // TODO: use CSS scroll-behavior once supported.
+        this.smoothScroll(this.items[newValue].offsetTop, this.scrollDuration);
+      }
+    },
+    /**
+     * Perform a easing scroll animation in the scroll target during which scroll spy is disabled.
+     * @param  {Number} top      Top position to scroll to.
+     * @param  {Number} duration Scroll duration (ms)
+     */
+    smoothScroll: function(top, duration) {
+      if (top == this._scrollTop) {
+        return;
+      }
+      var easingFn = function easeOutQuad(t, b, c, d) {
+        t /= d;
+        return -c * t*(t-2) + b;
+      };
+      var startTime = Date.now();
+      var currentScrollTop = this._scrollTop;
+      var deltaScrollTop = top - currentScrollTop;
+      this._setAutoScrolling(true);
+      (function updateFrame() {
+        var now = Date.now();
+        var elapsedTime = now - startTime;
+        if (elapsedTime > duration) {
+          this.scroll(0, top);
+          this._setAutoScrolling(false);
+        } else {
+          this.scroll(0, Math.round(easingFn(elapsedTime, currentScrollTop, deltaScrollTop, duration)));
+          requestAnimationFrame(updateFrame.bind(this));
+        }
+      }).call(this);
+    }
+  }
+
+  /** @polymerBehavior */
+  Polymer.IronAutoScrollBehavior = [
+    Polymer.IronSelectableBehavior,
+    Polymer.IronScrollTargetBehavior,
+    Polymer.IronAutoScrollBehaviorImpl
+  ];
+
+</script>

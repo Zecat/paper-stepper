@@ -1,0 +1,36 @@
+{
+  "name": "iron-scroll-spy",
+  "version": "2.1.0",
+  "authors": [
+    "Zecat <jullienfelix@gmail.com>"
+  ],
+  "description": "",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "iron-scroll-spy.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/Zecat/iron-scroll-spy/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "iron-scroll-target-behavior": "PolymerElements/iron-scroll-target-behavior#^1.0.6",
+    "iron-selector": "PolymerElements/iron-selector#^1.5.2",
+    "iron-auto-scroll": "Zecat/iron-auto-scroll#^0.4.0",
+    "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#^1.0.5"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "paper-tabs": "PolymerElements/paper-tabs#^1.5.0",
+    "paper-header-panel": "PolymerElements/paper-header-panel#^1.1.6",
+    "app-route": "PolymerElements/app-route#^0.9.1",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.3.1",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.2.5"
+  }
+}

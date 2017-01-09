@@ -1,0 +1,41 @@
+{
+  "name": "iron-auto-scroll",
+  "version": "0.4.0",
+  "authors": [
+    "Zecat <jullienfelix@gmail.com>"
+  ],
+  "description": "Make it easy to scroll to the selected element.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "iron-auto-scroll.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/Zecat/iron-auto-scroll/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "iron-scroll-target-behavior": "PolymerElements/iron-scroll-target-behavior#^1.0.6",
+    "iron-selector": "PolymerElements/iron-selector#^1.5.2"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "paper-header-panel": "PolymerElements/paper-header-panel#^1.1.6",
+    "paper-toolbar": "PolymerElements/paper-toolbar#^1.1.6",
+    "paper-tabs": "PolymerElements/paper-tabs#^1.6.2"
+  },
+  "_release": "0.4.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.4.0",
+    "commit": "84394263b113a3e8f422d80f92ec73a1569a573d"
+  },
+  "_source": "https://github.com/Zecat/iron-auto-scroll.git",
+  "_target": "^0.4.0",
+  "_originalSource": "Zecat/iron-auto-scroll"
+}

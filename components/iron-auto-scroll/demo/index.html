@@ -1,0 +1,71 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>iron-auto-scroll Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="../iron-auto-scroll.html">
+    <link rel="import" href="../../paper-tabs/paper-tabs.html">
+    <link rel="import" href="../../paper-tabs/paper-tab.html">
+    <link rel="import" href="../../paper-header-panel/paper-header-panel.html">
+    <link rel="import" href="../../paper-toolbar/paper-toolbar.html">
+  </head>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+      }
+      iron-auto-scroll div {
+        padding: 250px;
+        border-bottom: 1px solid grey;
+      }
+  </style>
+  <body unresolved>
+
+    <template is="dom-bind" id="scope">
+      <paper-header-panel class="flex" id="headerPanel">
+        <paper-toolbar>
+          <paper-tabs selected="{{scrollSelected}}">
+            <paper-tab>Section A</paper-tab>
+            <paper-tab>Section B</paper-tab>
+            <paper-tab>Section C</paper-tab>
+            <paper-tab>Section D</paper-tab>
+          </paper-tabs>
+        </paper-toolbar>
+        <iron-auto-scroll slient-scroll-for-initial-selection selected="{{scrollSelected}}" fallback-selection="1" id="scrollSpy">
+          <div>
+            <h1>Section A</h1>
+            <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis, provident asperiores. Itaque quas architecto commodi, quam dicta beatae blanditiis obcaecati, voluptatibus, quisquam sint necessitatibus aliquid vero sunt dolor iusto quos!</span>
+          </div>
+          <div>
+            <h1>Section B</h1>
+            <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis, provident asperiores. Itaque quas architecto commodi, quam dicta beatae blanditiis obcaecati, voluptatibus, quisquam sint necessitatibus aliquid vero sunt dolor iusto quos!</span>
+          </div>
+          <div>
+            <h1>Section C</h1>
+            <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis, provident asperiores. Itaque quas architecto commodi, quam dicta beatae blanditiis obcaecati, voluptatibus, quisquam sint necessitatibus aliquid vero sunt dolor iusto quos!</span>
+          </div>
+          <div>
+            <h1>Section D</h1>
+            <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis, provident asperiores. Itaque quas architecto commodi, quam dicta beatae blanditiis obcaecati, voluptatibus, quisquam sint necessitatibus aliquid vero sunt dolor iusto quos!</span>
+          </div>
+        </iron-auto-scroll>
+      </paper-header-panel>
+      <script>
+        var scope = document.getElementById("scope");
+        scope.$.scrollSpy.scrollTarget = scope.$.headerPanel.scroller;
+      </script>
+    </template>
+
+  </body>
+</html>
