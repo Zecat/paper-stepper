@@ -15,7 +15,7 @@
   <template>
     <style include="step-label-shared-styles">
       :host {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
       }
       #connectedBadge, #textWrapper {
         pointer-events: none;
@@ -24,13 +24,13 @@
       }
       #collapse {
         --iron-collapse-transition-duration: var(--paper-vertical-step-transition-duration, 500ms);
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
       }
       /**
        * Content
        */
       #connectedStep {
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
       }
       #contentConnectorLine {
         width: 1px;
@@ -39,13 +39,13 @@
         margin-right: 24px;
       }
       #stepWrapper {
-        @apply(--layout-flex);
+        @apply --layout-flex;
         /*should be 48px on large screen?*/
         padding-right: 24px;
       }
       #paperStepWrapper {
         max-height: calc(var(--paper-vertical-step-max-height, 400px) - 92px);
-        @apply(--layout-scroll);
+        @apply --layout-scroll;
       }
 
       /**
@@ -55,9 +55,9 @@
         height: 48px;
         padding-top: 16px;
         padding-bottom: 28px;
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-flex-none);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-flex-none;
       }
       #buttonsWrapper > paper-button {
         margin-right: 8px;
@@ -73,15 +73,15 @@
        * Label
        */
       #textWrapper {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
         padding: 20px 0 20px 12px;
       }
       #label {
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
       }
       #connectedBadge {
-        @apply(--layout-vertical);
-        @apply(--layout-center);
+        @apply --layout-vertical;
+        @apply --layout-center;
         margin-left: 24px;
       }
       #beforeConnectorLine, #afterConnectorLine {
@@ -92,7 +92,7 @@
         height: 10px;
       }
       #afterConnectorLine {
-        @apply(--layout-flex);
+        @apply --layout-flex;
       }
       #badge {
         margin: 8px 0;
@@ -125,7 +125,7 @@
       <div id="contentConnectorLine"></div>
       <div id="stepWrapper">
         <div id="paperStepWrapper">
-          <content></content>
+          <slot></slot>
         </div>
         <div id="buttonsWrapper">
           <paper-button id="continueButton" on-tap="continue">{{choosePrimaryButtonText(_attrForPrimaryButtonText, stepperData.continueText, stepperData.finishText, stepperData.updateText)}}</paper-button>

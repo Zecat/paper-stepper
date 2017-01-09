@@ -106,8 +106,8 @@ Custom property | Description | Default
       :host {
         display: block;
         box-sizing: border-box;
-        @apply(--layout-vertical);
-        @apply(--shadow-elevation-2dp);
+        @apply --layout-vertical;
+        @apply --shadow-elevation-2dp;
         background: white;
         border-radius: 1px;
       }
@@ -120,7 +120,7 @@ Custom property | Description | Default
 
       :host([vertical]) {
         padding: 4px 0;
-        @apply(--layout-scroll);
+        @apply --layout-scroll;
         max-height: var(--paper-stepper-vertical-max-height);
       }
       :host(:not([vertical])) {
@@ -131,7 +131,7 @@ Custom property | Description | Default
         transition: max-height var(--paper-stepper-horizontal-opening-transition-duration, 300ms), box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
       }
       :host(:not([vertical]):not([opened]):not(.collapsing)) {
-        @apply(--shadow-none);
+        @apply --shadow-none;
       }
       :host(:not([vertical])[opened]) {
         max-height: var(--paper-stepper-horizontal-opened-height, 450px);
@@ -140,19 +140,19 @@ Custom property | Description | Default
         height: var(--paper-stepper-horizontal-opened-height, 450px);
       }
       :host(:not([vertical])) #content-wrapper {
-        @apply(--shadow-elevation-2dp);
-        @apply(--layout-horizontal);
-        @apply(--layout-flex-none);
-        @apply(--layout-justified);
+        @apply --shadow-elevation-2dp;
+        @apply --layout-horizontal;
+        @apply --layout-flex-none;
+        @apply --layout-justified;
         background: var(--paper-stepper-horizontal-label-wrapper-background, --primary-background-color);
         border-radius: 1px;
         overflow: hidden;
       }
       .flex {
-        @apply(--layout-flex);
+        @apply --layout-flex;
       }
       #buttonsWrapper {
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
         margin: 0 24px 24px 24px;
         overflow: hidden;
       }
@@ -175,7 +175,7 @@ Custom property | Description | Default
     
     <!-- This wrapper contains the horizontal stepper header or the full vertical stepper -->
     <div id="content-wrapper">
-      <content select="[[selectable]]"></content>
+      <slot></slot>
     </div>
 
     <!-- Slideshow and buttons area for horizontal layout -->
@@ -497,8 +497,12 @@ Custom property | Description | Default
 
       _updateStepperClosedMaxHeight: function() {
         this.debounce('updateStepperClosedMaxHeight', function() {
-          this.customStyle['--label-wrapper-height'] = this.$$('#content-wrapper').clientHeight + 'px';
-          this.updateStyles('--label-wrapper-height');
+          if (Polymer.Element) {
+            this.updateStyles({ '--label-wrapper-height': this.$$('#content-wrapper').clientHeight + 'px' });
+          } else {
+            this.customStyle['--label-wrapper-height'] = this.$$('#content-wrapper').clientHeight + 'px';
+            this.updateStyles('--label-wrapper-height');
+          }
         });
       },
 
@@ -614,10 +618,12 @@ Custom property | Description | Default
       },
 
       _forwardCanSkip: function(_canSkip, selectedItem) {
+        if (!selectedItem) return;
         selectedItem._set_canSkip(_canSkip);
       },
 
       _forwardHasBackStep: function(_hasBackStep, selectedItem) {
+        if (!selectedItem) return;
         selectedItem._set_hasBackStep(_hasBackStep);
       },
 

@@ -23,8 +23,8 @@ Missing Doc
       }
       :host(:not([vertical])) {
         overflow: hidden;
-        @apply(--layout);
-        @apply(--layout-flex);
+        @apply --layout;
+        @apply --layout-flex;
       }
       :host(:not([vertical]):hover){
         overflow: visible;
@@ -41,8 +41,8 @@ Missing Doc
       }
       #contentWrapper {
         padding: 24px 24px 0 24px;
-        @apply(--layout-scroll);
-        @apply(--layout-fit);
+        @apply --layout-scroll;
+        @apply --layout-fit;
         pointer-events: auto;
       }
       :host(:focus:not([opened]):not([saved])) step-horizontal-label ::content #badge {
@@ -357,7 +357,9 @@ Missing Doc
       _updateSlideshowViewportTop: function(optional, _alternativeLabel, vertical) {
         if (!vertical) {
           this.async(function() {
-            this.$$('#slideshowViewport').style.top = this.clientHeight+'px';
+            var el = this.$$('#slideshowViewport');
+            if (!el) return;
+            el.style.top = this.clientHeight+'px';
             this.fire('step-horizontal-label-resize');
           })
         }
@@ -396,8 +398,8 @@ Missing Doc
 
       _verticalChange: function(vertical) {
         this.async(function() {
-          // move or create the content tag
-          Polymer.dom(this.$$(vertical ? '#verticalStepLabel' : '#contentWrapper')).appendChild(this.$$('content') || this.create('content'));
+          // move or create the slot tag
+          Polymer.dom(this.$$(vertical ? '#verticalStepLabel' : '#contentWrapper')).appendChild(this.$$('slot') || this.create('slot'));
           // reset the ripple
           this._ripple = false;
           this._rippleContainer = vertical ? this.$$('#verticalStepLabel').$.label : this.$$('#horizontalStepLabel').$.label;

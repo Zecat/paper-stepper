@@ -15,10 +15,10 @@
         overflow: hidden;
       }
       :host([alternative-label]) {
-        @apply(--layout);
+        @apply --layout;
       }
       #textWrapper {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
         padding-right: 8px;
         overflow: hidden;
       }
@@ -36,8 +36,8 @@
         z-index: 1;
       }
       :host(:not([alternative-label])) #label {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
         height: 72px;
       }
       :host(.firstStep:not([alternative-label])) #badge {
@@ -53,7 +53,7 @@
         height: 1px;
         min-width: 16px;
         background: var(--paper-step-connector-line-color, --divider-color);
-        @apply(--layout-flex);
+        @apply --layout-flex;
         content: '';
       }
       :host([alternative-label].first-step) #badgeWrapper::before,
@@ -62,22 +62,22 @@
       }
       :host([alternative-label]) #textWrapper{
         padding: 0 16px;
-        @apply(--layout-vertical);
-        @apply(--layout-center);
+        @apply --layout-vertical;
+        @apply --layout-center;
       }
       :host([alternative-label]) #textLabel, :host([alternative-label]) #optional{
         text-align: center;
-        @apply(--layout-self-stretch);
+        @apply --layout-self-stretch;
       }
       :host([alternative-label]) #label{
-        @apply(--layout-vertical);
-        @apply(--layout-self-stretch);
+        @apply --layout-vertical;
+        @apply --layout-self-stretch;
         padding: 24px 0;
         width: 100%;
       }
       :host([alternative-label]) #badgeWrapper {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
         padding-bottom: 16px;
       }
       :host(.first-step:not([alternative-label])) #label {
