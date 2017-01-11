@@ -11,63 +11,21 @@
 <link rel="import" href="step-label-behavior.html">
 <link rel="import" href="step-label-shared-styles.html">
 
-<dom-module id="step-vertical">
+<dom-module id="step-vertical-label">
   <template>
     <style include="step-label-shared-styles">
       :host {
-        @apply(--layout-vertical);
       }
       #connectedBadge, #textWrapper {
         pointer-events: none;
         /* to be above paper-ripple*/
         z-index: 1;
       }
-      #collapse {
-        --iron-collapse-transition-duration: var(--paper-vertical-step-transition-duration, 500ms);
-        @apply(--layout-horizontal);
-      }
       /**
        * Content
        */
       #connectedStep {
         @apply(--layout-horizontal);
-      }
-      #contentConnectorLine {
-        width: 1px;
-        background: var(--divider-color, --paper-grey-300);
-        margin-left: 36px;
-        margin-right: 24px;
-      }
-      #stepWrapper {
-        @apply(--layout-flex);
-        /*should be 48px on large screen?*/
-        padding-right: 24px;
-      }
-      #paperStepWrapper {
-        max-height: calc(var(--paper-vertical-step-max-height, 400px) - 92px);
-        @apply(--layout-scroll);
-      }
-
-      /**
-       * Buttons
-       */
-      #buttonsWrapper {
-        height: 48px;
-        padding-top: 16px;
-        padding-bottom: 28px;
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-flex-none);
-      }
-      #buttonsWrapper > paper-button {
-        margin-right: 8px;
-        margin-left: 0;
-      }
-      #continueButton {
-        --paper-button: {
-          background: var(--paper-vertical-step-continue-button-background, --primary-color);
-          color: var(--paper-vertical-step-continue-button-color, --dark-theme-text-color);
-        };
       }
       /**
        * Label
@@ -121,38 +79,16 @@
         </template>
       </div>
     </div>
-    <iron-collapse id="collapse" opened="[[opened]]">
-      <div id="contentConnectorLine"></div>
-      <div id="stepWrapper">
-        <div id="paperStepWrapper">
-          <content></content>
-        </div>
-        <div id="buttonsWrapper">
-          <paper-button id="continueButton" on-tap="continue">{{choosePrimaryButtonText(_attrForPrimaryButtonText, stepperData.continueText, stepperData.finishText, stepperData.updateText)}}</paper-button>
-          <paper-button id="backButton" disabled="[[!hasBackStep]]" on-tap="back" hidden$="[[!stepperData.hasBackButton]]">
-            [[stepperData.backText]]
-          </paper-button>
-          <paper-button id="skipButton" disabled="[[!canSkip]]" on-tap="skip" hidden$="[[!stepperData.hasSkipButton]]">
-            [[stepperData.skipText]]
-          </paper-button>
-        </div>
-      </div>
-    </iron-collapse>
   </template>
   <script>
 
     Polymer({
-      is: 'step-vertical',
+      is: 'step-vertical-label',
 
       properties: {
         canSkip: {
           type: Boolean
-        },
-        _attrForPrimaryButtonText: {
-          type: String,
-          value: false
-        },
-        hasBackStep: Boolean
+        }
       },
 
       behaviors: [
@@ -169,11 +105,8 @@
 
       continue: function() {
         this.fire('paper-step-vertical-continue-tapped');
-      },
-
-      choosePrimaryButtonText: function(_attrForPrimaryButtonText) {
-        return this.stepperData[_attrForPrimaryButtonText];
       }
+
     });
   </script>
 </dom-module>

@@ -4,7 +4,7 @@
 <link rel="import" href="../neon-animation/neon-animatable-behavior.html">
 <link rel="import" href="../paper-styles/default-theme.html">
 <link rel="import" href="step-horizontal-label.html">
-<link rel="import" href="step-vertical.html">
+<link rel="import" href="step-vertical-label.html">
 <link rel="import" href="../polymer/polymer.html">
 
 <!--
@@ -48,15 +48,73 @@ Missing Doc
       :host(:focus:not([opened]):not([saved])) step-horizontal-label ::content #badge {
         background: var(--paper-step-selectable-hovered-badge-background, --paper-grey-500);
       }
+      #slideshowViewport {
+        @apply(--layout);
+        @apply(--layout-center-center);
+      }
+      #test {
+        @apply(--layout-fit);
+        background: red;
+      }
+      :host([vertical]) {
+        @apply(--layout-vertical);
+      }
+      #collapse {
+        --iron-collapse-transition-duration: var(--paper-vertical-step-transition-duration, 500ms);
+        @apply(--layout-horizontal);
+      }
+      #stepWrapper {
+        @apply(--layout-flex);
+        /*should be 48px on large screen?*/
+        padding-right: 24px;
+      }
+      #paperStepWrapper {
+        max-height: calc(var(--paper-vertical-step-max-height, 400px) - 92px);
+        @apply(--layout-scroll);
+      }
+      #contentConnectorLine {
+        width: 1px;
+        background: var(--divider-color, --paper-grey-300);
+        margin-left: 36px;
+        margin-right: 24px;
+      }
+      /**
+       * Vertical Buttons
+       */
+      #buttonsWrapper {
+        height: 48px;
+        padding-top: 16px;
+        padding-bottom: 28px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-flex-none);
+      }
+      #buttonsWrapper > paper-button {
+        margin-right: 8px;
+        margin-left: 0;
+      }
+      #continueButton {
+        --paper-button: {
+          background: var(--paper-vertical-step-continue-button-background, --primary-color);
+          color: var(--paper-vertical-step-continue-button-color, --dark-theme-text-color);
+        };
+      }
     </style>
 
     <!-- horizontal step layout -->
 
     <template is="dom-if" if="[[!vertical]]">
-      <step-horizontal-label id="horizontalStepLabel" editable="[[editable]]" label="[[label]]"
-        alternative-label="[[_alternativeLabel]]" optional="[[optional]]"
-        opened="[[opened]]" selectable="[[selectable]]" index="[[index]]"
-        saved="[[saved]]" stepper-data="[[_stepperData]]">
+      <step-horizontal-label
+        id="horizontalStepLabel"
+        editable="[[editable]]"
+        label="[[label]]"
+        alternative-label="[[_alternativeLabel]]"
+        optional="[[optional]]"
+        opened="[[opened]]"
+        selectable="[[selectable]]"
+        index="[[index]]"
+        saved="[[saved]]"
+        stepper-data="[[_stepperData]]">
       </step-horizontal-label>
       <div id="slideshowViewport">
         <div id="contentWrapper">
@@ -67,12 +125,35 @@ Missing Doc
     <!-- vertical step layout -->
 
     <template is="dom-if" if="[[vertical]]">
-      <step-vertical id="verticalStepLabel" editable="[[editable]]" label="[[label]]"
-        optional="[[optional]]" opened="[[opened]]"
-        selectable="[[selectable]]" stepper-data="[[_stepperData]]" index="[[index]]"
-        saved="[[saved]]" _attr-for-primary-button-text="[[_attrForPrimaryButtonText]]"
-        can-skip="[[_canSkip]]" has-back-step="[[_hasBackStep]]">
-      </step-vertical>
+      <step-vertical-label
+        id="verticalStepLabel"
+        editable="[[editable]]"
+        label="[[label]]"
+        optional="[[optional]]"
+        opened="[[opened]]"
+        selectable="[[selectable]]"
+        stepper-data="[[_stepperData]]"
+        index="[[index]]"
+        saved="[[saved]]">
+      </step-vertical-label>
+      <iron-collapse id="collapse" opened="[[opened]]">
+      <div id="contentConnectorLine"></div>
+      <div id="stepWrapper">
+        <div id="paperStepWrapper">
+        </div>
+        <div id="buttonsWrapper">
+          <paper-button id="continueButton" on-tap="continue">
+            {{_choosePrimaryButtonText(_attrForPrimaryButtonText, _stepperData.continueText, _stepperData.finishText, _stepperData.updateText)}}
+          </paper-button>
+          <paper-button id="backButton" disabled="[[!_hasBackStep]]" on-tap="back" hidden$="[[!_stepperData.hasBackButton]]">
+            [[_stepperData.backText]]
+          </paper-button>
+          <paper-button id="skipButton" disabled="[[!_canSkip]]" on-tap="skip" hidden$="[[!_stepperData.hasSkipButton]]">
+            [[_stepperData.skipText]]
+          </paper-button>
+        </div>
+      </div>
+    </iron-collapse>
     </template>
   </template>
 
@@ -398,7 +479,7 @@ Missing Doc
       _verticalChange: function(vertical) {
         this.async(function() {
           // move or create the content tag
-          Polymer.dom(this.$$(vertical ? '#verticalStepLabel' : '#contentWrapper')).appendChild(this.$$('content') || this.create('content'));
+          Polymer.dom(this.$$(vertical ? '#paperStepWrapper' : '#contentWrapper')).appendChild(this.$$('content') || this.create('content'));
           // reset the ripple
           this._ripple = false;
           this._rippleContainer = vertical ? this.$$('#verticalStepLabel').$.label : this.$$('#horizontalStepLabel').$.label;
@@ -417,6 +498,10 @@ Missing Doc
         // disabled is used by IronMenuBehavior in paper-stepper
         // TODO: remove selectable attribute and use disabled instead
         return !selectable;
+      },
+
+      _choosePrimaryButtonText: function(_attrForPrimaryButtonText) {
+        return this._stepperData[_attrForPrimaryButtonText];
       }
 
     });
