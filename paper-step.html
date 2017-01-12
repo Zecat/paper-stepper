@@ -1,11 +1,13 @@
 <link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html">
 <link rel="import" href="../paper-item/paper-item-behavior.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="../paper-behaviors/paper-ripple-behavior.html">
 <link rel="import" href="../neon-animation/neon-animatable-behavior.html">
 <link rel="import" href="../paper-styles/default-theme.html">
+<link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="step-horizontal-label.html">
 <link rel="import" href="step-vertical-label.html">
-<link rel="import" href="../polymer/polymer.html">
 
 <!--
 Missing Doc
@@ -32,6 +34,9 @@ Missing Doc
       :host(:not([opened]):not(.neon-animating)) #slideshowViewport{
         display: none;
       }
+      #horizontalStepLabel {
+        @apply(--layout-flex);
+      }
       #slideshowViewport {
         position: absolute;
         bottom: 84px;
@@ -51,10 +56,6 @@ Missing Doc
       #slideshowViewport {
         @apply(--layout);
         @apply(--layout-center-center);
-      }
-      #test {
-        @apply(--layout-fit);
-        background: red;
       }
       :host([vertical]) {
         @apply(--layout-vertical);
@@ -359,7 +360,7 @@ Missing Doc
         if (receivedFocusFromKeyboard) {
           this.ensureRipple();
           // generate a ripple effect from the center of the badge
-          var badge = Polymer.dom(this._rippleContainer).querySelector('#badge');
+          var badge = this._rippleContainer.$.badge;
           var badgePos = badge.getBoundingClientRect();
           var rippleX = badgePos.left + 12;
           var rippleY = badgePos.top + 12;
@@ -482,7 +483,7 @@ Missing Doc
           Polymer.dom(this.$$(vertical ? '#paperStepWrapper' : '#contentWrapper')).appendChild(this.$$('content') || this.create('content'));
           // reset the ripple
           this._ripple = false;
-          this._rippleContainer = vertical ? this.$$('#verticalStepLabel').$.label : this.$$('#horizontalStepLabel').$.label;
+          this._rippleContainer = this.$$(vertical ? '#verticalStepLabel' : '#horizontalStepLabel');
           if (!vertical) {
             this._updateAnimationConfig();
           }
@@ -502,7 +503,33 @@ Missing Doc
 
       _choosePrimaryButtonText: function(_attrForPrimaryButtonText) {
         return this._stepperData[_attrForPrimaryButtonText];
+      },
+
+      /**
+       * Overriden from paper-ripple-behavior
+       * TODO: post issue about that ?
+       */
+      ensureRipple: function(optTriggeringEvent) {
+      if (!this.hasRipple()) {
+        this._ripple = this._createRipple();
+        this._ripple.noink = this.noink;
+        var rippleContainer = this._rippleContainer || this.root;
+        if (rippleContainer) {
+          // ------- line changed -------
+          Polymer.dom(rippleContainer.root).appendChild(this._ripple);
+        }
+        if (optTriggeringEvent) {
+          // Check if the event happened inside of the ripple container
+          // Fall back to host instead of the root because distributed text
+          // nodes are not valid event targets
+          var domContainer = Polymer.dom(this._rippleContainer || this);
+          var target = Polymer.dom(optTriggeringEvent).rootTarget;
+          if (domContainer.deepContains( /** @type {Node} */(target))) {
+            this._ripple.uiDownAction(optTriggeringEvent);
+          }
+        }
       }
+    },
 
     });
 

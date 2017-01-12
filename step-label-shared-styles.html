@@ -11,7 +11,10 @@
         display: block;
         box-sizing: border-box;
         @apply(--paper-font-common-base);
-        @apply(--layout-flex);
+        cursor: default;
+        pointer-events: none;
+        /* For paper-ripple */
+        position: relative;
       }
       #textWrapper {
         color: var(--paper-step-disabled-label-text-color, --paper-grey-400);
@@ -29,19 +32,18 @@
         color: var(--paper-step-opened-label-text-color, --light-theme-text-color);
         font-weight: 500;
       }
-      #label {
-        cursor: default;
-        pointer-events: none;
-        /* For paper-ripple */
-        position: relative;
-      }
-      :host([selectable]) #label {
+      :host([selectable]) {
         cursor: pointer;
         pointer-events: auto;
       }
-      #label:hover {
+      :host:hover {
         /* using alpha chanel for .connectorLine to grow dark */
         background: var(--paper-step-label-hover-background, rgba(0,0,0,0.04));
+      }
+      #badgeWrapper, #textWrapper {
+        pointer-events: none;
+        /* to be above paper-ripple*/
+        z-index: 1;
       }
       #badge {
         width: 24px;
@@ -63,7 +65,7 @@
       :host([saved]) #badge {
         background: var(--paper-step-saved-badge-background, --primary-color);
       }
-      :host([selectable]:not([opened]):not([saved])) #label:hover #badge {
+      :host([selectable]:not([opened]):not([saved])):hover #badge {
         background: var(--paper-step-selectable-hovered-badge-background, --paper-grey-500);
       }
       paper-ripple {

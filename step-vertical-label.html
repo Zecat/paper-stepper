@@ -1,13 +1,10 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-styles/color.html">
 <link rel="import" href="../paper-styles/default-theme.html">
-<link rel="import" href="../paper-styles/typography.html">
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../iron-icons/editor-icons.html">
-<link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="step-label-behavior.html">
 <link rel="import" href="step-label-shared-styles.html">
 
@@ -15,70 +12,54 @@
   <template>
     <style include="step-label-shared-styles">
       :host {
-      }
-      #connectedBadge, #textWrapper {
-        pointer-events: none;
-        /* to be above paper-ripple*/
-        z-index: 1;
-      }
-      /**
-       * Content
-       */
-      #connectedStep {
         @apply(--layout-horizontal);
       }
-      /**
-       * Label
-       */
       #textWrapper {
         @apply(--layout-vertical);
         padding: 20px 0 20px 12px;
       }
-      #label {
-        @apply(--layout-horizontal);
-      }
-      #connectedBadge {
+      #badgeWrapper {
         @apply(--layout-vertical);
         @apply(--layout-center);
         margin-left: 24px;
       }
-      #beforeConnectorLine, #afterConnectorLine {
-        width: 1px;
+      :host #badgeWrapper::before,
+      :host #badgeWrapper::after {
+        display: block;
+        content: '';
         background: var(--paper-step-connector-line-color, --divider-color);
+        width: 1px;
       }
-      #beforeConnectorLine {
+      :host #badgeWrapper::before {
         height: 10px;
       }
-      #afterConnectorLine {
+      :host #badgeWrapper::after {
         @apply(--layout-flex);
       }
       #badge {
         margin: 8px 0;
       }
-      :host(.first-step) #beforeConnectorLine, :host(.lastStep) #contentConnectorLine{
+      :host(.first-step) #badgeWrapper::before {
         visibility: hidden;
       }
-      :host(.last-step:not([opened])) #afterConnectorLine {
+      :host(.last-step:not([opened])) #badgeWrapper::after {
         display: none;
       }
     </style>
 
-    <div id="label">
-      <div id="connectedBadge">
-        <div id="beforeConnectorLine"></div>
-        <div id="badge">
-          <iron-icon hidden$="{{!_computeIsIconBadge(icon)}}" icon="{{icon}}"></iron-icon>
-          <span hidden$="{{_computeIsIconBadge(icon)}}">{{index}}</span>
-        </div>
-        <div id="afterConnectorLine" class="connectorLine"></div>
-      </div>
-      <div id="textWrapper">
-        <span id="textLabel">[[label]]</span>
-        <template is="dom-if" if="[[optional]]">
-          <span id="optional">[[stepperData.optionalText]]</span>
-        </template>
+    <div id="badgeWrapper">
+      <div id="badge">
+        <iron-icon hidden$="{{!_computeIsIconBadge(icon)}}" icon="{{icon}}"></iron-icon>
+        <span hidden$="{{_computeIsIconBadge(icon)}}">{{index}}</span>
       </div>
     </div>
+    <div id="textWrapper">
+      <span id="textLabel">[[label]]</span>
+      <template is="dom-if" if="[[optional]]">
+        <span id="optional">[[stepperData.optionalText]]</span>
+      </template>
+    </div>
+
   </template>
   <script>
 
@@ -93,19 +74,7 @@
 
       behaviors: [
         Stepper.StepLabelBehavior
-      ],
-
-      skip: function() {
-        this.fire('paper-step-vertical-skip-tapped');
-      },
-
-      back: function() {
-        this.fire('paper-step-vertical-back-tapped');
-      },
-
-      continue: function() {
-        this.fire('paper-step-vertical-continue-tapped');
-      }
+      ]
 
     });
   </script>

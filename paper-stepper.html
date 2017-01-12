@@ -350,17 +350,12 @@ Custom property | Description | Default
         _attrForSelectedStepPrimaryButtonText: {
           type: String,
           computed: '_compute__attrForSelectedStepPrimaryButtonText(_selectedIndex, stepNumber)'
-        },
-        _previousAnimatedStep: {
-          type: Object,
-          value: null,
-          readOnly: true
-        },
-        _previousSelected: {
-          type: Object,
-          readOnly: true
         }
       },
+
+      _previousAnimatedStep: null,
+
+      _previousSelected: null,
 
       keyBindings: {
         'left': '_onLeftKey',
@@ -482,12 +477,12 @@ Custom property | Description | Default
             } else {
               this.selected = null;
             }
-            this._set_previousSelected(null);
+            this._previousSelected = null;
             return;
           }
         }
         this._selection.select(item);
-        this._set_previousSelected(item);
+        this._previousSelected = item;
         this._set_selectedIndex(this.indexOf(item));
         // Check for items, since this array is populated only when attached
         // Since Number(0) is falsy, explicitly check for undefined
@@ -603,7 +598,7 @@ Custom property | Description | Default
             this.toggleClass('neon-animating', true, oldStep);
           }
 
-          this._set_previousAnimatedStep(oldStep);
+          this._previousAnimatedStep = oldStep;
         }
       },
 

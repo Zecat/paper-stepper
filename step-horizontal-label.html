@@ -1,8 +1,6 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-icons/editor-icons.html">
-<link rel="import" href="../paper-styles/color.html">
-<link rel="import" href="../paper-styles/typography.html">
 <link rel="import" href="../paper-styles/default-theme.html">
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="step-label-behavior.html">
@@ -11,7 +9,7 @@
 <dom-module id="step-horizontal-label">
   <template>
     <style include="step-label-shared-styles">
-      :host{
+      :host {
         overflow: hidden;
       }
       :host([alternative-label]) {
@@ -30,12 +28,7 @@
       #badge {
         margin: 0 8px;
       }
-      #badgeWrapper, #textWrapper {
-        pointer-events: none;
-        /* to be above paper-ripple*/
-        z-index: 1;
-      }
-      :host(:not([alternative-label])) #label {
+      :host(:not([alternative-label])) {
         @apply(--layout-horizontal);
         @apply(--layout-center);
         height: 72px;
@@ -46,8 +39,8 @@
       :host(.lastStep:not([alternative-label])) #textWrapper {
         padding-right: 24px;
       }
-      :host(:not([alternative-label]):not(.first-step)) #label::before, 
-      :host(:not([alternative-label]):not(.last-step)) #label::after,
+      :host(:not([alternative-label]):not(.first-step))::before, 
+      :host(:not([alternative-label]):not(.last-step))::after,
       :host([alternative-label]) #badgeWrapper::before,
       :host([alternative-label]) #badgeWrapper::after  {
         height: 1px;
@@ -65,11 +58,12 @@
         @apply(--layout-vertical);
         @apply(--layout-center);
       }
-      :host([alternative-label]) #textLabel, :host([alternative-label]) #optional{
+      :host([alternative-label]) #textLabel,
+      :host([alternative-label]) #optional{
         text-align: center;
         @apply(--layout-self-stretch);
       }
-      :host([alternative-label]) #label{
+      :host([alternative-label]){
         @apply(--layout-vertical);
         @apply(--layout-self-stretch);
         padding: 24px 0;
@@ -80,27 +74,25 @@
         @apply(--layout-center);
         padding-bottom: 16px;
       }
-      :host(.first-step:not([alternative-label])) #label {
+      :host(.first-step:not([alternative-label])) {
         padding-left: 16px;
       }
-      :host(.last-step:not([alternative-label])) #label {
+      :host(.last-step:not([alternative-label])) {
         padding-right: 16px;
       }
     </style>
-    <!-- use a "label" wrapper to use the same shared css rules with step-vertical -->
-    <div id="label">
-      <div id="badgeWrapper">
-        <div id="badge">
-          <iron-icon hidden$="{{!_computeIsIconBadge(icon)}}" icon="{{icon}}"></iron-icon>
-          <span hidden$="{{_computeIsIconBadge(icon)}}">{{index}}</span>
-        </div>
+
+    <div id="badgeWrapper">
+      <div id="badge">
+        <iron-icon hidden$="{{!_computeIsIconBadge(icon)}}" icon="{{icon}}"></iron-icon>
+        <span hidden$="{{_computeIsIconBadge(icon)}}">{{index}}</span>
       </div>
-      <div id="textWrapper">
-        <span id="textLabel">[[label]]</span>
-        <template is="dom-if" if="[[optional]]">
-          <span id="optional">[[stepperData.optionalText]]</span>
-        </template>
-      </div>
+    </div>
+    <div id="textWrapper">
+      <span id="textLabel">[[label]]</span>
+      <template is="dom-if" if="[[optional]]">
+        <span id="optional">[[stepperData.optionalText]]</span>
+      </template>
     </div>
   </template>
   <script>
