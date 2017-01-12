@@ -424,19 +424,6 @@ Missing Doc
         return false;
       },
 
-      _removeAnimatingClass: function() {
-        if (this._animationCanceled) {
-          this._set_animationCanceled(false);
-        } else {
-          this.toggleClass('neon-animating', false);
-        }
-      },
-
-      _cancelAnimation: function() {
-        this._set_animationCanceled(true);
-        this.toggleClass('neon-animating', false);
-      },
-
       _updateSlideshowViewportTop: function(optional, _alternativeLabel, vertical) {
         if (!vertical) {
           this.async(function() {
