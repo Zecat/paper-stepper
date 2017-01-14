@@ -441,7 +441,9 @@ Missing Doc
        */
       _savedObserver: function(saved, old) {
         if (saved) {
-          return this.fire('paper-step-saved'); 
+          // we need async because it can be that the stepper is no initialized
+          // race condition with _previousSaved.
+          return this.async(function(){this.fire('paper-step-saved');}); 
         }
         if(old) {
           this.fire('paper-step-unsaved'); 
