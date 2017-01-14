@@ -29,8 +29,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <link rel="import" href="../../paper-item/paper-item.html">
     <link rel="import" href="../../paper-toast/paper-toast.html">
     <link rel="import" href="../../iron-scroll-spy/iron-auto-scroll-spy.html">
+    <link rel="import" href="../../neon-animation/animations/slide-from-left-animation.html">
+    <link rel="import" href="../../neon-animation/animations/slide-from-right-animation.html">
+    <link rel="import" href="../../neon-animation/animations/slide-left-animation.html">
+    <link rel="import" href="../../neon-animation/animations/slide-right-animation.html">
+    <link rel="import" href="../../neon-animation/animations/fade-out-animation.html">
     <link rel="import" href="../paper-stepper.html">
-    <link rel="import" href="paper-stepper-sandbox.html">
+    <link rel="import" href="paper-stepper-sandbox/paper-stepper-sandbox.html">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:300" rel="stylesheet" type="text/css">
   </head>
   <body unresolved>
@@ -135,6 +140,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-item>Buttons</paper-item>
         <paper-item>Styling</paper-item>
         <paper-item>Selection</paper-item>
+        <paper-item>Animations</paper-item>
         <paper-item>Events</paper-item>
         <paper-item>Methods</paper-item>
         <paper-item>Binding</paper-item>
@@ -152,7 +158,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <p>Paper-stepper is an element made with <a href="https://www.polymer-project.org/1.0/" target="_blank">Polymer</a> with respect to the <a href="https://www.google.com/design/spec/components/steppers.html" target="_blank">material specifications</a>.</p>
         <p>Steppers display progress through a sequence by breaking it up into multiple logical and numbered steps. They may also be used for navigation.</p>
         <p>Spec recommendation: Avoid using steppers to break up sections in a short form, or multiple times on one page and don’t embed steppers within steppers.</p>
-        <p>Start using now <strong>bower install -S Zecat/paper-stepper</strong></p>
+        <p>Start using now <strong>bower install -S Zecat/paper-stepper#v2.0-beta.5</strong></p>
         <p>Note, it is still a beta release, attributes and methods might change suddenly.</p>  
       </div>
       <div>
@@ -413,6 +419,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </template>
         </demo-snippet>
       </div>
+      <div>
+        <h2>Animations</h2>
+        <p>You can define animations between steps in horizontal layout. Import your animations and set</p>
+        <ul>
+          <li>horizontal-higher-entry-animation</li>
+          <li>horizontal-lower-entry-animation</li>
+          <li>horizontal-higher-exit-animation</li>
+          <li>horizontal-lower-exit-animation</li>
+        </ul>
+        <p>to the name of the wanted animation, directly on paper-stepper or on a specific paper-step.</p>
+         <demo-snippet>
+          <template is="dom-bind">
+            <paper-stepper
+              selected="0"
+              horizontal-higher-entry-animation="slide-from-right-animation"
+              horizontal-lower-entry-animation="slide-from-left-animation"
+              horizontal-higher-exit-animation="slide-right-animation"
+              horizontal-lower-exit-animation="slide-left-animation">
+              <paper-step label="step 1">Step 1</paper-step>
+              <paper-step label="step 2" horizontal-higher-exit-animation="fade-out-animation">Step 2</paper-step>
+              <paper-step label="step 3">Step 3</paper-step>
+              <paper-step label="step 4">Step 4</paper-step>
+            </paper-stepper>
+          </template>
+        </demo-snippet>
+        </div>
       <div>
       <h2>Events</h2>
       <ul>
