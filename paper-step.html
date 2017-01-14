@@ -1,12 +1,13 @@
 <link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html">
-<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
-<link rel="import" href="../neon-animation/animations/slide-left-animation.html">
-<link rel="import" href="../neon-animation/animations/slide-from-left-animation.html">
-<link rel="import" href="../neon-animation/animations/slide-right-animation.html">
-<link rel="import" href="../neon-animation/animations/slide-from-right-animation.html">
-<link rel="import" href="step-horizontal-label.html">
-<link rel="import" href="step-vertical.html">
+<link rel="import" href="../paper-item/paper-item-behavior.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../paper-behaviors/paper-ripple-behavior.html">
+<link rel="import" href="../neon-animation/neon-animatable-behavior.html">
+<link rel="import" href="../paper-styles/default-theme.html">
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="step-horizontal-label.html">
+<link rel="import" href="step-vertical-label.html">
 
 <!--
 Missing Doc
@@ -20,6 +21,7 @@ Missing Doc
       :host {
         display: block;
         box-sizing: border-box;
+        outline: 0;
       }
       :host(:not([vertical])) {
         overflow: hidden;
@@ -31,6 +33,9 @@ Missing Doc
       }
       :host(:not([opened]):not(.neon-animating)) #slideshowViewport{
         display: none;
+      }
+      #horizontalStepLabel {
+        @apply(--layout-flex);
       }
       #slideshowViewport {
         position: absolute;
@@ -45,33 +50,111 @@ Missing Doc
         @apply(--layout-fit);
         pointer-events: auto;
       }
+      :host(:focus:not([opened]):not([saved])) step-horizontal-label ::content #badge {
+        background: var(--paper-step-selectable-hovered-badge-background, --paper-grey-500);
+      }
+      #slideshowViewport {
+        @apply(--layout);
+        @apply(--layout-center-center);
+      }
+      :host([vertical]) {
+        @apply(--layout-vertical);
+      }
+      #collapse {
+        --iron-collapse-transition-duration: var(--paper-vertical-step-transition-duration, 500ms);
+        @apply(--layout-horizontal);
+      }
+      #stepWrapper {
+        @apply(--layout-flex);
+        /*should be 48px on large screen?*/
+        padding-right: 24px;
+      }
+      #paperStepWrapper {
+        max-height: calc(var(--paper-vertical-step-max-height, 400px) - 92px);
+        @apply(--layout-scroll);
+      }
+      #contentConnectorLine {
+        width: 1px;
+        background: var(--divider-color, --paper-grey-300);
+        margin-left: 36px;
+        margin-right: 24px;
+      }
+      /**
+       * Vertical Buttons
+       */
+      #buttonsWrapper {
+        height: 48px;
+        padding-top: 16px;
+        padding-bottom: 28px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-flex-none);
+      }
+      #buttonsWrapper > paper-button {
+        margin-right: 8px;
+        margin-left: 0;
+      }
+      #continueButton {
+        --paper-button: {
+          background: var(--paper-vertical-step-continue-button-background, --primary-color);
+          color: var(--paper-vertical-step-continue-button-color, --dark-theme-text-color);
+        };
+      }
     </style>
 
     <!-- horizontal step layout -->
 
-    <template is="dom-if" if="[[!vertical]]" restamp on-dom-change="_updateAnimationConfig">
-      <step-horizontal-label id="stepLabel" editable="[[editable]]" label="[[label]]"
-        alternative-label="[[_alternativeLabel]]" optional="[[optional]]"
-        opened="[[opened]]" selectable="[[selectable]]" index="[[index]]"
-        saved="[[saved]]" stepper-data="[[_stepperData]]">
+    <template is="dom-if" if="[[!vertical]]">
+      <step-horizontal-label
+        id="horizontalStepLabel"
+        editable="[[editable]]"
+        label="[[label]]"
+        alternative-label="[[_alternativeLabel]]"
+        optional="[[optional]]"
+        opened="[[opened]]"
+        selectable="[[selectable]]"
+        index="[[index]]"
+        saved="[[saved]]"
+        stepper-data="[[_stepperData]]">
       </step-horizontal-label>
       <div id="slideshowViewport">
         <div id="contentWrapper">
-          <content></content>
         </div>
       </div>
     </template>
 
     <!-- vertical step layout -->
 
-    <template is="dom-if" if="[[vertical]]" restamp>
-      <step-vertical id="stepLabel" editable="[[editable]]" label="[[label]]"
-        optional="[[optional]]" opened="[[opened]]"
-        selectable="[[selectable]]" stepper-data="[[_stepperData]]" index="[[index]]"
-        saved="[[saved]]" _attr-for-primary-button-text="[[_attrForPrimaryButtonText]]"
-        can-skip="[[_canSkip]]" has-back-step="[[_hasBackStep]]">
-        <content></content>
-      </step-vertical>
+    <template is="dom-if" if="[[vertical]]">
+      <step-vertical-label
+        id="verticalStepLabel"
+        editable="[[editable]]"
+        label="[[label]]"
+        optional="[[optional]]"
+        opened="[[opened]]"
+        selectable="[[selectable]]"
+        stepper-data="[[_stepperData]]"
+        index="[[index]]"
+        saved="[[saved]]">
+      </step-vertical-label>
+      <iron-collapse id="collapse" opened="[[opened]]">
+      <div id="contentConnectorLine"></div>
+      <div id="stepWrapper">
+        <div id="paperStepWrapper">
+        </div>
+        <div id="buttonsWrapper">
+          <paper-button id="continueButton" on-tap="continue">
+            {{_choosePrimaryButtonText(_attrForPrimaryButtonText, _stepperData.continueText, _stepperData.finishText, _stepperData.updateText)}}
+          </paper-button>
+          <paper-button id="backButton" disabled="[[!_hasBackStep]]" on-tap="back" hidden$="[[!_stepperData.hasBackButton]]">
+            [[_stepperData.backText]]
+          </paper-button>
+          <paper-button id="skipButton" disabled="[[!_canSkip]]" on-tap="skip" hidden$="[[!_stepperData.hasSkipButton]]">
+            [[_stepperData.skipText]]
+          </paper-button>
+        </div>
+      </div>
+    </iron-collapse>
     </template>
   </template>
 
@@ -82,7 +165,9 @@ Missing Doc
 
       behaviors: [
         Polymer.IronValidatableBehavior,
-        Polymer.NeonAnimationRunnerBehavior
+        Polymer.NeonAnimatableBehavior,
+        Polymer.PaperItemBehavior,
+        Polymer.PaperRippleBehavior
       ],
       
       /**
@@ -146,6 +231,12 @@ Missing Doc
         /**
          * Missing Doc
          */
+        disabled: {
+          computed: '_computeDisabled(selectable)'
+        },
+        /**
+         * Missing Doc
+         */
         label: {
           type: String,
           value: ''
@@ -155,9 +246,25 @@ Missing Doc
          */
         opened: {
           type: Boolean,
-          value: false
+          value: false,
+          notify: true
         },
+        /**
+         * Missing Doc
+         */
         animationConfig: {
+          readOnly: true
+        },
+        /**
+         * Missing Doc
+         */
+        entryAnimation: {
+          readOnly: true
+        },
+        /**
+         * Missing Doc
+         */
+        exitAnimation: {
           readOnly: true
         },
         /**
@@ -167,6 +274,30 @@ Missing Doc
           type: Boolean,
           readOnly: true,
           reflectToAttribute: true
+        },
+        /**
+         * Missing Doc
+         */
+        horizontalHigherEntryAnimation: {
+          type: String
+        },
+        /**
+         * Missing Doc
+         */
+        horizontalHigherExitAnimation: {
+          type: String
+        },
+        /**
+         * Missing Doc
+         */
+        horizontalLowerEntryAnimation: {
+          type: String
+        },
+        /**
+         * Missing Doc
+         */
+        horizontalLowerExitAnimation: {
+          type: String
         },
         /**
          * Missing Doc
@@ -200,11 +331,6 @@ Missing Doc
           type: Object,
           readOnly: true
         },
-        _animationCanceled: {
-          type: Boolean,
-          value: false,
-          readOnly: true
-        },
         _canSkip: {
           type: Boolean,
           readOnly: true
@@ -219,14 +345,38 @@ Missing Doc
         'paper-step-vertical-skip-tapped': 'skip',
         'paper-step-vertical-back-tapped': 'back',
         'paper-step-vertical-continue-tapped': 'continue',
-        'neon-animation-finish': '_removeAnimatingClass',
-        'neon-animation-canceled': '_cancelAnimation'
+        'tap': '_tapHandler'
       },
 
       observers: [
         '_toggleClassPosition(index, _stepperData.stepNumber, vertical)',
-        '_updateSlideshowViewportTop(optional, _alternativeLabel, vertical)'
+        '_updateSlideshowViewportTop(optional, _alternativeLabel, vertical)',
+        '_verticalChange(vertical)',
+        '_focusedChanged(receivedFocusFromKeyboard)',
+        '_labelElementChanged(_labelElement)'
       ],
+
+      _focusedChanged: function(receivedFocusFromKeyboard) {
+        if (receivedFocusFromKeyboard) {
+          this.ensureRipple();
+          // generate a ripple effect from the center of the badge
+          var badge = this._rippleContainer.$.badge;
+          var badgePos = badge.getBoundingClientRect();
+          var rippleX = badgePos.left + 12;
+          var rippleY = badgePos.top + 12;
+          this._ripple.downAction({detail: {x: rippleX, y: rippleY}});
+        }
+        if (this.hasRipple()) {
+          this._ripple.holdDown = receivedFocusFromKeyboard;
+        }
+      },
+
+      _tapHandler: function(e) {
+        var rootTarget = Polymer.dom(e).rootTarget;
+        if (rootTarget !== this && rootTarget !== this._rippleContainer) {
+          e.stopImmediatePropagation();
+        }
+      },
 
       /**
        * Missing Doc
@@ -274,60 +424,99 @@ Missing Doc
         return false;
       },
 
-      _removeAnimatingClass: function() {
-        if (this._animationCanceled) {
-          this._set_animationCanceled(false);
-        } else {
-          this.toggleClass('neon-animating', false);
-        }
-      },
-
-      _cancelAnimation: function() {
-        this._set_animationCanceled(true);
-        this.toggleClass('neon-animating', false);
-      },
-
       _updateSlideshowViewportTop: function(optional, _alternativeLabel, vertical) {
         if (!vertical) {
           this.async(function() {
             this.$$('#slideshowViewport').style.top = this.clientHeight+'px';
             this.fire('step-horizontal-label-resize');
-          })
+          }, 1);
         }
       },
 
-      _toggleClassPosition: function(index, stepNumber) {
+      _toggleClassPosition: function(index, stepNumber, vertical) {
         this.async(function() {
-          this.toggleClass('first-step', (index == 1), this.$$('#stepLabel'));
-          this.toggleClass('last-step', (index == stepNumber), this.$$('#stepLabel'));
+          var stepLabel = this.$$(vertical ? '#verticalStepLabel' : '#horizontalStepLabel');
+          this.toggleClass('first-step', (index == 1), stepLabel);
+          this.toggleClass('last-step', (index == stepNumber), stepLabel);
         });
       },
 
       _updateAnimationConfig: function() {
+        /* TODO: call this method when horizontalHigher/LowerEntry/ExitAnimation change */
+        var animatedNode = this.$$('#contentWrapper');
         this._setAnimationConfig({
           'higher-step-entry': {
-            name: 'slide-from-right-animation',
-            node: this.$$('#contentWrapper')
+            node: animatedNode,
+            name: this.horizontalHigherEntryAnimation
           },
           'higher-step-exit': {
-            name: 'slide-right-animation',
-            node: this.$$('#contentWrapper')
+            node: animatedNode,
+            name: this.horizontalHigherExitAnimation
           },
           'lower-step-entry': {
-            name: 'slide-from-left-animation',
-            node: this.$$('#contentWrapper')
+            node: animatedNode,
+            name: this.horizontalLowerEntryAnimation
           },
           'lower-step-exit': {
-            name: 'slide-left-animation',
-            node: this.$$('#contentWrapper')
+            node: animatedNode,
+            name: this.horizontalLowerExitAnimation
           }
         });
+      },
+
+      _verticalChange: function(vertical) {
+        this.async(function() {
+          // move or create the content tag
+          Polymer.dom(this.$$(vertical ? '#paperStepWrapper' : '#contentWrapper')).appendChild(this.$$('content') || this.create('content'));
+          // reset the ripple
+          this._ripple = false;
+          this._rippleContainer = this.$$(vertical ? '#verticalStepLabel' : '#horizontalStepLabel');
+          if (!vertical) {
+            this._updateAnimationConfig();
+          }
+        }.bind(this));
       },
 
       _computeSelectable: function(linear, saved, editable, previousSaved) {
         // TODO: factorize the expression
         return (!linear || previousSaved) && (!saved || editable) || (editable && saved);
+      },
+
+      _computeDisabled: function(selectable) {
+        // disabled is used by IronMenuBehavior in paper-stepper
+        // TODO: remove selectable attribute and use disabled instead
+        return !selectable;
+      },
+
+      _choosePrimaryButtonText: function(_attrForPrimaryButtonText) {
+        return this._stepperData[_attrForPrimaryButtonText];
+      },
+
+      /**
+       * Overriden from paper-ripple-behavior
+       * TODO: post issue about that ?
+       */
+      ensureRipple: function(optTriggeringEvent) {
+      if (!this.hasRipple()) {
+        this._ripple = this._createRipple();
+        this._ripple.noink = this.noink;
+        var rippleContainer = this._rippleContainer || this.root;
+        if (rippleContainer) {
+          // ------- line changed -------
+          Polymer.dom(rippleContainer.root).appendChild(this._ripple);
+        }
+        if (optTriggeringEvent) {
+          // Check if the event happened inside of the ripple container
+          // Fall back to host instead of the root because distributed text
+          // nodes are not valid event targets
+          var domContainer = Polymer.dom(this._rippleContainer || this);
+          var target = Polymer.dom(optTriggeringEvent).rootTarget;
+          if (domContainer.deepContains( /** @type {Node} */(target))) {
+            this._ripple.uiDownAction(optTriggeringEvent);
+          }
+        }
       }
+    },
 
     });
 
