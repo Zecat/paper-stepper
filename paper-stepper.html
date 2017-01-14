@@ -536,9 +536,9 @@ Custom property | Description | Default
 
       _stepUnsaved: function(e) {
         var index = this.indexOf(e.target);
-        var previousStep = this.items[index+1];
-        if (previousStep) {
-          previousStep._set_previousSaved(false);
+        var nextStep = this.items[index+1];
+        if (nextStep) {
+          nextStep._set_previousSaved(false);
         }
         this._setSavedStepNumber(this.savedStepNumber-1);
 
@@ -546,8 +546,8 @@ Custom property | Description | Default
         if (!this.noFocusOnUnsave) {
           this.__lastIndex = index;
           this.debounce('paper-setpper-unsave-focus', function(){
-            this.selected = this.__lastIndex;
-            delete this.__lastIndex;
+            this._selectedIndex = this.__lastIndex;
+            this.__lastIndex = false;
           }, 100)
         }
       },
