@@ -440,10 +440,9 @@ Missing Doc
        * `_savedObserver` observe changes on `saved`. Fires `paper-step-saved` when the step is saved.
        */
       _savedObserver: function(saved, old) {
-        if (saved) {
-          // we need async because it can be that the stepper is no initialized
-          // race condition with _previousSaved.
-          return this.async(function(){this.fire('paper-step-saved');}); 
+        //we only fire if the stepper has been and initialized
+        if (saved && this._stepper && (this._stepper.savedStepNumber !== undefined)) {
+          return this.fire('paper-step-saved');
         }
         if(old) {
           this.fire('paper-step-unsaved'); 
