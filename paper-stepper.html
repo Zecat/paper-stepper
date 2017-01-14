@@ -671,6 +671,7 @@ Custom property | Description | Default
           hasBackButton: this.hasBackButton,
           stepNumber: this.stepNumber
         };
+        var previous = {saved: true};
         this.items.map(function(step, i) {
           if (this.horizontalHigherEntryAnimation && !step.horizontalHigherEntryAnimation) {
             step.horizontalHigherEntryAnimation = this.horizontalHigherEntryAnimation;
@@ -690,7 +691,8 @@ Custom property | Description | Default
           step._set_alternativeLabel(this.alternativeLabel);
           step._set_stepperData(data);
           // true for index 0
-          step._set_previousSaved(!i);
+          step._set_previousSaved(previous.saved);
+          previous = step;
           if (step.saved) {
             savedStepNumber++;
           }
