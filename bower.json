@@ -18,7 +18,7 @@
     "/test/"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.2.0",
+    "polymer": "Polymer/polymer#^1.7.0",
     "paper-button": "PolymerElements/paper-button#^1.0.11",
     "iron-icons": "PolymerElements/iron-icons#^1.1.3",
     "paper-styles": "PolymerElements/paper-styles#^1.1.4",
