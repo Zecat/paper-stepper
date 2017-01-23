@@ -9,48 +9,48 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport"
+          content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
     <!-- Step 1: import the element to test -->
     <link rel="import" href="../paper-stepper.html">
-  </head>
-  <body>
+</head>
+<body>
 
-    <!-- You can use the document as a place to set up your fixtures. -->
-    <paper-stepper></paper-stepper>
+    <test-fixture id="basic">
+        <template>
+            <paper-stepper>
+                <paper-step label="step 1" slot="paper-step"></paper-step>
+                <paper-step label="step 2" slot="paper-step"></paper-step>
+                <paper-step label="step 3" slot="paper-step"></paper-step>
+                <paper-step label="step 4" slot="paper-step"></paper-step>
+            </paper-stepper>
+        </template>
+    </test-fixture>
 
     <script>
-      var myEl = document.querySelector('paper-stepper');
+        suite('<paper-stepper>', function () {
 
-      suite('<paper-stepper>', function() {
+            var element;
 
-        test('defines the "author" property', function() {
-          assert.equal(myEl.author.name, 'Dimitri Glazkov');
-          assert.equal(myEl.author.image, 'http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg');
+            setup(function () {
+                element = fixture('basic');
+            });
+
+            test('instantiating the element works', function () {
+                var element = fixture('basic');
+                assert.equal(element.is, 'paper-stepper');
+            });
+
+            a11ySuite('basic', ['focusableElementNotVisibleAndNotAriaHidden']);
+
         });
-
-        test('says hello', function() {
-          assert.equal(myEl.sayHello(), 'paper-stepper says, Hello World!');
-
-          var greetings = myEl.sayHello('greetings Earthlings');
-          assert.equal(greetings, 'paper-stepper says, greetings Earthlings');
-        });
-
-        test('fires lasers', function(done) {
-          myEl.addEventListener('paper-stepper-lasers', function(event) {
-            assert.equal(event.detail.sound, 'Pew pew!');
-            done();
-          });
-          myEl.fireLasers();
-        });
-
-      });
     </script>
 
-  </body>
+</body>
 </html>
