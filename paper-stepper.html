@@ -181,12 +181,14 @@ Custom property | Description | Default
     <!-- Slideshow and buttons area for horizontal layout -->
     <template is="dom-if" if="[[!vertical]]">
       <div class="flex"></div>
-      <div id="buttonsWrapper">
-        <paper-button hidden$="[[!hasBackButton]]" disabled=[[!_hasBackStep]] on-tap="back">[[backText]]</paper-button>
-        <span class="flex"></span>
-        <paper-button hidden$="[[!hasSkipButton]]" disabled="[[!_canSkip]]" on-tap="progress">[[skipText]]</paper-button>
-        <paper-button id="continueButton" hidden$="[[hideContinueButton]]" on-tap="continue">{{_choosePrimaryButtonText(_attrForSelectedStepPrimaryButtonText, finishText, continueText, updateText)}}</paper-button>
-      </div>
+      <template is="dom-if" if="[[!noButton]]">
+        <div id="buttonsWrapper">
+          <paper-button hidden$="[[!hasBackButton]]" disabled=[[!_hasBackStep]] on-tap="back">[[backText]]</paper-button>
+          <span class="flex"></span>
+          <paper-button hidden$="[[!hasSkipButton]]" disabled="[[!_canSkip]]" on-tap="progress">[[skipText]]</paper-button>
+          <paper-button id="continueButton" on-tap="continue">{{_choosePrimaryButtonText(_attrForSelectedStepPrimaryButtonText, finishText, continueText, updateText)}}</paper-button>
+        </div>
+      </template>
     </template>
 
   </template>
@@ -214,9 +216,19 @@ Custom property | Description | Default
        * @event paper-stepper-completed
        */
        /**
-       * Fired when continue button is pressed. Firing this event from a paper-step will also attempt to continue the step process
+       * Fired when `continue` button is pressed. Firing this event from a paper-step will also attempt to continue the step process
        *
        * @event paper-stepper-continue
+       */
+        /**
+       * Fired when `back` button is pressed. Firing this event from a paper-step will also attempt to process back step process
+       *
+       * @event paper-stepper-back
+       */
+        /**
+       * Fired when `skip` button is pressed. Firing this event from a paper-step will also attempt to skip the step process
+       *
+       * @event paper-stepper-progress
        */
       properties: {
         opened: {
@@ -236,6 +248,16 @@ Custom property | Description | Default
           notify: true,
           reflectToAttribute: true
         },
+        
+        /**
+         * `noButton` when true, buttons are not displayed and progress login need to be implemented via paper-stepper events (`paper-stepper-continue`, `paper-stepper-back`and `paper-stepper-progress`)
+         */
+        noButton: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+
         backText: {
           type: String,
           value: 'BACK'
@@ -275,13 +297,6 @@ Custom property | Description | Default
           value: false
         },
         hasBackButton: {
-          type: Boolean,
-          value: false
-        },
-        /**
-         * `hideContinueButton` set to true if you want to hide continue button and rely on your own implementation to trigger continue event
-         */
-        hideContinueButton: {
           type: Boolean,
           value: false
         },
@@ -382,6 +397,8 @@ Custom property | Description | Default
         'step-horizontal-label-resize': '_updateStepperClosedMaxHeight',
         'iron-resize': '_resizeHandler',
         'paper-stepper-continue': 'onContinue',
+        'paper-stepper-back': 'onBack',
+        'paper-stepper-progress': 'onProgress',
         'neon-animation-finish': '_onNeonAnimationFinish'
 
       },
@@ -399,9 +416,16 @@ Custom property | Description | Default
       },
 
       /**
-       * Missing Doc
+       * @return {Boolean} Try to go back. Fired by the `back` button.
        */
       back: function() {
+        this.fire('paper-stepper-continue');
+      },
+
+      /**
+       * Missing Doc
+       */
+      onBack: function() {
         this.selectIndex(this._backStepIndex);
       },
 
@@ -419,12 +443,19 @@ Custom property | Description | Default
           }
         }
       },
+      
+      /**
+       * @return {Boolean} Fired by the `skip` button. 
+       */
+      progress: function() {
+        this.fire('paper-stepper-progress');
+      },
 
       /**
        * Loops around the steps from the current (if no step opened, from the first one)
        * in order to open the next selectable unsaved step. Returns true if a step has been opened.
        */
-      progress: function() {
+      onProgress: function() {
         if (!this.stepNumber) {
           return false;
         }
@@ -677,6 +708,7 @@ Custom property | Description | Default
           step._setIndex(i + 1);
           step._set_stepper(this);
           step._setVertical(this.vertical);
+          step._setNoButton(this.noButton);
           step._set_alternativeLabel(this.alternativeLabel);
           step._set_stepperData(data);
           // true for index 0
