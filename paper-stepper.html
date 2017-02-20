@@ -714,6 +714,11 @@ Custom property | Description | Default
       _resizeHandler: function() {
         this.debounce('paper-stepper-responsive-check', function() {
           this._responsiveCheck();
+          if(!this.vertical) {
+            this.items.forEach(function(step) {
+               step._updateSlideshowViewportTop();
+            });
+          }
         }, this.responsiveCheckFrequence);
       },
 
