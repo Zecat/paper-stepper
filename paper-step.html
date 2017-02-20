@@ -34,6 +34,10 @@ Missing Doc
       :host(:not([opened]):not(.neon-animating)) #slideshowViewport{
         display: none;
       }
+      :host[no-button] #slideshowViewport {
+        bottom: 0;
+      }
+
       #horizontalStepLabel {
         @apply(--layout-flex);
       }
@@ -142,17 +146,19 @@ Missing Doc
       <div id="stepWrapper">
         <div id="paperStepWrapper">
         </div>
-        <div id="buttonsWrapper">
-          <paper-button id="continueButton" on-tap="continue">
-            {{_choosePrimaryButtonText(_attrForPrimaryButtonText, _stepperData.continueText, _stepperData.finishText, _stepperData.updateText)}}
-          </paper-button>
-          <paper-button id="backButton" disabled="[[!_hasBackStep]]" on-tap="back" hidden$="[[!_stepperData.hasBackButton]]">
-            [[_stepperData.backText]]
-          </paper-button>
-          <paper-button id="skipButton" disabled="[[!_canSkip]]" on-tap="skip" hidden$="[[!_stepperData.hasSkipButton]]">
-            [[_stepperData.skipText]]
-          </paper-button>
-        </div>
+        <template is="dom-if" if="[[!noButton]]">
+          <div id="buttonsWrapper">
+            <paper-button id="continueButton" on-tap="continue">
+              {{_choosePrimaryButtonText(_attrForPrimaryButtonText, _stepperData.continueText, _stepperData.finishText, _stepperData.updateText)}}
+            </paper-button>
+            <paper-button id="backButton" disabled="[[!_hasBackStep]]" on-tap="back" hidden$="[[!_stepperData.hasBackButton]]">
+              [[_stepperData.backText]]
+            </paper-button>
+            <paper-button id="skipButton" disabled="[[!_canSkip]]" on-tap="skip" hidden$="[[!_stepperData.hasSkipButton]]">
+              [[_stepperData.skipText]]
+            </paper-button>
+          </div>
+        </template>
       </div>
     </iron-collapse>
     </template>
@@ -228,6 +234,17 @@ Missing Doc
           reflectToAttribute: true,
           notify: true
         },
+
+         /**
+         * `noButton` when true, buttons are not displayed and progress login need to be implemented via paper-stepper events (`paper-stepper-continue`, `paper-stepper-back` and `paper-stepper-progress`)
+         */
+        noButton: {
+          type: Boolean,
+          value: false,
+          readOnly: true,
+          reflectToAttribute: true
+        },
+
         /**
          * Missing Doc
          */

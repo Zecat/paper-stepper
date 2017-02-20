@@ -212,12 +212,43 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <p><strong>optional</strong> steps don't bloc the progression in linear stepper [<strong>Missing feature</strong>]. You can configure the text displayed which default to "optional" with <strong>optional-text</strong> attribute.</p>
         <demo-snippet>
           <template>
-            <paper-stepper linear optional-text="opcional">
+            <paper-stepper linear optional-text="optional">
               <paper-step label="etapa 1"></paper-step>
               <paper-step label="etapa 2" optional></paper-step>
               <paper-step label="etapa 3"></paper-step>
               <paper-step label="etapa 4"></paper-step>
             </paper-stepper>
+          </template>
+        </demo-snippet>
+        <p>The <strong>no-button</strong> prevents the default button to ne shown and allows to implement one's own logic for progressing the stepper.</p>
+        <demo-snippet>
+          <template>
+           <template is="dom-bind" id="noButton">
+
+            <paper-stepper linear no-button>
+              <paper-step editable label="step 1">
+                <h2>First step</h2>
+                <paper-button raised on-tap="onStepContinue"> go to step 2</paper-button>
+              </paper-step>
+              <paper-step label="step 2">
+                <h2>Second step</h2>
+                <paper-button raised on-tap="onStepBack"> go back to step 1</paper-button>
+              </paper-step>
+            </paper-stepper>
+             <script>
+                var noButton = document.getElementById('noButton');
+
+                noButton.onStepContinue = function(e) {
+                  console.info('FIRE');
+                  e.currentTarget.fire('paper-stepper-continue');
+                };
+
+                noButton.onStepBack = function(e) {
+                  console.info('FIRE BACK');
+                  e.currentTarget.fire('paper-stepper-back');
+                };
+              </script>
+          </template>
           </template>
         </demo-snippet>
       </div>
@@ -300,6 +331,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-stepper>
         </template>
       </demo-snippet>
+      <demo-snippet>
+          <template>
+           <template is="dom-bind" id="noButtonVertical">
+
+            <paper-stepper linear vertical no-button>
+              <paper-step editable label="step 1">
+                <h2>First step</h2>
+                <paper-button raised on-tap="onStepContinue"> go to step 2</paper-button>
+              </paper-step>
+              <paper-step label="step 2">
+                <h2>Second step</h2>
+                <paper-button raised on-tap="onStepBack"> go back to step 1</paper-button>
+              </paper-step>
+            </paper-stepper>
+             <script>
+                var noButton = document.getElementById('noButtonVertical');
+
+                noButton.onStepContinue = function(e) {
+                  console.info('FIRE');
+                  e.currentTarget.fire('paper-stepper-continue');
+                };
+
+                noButton.onStepBack = function(e) {
+                  console.info('FIRE BACK');
+                  e.currentTarget.fire('paper-stepper-back');
+                };
+              </script>
+          </template>
+          </template>
+        </demo-snippet>
       </div>
        <div>
         <h2>Buttons</h2>
