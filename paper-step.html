@@ -81,6 +81,7 @@ Missing Doc
       }
       #contentConnectorLine {
         width: 1px;
+        min-width: 1px;
         background: var(--divider-color, --paper-grey-300);
         margin-left: 36px;
         margin-right: 24px;
@@ -147,6 +148,7 @@ Missing Doc
         <div id="contentConnectorLine"></div>
         <div id="stepWrapper">
           <div id="paperStepWrapper">
+            <content></content>
           </div>
           <div id="buttonsWrapper" hidden$="[[_stepperData.noButtons]]">
             <paper-button id="continueButton" on-tap="continue">
