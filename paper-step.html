@@ -23,6 +23,9 @@ Missing Doc
         box-sizing: border-box;
         outline: 0;
       }
+      [hidden] {
+        display: none !important;
+      }
       :host(:not([vertical])) {
         overflow: hidden;
         @apply(--layout);
@@ -43,6 +46,9 @@ Missing Doc
         left: 0;
         right: 0;
         overflow: hidden;
+      }
+      #slideshowViewport[fullheight] {
+        bottom: 0;
       }
       #contentWrapper {
         padding: 24px 24px 0 24px;
@@ -75,6 +81,7 @@ Missing Doc
       }
       #contentConnectorLine {
         width: 1px;
+        min-width: 1px;
         background: var(--divider-color, --paper-grey-300);
         margin-left: 36px;
         margin-right: 24px;
@@ -117,7 +124,7 @@ Missing Doc
         saved="[[saved]]"
         stepper-data="[[_stepperData]]">
       </step-horizontal-label>
-      <div id="slideshowViewport">
+      <div id="slideshowViewport" fullheight$="[[_stepperData.noButtons]]">
         <div id="contentWrapper">
         </div>
       </div>
@@ -138,23 +145,24 @@ Missing Doc
         saved="[[saved]]">
       </step-vertical-label>
       <iron-collapse id="collapse" opened="[[opened]]">
-      <div id="contentConnectorLine"></div>
-      <div id="stepWrapper">
-        <div id="paperStepWrapper">
+        <div id="contentConnectorLine"></div>
+        <div id="stepWrapper">
+          <div id="paperStepWrapper">
+            <content></content>
+          </div>
+          <div id="buttonsWrapper" hidden$="[[_stepperData.noButtons]]">
+            <paper-button id="continueButton" on-tap="continue">
+              {{_choosePrimaryButtonText(_attrForPrimaryButtonText, _stepperData.continueText, _stepperData.finishText, _stepperData.updateText)}}
+            </paper-button>
+            <paper-button id="backButton" disabled="[[!_hasBackStep]]" on-tap="back" hidden$="[[!_stepperData.hasBackButton]]">
+              [[_stepperData.backText]]
+            </paper-button>
+            <paper-button id="skipButton" disabled="[[!_canSkip]]" on-tap="skip" hidden$="[[!_stepperData.hasSkipButton]]">
+              [[_stepperData.skipText]]
+            </paper-button>
+          </div>
         </div>
-        <div id="buttonsWrapper">
-          <paper-button id="continueButton" on-tap="continue">
-            {{_choosePrimaryButtonText(_attrForPrimaryButtonText, _stepperData.continueText, _stepperData.finishText, _stepperData.updateText)}}
-          </paper-button>
-          <paper-button id="backButton" disabled="[[!_hasBackStep]]" on-tap="back" hidden$="[[!_stepperData.hasBackButton]]">
-            [[_stepperData.backText]]
-          </paper-button>
-          <paper-button id="skipButton" disabled="[[!_canSkip]]" on-tap="skip" hidden$="[[!_stepperData.hasSkipButton]]">
-            [[_stepperData.skipText]]
-          </paper-button>
-        </div>
-      </div>
-    </iron-collapse>
+      </iron-collapse>
     </template>
   </template>
 
