@@ -163,7 +163,7 @@ Custom property | Description | Default
         background-color: transparent;
       }
       [hidden] {
-        display: none;
+        display: none !important;
       }
       :host(:not[vertical]) #content-wrapper:not(:hover) ::content paper-step[opened] {
         overflow: visible;
@@ -181,7 +181,7 @@ Custom property | Description | Default
     <!-- Slideshow and buttons area for horizontal layout -->
     <template is="dom-if" if="[[!vertical]]">
       <div class="flex"></div>
-      <div id="buttonsWrapper">
+      <div id="buttonsWrapper" hidden$="[[noButtons]]">
         <paper-button hidden$="[[!hasBackButton]]" disabled=[[!_hasBackStep]] on-tap="back">[[backText]]</paper-button>
         <span class="flex"></span>
         <paper-button hidden$="[[!hasSkipButton]]" disabled="[[!_canSkip]]" on-tap="progress">[[skipText]]</paper-button>
@@ -264,6 +264,10 @@ Custom property | Description | Default
           value: false,
           notify: true,
           computed: '_computeCompleted(stepNumber, savedStepNumber)'
+        },
+        noButtons: {
+          type: Boolean,
+          value: false
         },
         hasSkipButton: {
           type: Boolean,
@@ -376,7 +380,7 @@ Custom property | Description | Default
         '_forwardHasBackStep(_hasBackStep, selectedItem)',
         '_forwardVertical(vertical)',
         '_forwardAlternativeLabel(alternativeLabel)',
-        '_forwardStepperData(linear, backText, optionalText, finishText, continueText, skipText, updateText, hasSkipButton, hasBackButton)'
+        '_forwardStepperData(linear, backText, optionalText, finishText, continueText, skipText, updateText, noButtons, hasSkipButton, hasBackButton)'
       ],
 
       attached: function() {
@@ -532,7 +536,7 @@ Custom property | Description | Default
         this.setAttribute('role', vertical ? 'menu': 'menubar');
       },
 
-      _forwardStepperData: function(linear, backText, optionalText, finishText, continueText, skipText, updateText, hasSkipButton, hasBackButton) {
+      _forwardStepperData: function(linear, backText, optionalText, finishText, continueText, skipText, updateText, noButtons, hasSkipButton, hasBackButton) {
         if (this.stepNumber) {
           this.items.map(function(step) {
             step._set_stepperData({
@@ -543,6 +547,7 @@ Custom property | Description | Default
               continueText: continueText,
               skipText: skipText,
               updateText: updateText,
+              noButtons: noButtons,
               hasSkipButton: hasSkipButton,
               hasBackButton: hasBackButton,
               stepNumber: this.stepNumber
@@ -638,6 +643,7 @@ Custom property | Description | Default
           continueText: this.continueText,
           skipText: this.skipText,
           updateText: this.updateText,
+          noButtons: this.noButtons,
           hasSkipButton: this.hasSkipButton,
           hasBackButton: this.hasBackButton,
           stepNumber: this.stepNumber
