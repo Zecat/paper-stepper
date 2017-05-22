@@ -176,7 +176,8 @@ Missing Doc
         saved: {
           type: Boolean,
           value: false,
-          notify: true
+          notify: true,
+          observer: '_savedChanged'
         },
         /**
          * Missing Doc
@@ -344,6 +345,14 @@ Missing Doc
         '_labelElementChanged(_labelElement)'
       ],
 
+      _savedChanged: function(newValue, oldValue) {
+        if (newValue && oldValue != undefined && !oldValue) {
+          this.fire('paper-step-saved');
+        } else if (!newValue && oldValue) {
+          this.fire('paper-step-unsaved');
+        }
+      },
+
       _focusedChanged: function(receivedFocusFromKeyboard) {
         if (receivedFocusFromKeyboard) {
           this.ensureRipple();
@@ -388,11 +397,11 @@ Missing Doc
        */
       save: function() {
         if ((!this.saved || this.editable) && this.validate()) {
+          this.saved = true;
           if (this.saved) {
             this.fire('paper-step-updated');
           } else {
             this.saved = true;
-            this.fire('paper-step-saved');
           }
           return true;
         }
