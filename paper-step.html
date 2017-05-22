@@ -213,7 +213,7 @@ Missing Doc
          */
         selectable: {
           type: Boolean,
-          computed: '_computeSelectable(_stepperData.linear, saved, editable, _previousSaved)',
+          computed: '_computeSelectable(disabled, _stepperData.linear, saved, editable, _previousSaved)',
           reflectToAttribute: true,
           notify: true
         },
@@ -221,7 +221,8 @@ Missing Doc
          * Missing Doc
          */
         disabled: {
-          computed: '_computeDisabled(selectable)'
+          type: Boolean,
+          value: false
         },
         /**
          * Missing Doc
@@ -474,9 +475,9 @@ Missing Doc
         }.bind(this));
       },
 
-      _computeSelectable: function(linear, saved, editable, previousSaved) {
+      _computeSelectable: function(disabled, linear, saved, editable, previousSaved) {
         // TODO: factorize the expression
-        return (!linear || previousSaved) && (!saved || editable) || (editable && saved);
+        return !disabled && ( (!linear || previousSaved) && (!saved || editable) || (editable && saved));
       },
 
       _computeDisabled: function(selectable) {
