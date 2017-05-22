@@ -125,19 +125,9 @@ Custom property | Description | Default
       }
       :host(:not([vertical])) {
         position: relative;
-        /* Note: this variable is updated by the stepper itself, don't use it on user side */
-        height: var(--label-wrapper-height);
-        max-height: var(--label-wrapper-height);
-        transition: max-height var(--paper-stepper-horizontal-opening-transition-duration, 300ms), box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
       }
       :host(:not([vertical]):not([opened]):not(.collapsing)) {
         @apply(--shadow-none);
-      }
-      :host(:not([vertical])[opened]) {
-        max-height: var(--paper-stepper-horizontal-opened-height, 450px);
-      }
-      :host(:not([vertical])[opened]), :host(:not([vertical]).collapsing) {
-        height: var(--paper-stepper-horizontal-opened-height, 450px);
       }
       :host(:not([vertical])) #content-wrapper {
         @apply(--shadow-elevation-2dp);
@@ -146,7 +136,6 @@ Custom property | Description | Default
         @apply(--layout-justified);
         background: var(--paper-stepper-horizontal-label-wrapper-background, --primary-background-color);
         border-radius: 1px;
-        overflow: hidden;
       }
       .flex {
         @apply(--layout-flex);
@@ -355,7 +344,6 @@ Custom property | Description | Default
         'iron-items-changed': '_initializeSteps',
         'paper-step-saved': '_stepSaved',
         'transitionend': '_transitionEnd',
-        'step-horizontal-label-resize': '_updateStepperClosedMaxHeight',
         'iron-resize': '_resizeHandler',
         'neon-animation-finish': '_onNeonAnimationFinish'
       },
@@ -478,13 +466,6 @@ Custom property | Description | Default
         if (this.fallbackSelection && this.items.length && (this._selection.get() === undefined)) {
           this.selected = this.fallbackSelection;
         }
-      },
-
-      _updateStepperClosedMaxHeight: function() {
-        this.debounce('updateStepperClosedMaxHeight', function() {
-          this.customStyle['--label-wrapper-height'] = this.$$('#content-wrapper').clientHeight + 'px';
-          this.updateStyles('--label-wrapper-height');
-        });
       },
 
       _openedChanged: function(newValue, oldValue) {
