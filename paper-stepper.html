@@ -409,7 +409,7 @@ Custom property | Description | Default
           return;
         }
         this.items.map(function(step) {
-          step._setSaved(false);
+          step.saved = false;
           step._set_previousSaved(false);
         });
         this.items[0]._set_previousSaved(true);

@@ -176,8 +176,7 @@ Missing Doc
         saved: {
           type: Boolean,
           value: false,
-          notify: true,
-          readOnly: true
+          notify: true
         },
         /**
          * Missing Doc
@@ -392,7 +391,7 @@ Missing Doc
           if (this.saved) {
             this.fire('paper-step-updated');
           } else {
-            this._setSaved(true);
+            this.saved = true;
             this.fire('paper-step-saved');
           }
           return true;
