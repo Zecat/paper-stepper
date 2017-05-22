@@ -344,6 +344,7 @@ Custom property | Description | Default
       listeners: {
         'iron-items-changed': '_initializeSteps',
         'paper-step-saved': '_stepSaved',
+        'paper-step-unsaved': '_stepUnsaved',
         'transitionend': '_transitionEnd',
         'iron-resize': '_resizeHandler',
         'neon-animation-finish': '_onNeonAnimationFinish'
@@ -492,6 +493,14 @@ Custom property | Description | Default
           previousStep._set_previousSaved(true);
         }
         this._setSavedStepNumber(this.savedStepNumber+1);
+      },
+
+      _stepUnsaved: function(e) {
+        var previousStep = this.items[this.indexOf(e.target)+1];
+        if (previousStep) {
+          previousStep._set_previousSaved(false);
+        }
+        this._setSavedStepNumber(this.savedStepNumber-1);
       },
 
       _forwardVertical: function(vertical) {
