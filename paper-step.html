@@ -142,17 +142,6 @@ Missing Doc
       <div id="stepWrapper">
         <div id="paperStepWrapper">
         </div>
-        <div id="buttonsWrapper">
-          <paper-button id="continueButton" on-tap="continue">
-            {{_choosePrimaryButtonText(_attrForPrimaryButtonText, _stepperData.continueText, _stepperData.finishText, _stepperData.updateText)}}
-          </paper-button>
-          <paper-button id="backButton" disabled="[[!_hasBackStep]]" on-tap="back" hidden$="[[!_stepperData.hasBackButton]]">
-            [[_stepperData.backText]]
-          </paper-button>
-          <paper-button id="skipButton" disabled="[[!_canSkip]]" on-tap="skip" hidden$="[[!_stepperData.hasSkipButton]]">
-            [[_stepperData.skipText]]
-          </paper-button>
-        </div>
       </div>
     </iron-collapse>
     </template>
@@ -169,7 +158,7 @@ Missing Doc
         Polymer.PaperItemBehavior,
         Polymer.PaperRippleBehavior
       ],
-      
+
       /**
        * Fired when the step has been saved.
        *

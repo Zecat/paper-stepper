@@ -169,25 +169,14 @@ Custom property | Description | Default
         overflow: visible;
       }
     </style>
-    
+
     <!-- Hidden block with width equals to the responsive threshold -->
     <div id="verticalResponsiveWidth"></div>
-    
+
     <!-- This wrapper contains the horizontal stepper header or the full vertical stepper -->
     <div id="content-wrapper">
       <content select="[[selectable]]"></content>
     </div>
-
-    <!-- Slideshow and buttons area for horizontal layout -->
-    <template is="dom-if" if="[[!vertical]]">
-      <div class="flex"></div>
-      <div id="buttonsWrapper">
-        <paper-button hidden$="[[!hasBackButton]]" disabled=[[!_hasBackStep]] on-tap="back">[[backText]]</paper-button>
-        <span class="flex"></span>
-        <paper-button hidden$="[[!hasSkipButton]]" disabled="[[!_canSkip]]" on-tap="progress">[[skipText]]</paper-button>
-        <paper-button id="continueButton" on-tap="continue">{{_choosePrimaryButtonText(_attrForSelectedStepPrimaryButtonText, finishText, continueText, updateText)}}</paper-button>
-      </div>
-    </template>
 
   </template>
 
@@ -449,7 +438,7 @@ Custom property | Description | Default
         }
         event.detail.keyboardEvent.preventDefault();
       },
-      
+
       _onRightKey: function(event) {
         if (this._isRTL) {
           this._focusPrevious();
@@ -666,7 +655,7 @@ Custom property | Description | Default
             savedStepNumber++;
           }
         }.bind(this));
-         
+
         this._setSavedStepNumber(savedStepNumber);
         // method from IronSelectableBehavior
         this._updateSelected();
