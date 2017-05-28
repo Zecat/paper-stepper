@@ -32,10 +32,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
   </style>
 
+  <div id="container">
+
+  </div>
+
   <paper-stepper
-    entry-animation="fade-in-animation"
-    entry-animation="fade-in-animation"
+    selected="{{selected}}"
   >
+
+    <!-- <step-slider slot="horizontal-steps-container" selected="[[selected]]"> -->
+      <!--
+        When stepper is horizontal, all your step will be appended to this element
+        so the light dom of this element will look like
+        So it's up to this element to manage the "view" and selection
+
+        <paper-step label="step 1" opened>You content</paper-step>
+        <paper-step label="step 2" >You content</paper-step>
+        <paper-step label="step 3" disabled>You content</paper-step>
+      -->
+
+      <!-- You coul even add a button toolbar here -->
+    <!-- </step-slider> -->
 
     <paper-step label="step 1">
       <div>

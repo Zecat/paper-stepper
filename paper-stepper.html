@@ -126,9 +126,6 @@ Custom property | Description | Default
       :host(:not([vertical])) {
         position: relative;
       }
-      :host(:not([vertical]):not([opened]):not(.collapsing)) {
-        @apply(--shadow-none);
-      }
       :host(:not([vertical])) #content-wrapper {
         @apply(--shadow-elevation-2dp);
         @apply(--layout-horizontal);
@@ -141,32 +138,26 @@ Custom property | Description | Default
       .flex {
         @apply(--layout-flex);
       }
-      #buttonsWrapper {
-        @apply(--layout-horizontal);
-        margin: 0 24px 24px 24px;
-        overflow: hidden;
-      }
-      #continueButton:not([disabled]) {
-        color: var(--primary-color);
-      }
-      paper-button[disabled] {
-        background-color: transparent;
-      }
       [hidden] {
         display: none;
-      }
-      :host(:not[vertical]) #content-wrapper:not(:hover) ::content paper-step[opened] {
-        overflow: visible;
       }
     </style>
 
     <!-- Hidden block with width equals to the responsive threshold -->
     <div id="verticalResponsiveWidth"></div>
 
-    <!-- This wrapper contains the horizontal stepper header or the full vertical stepper -->
-    <div id="content-wrapper">
-      <content select="[[selectable]]"></content>
-    </div>
+    <iron-menu id="horizontalLabelsContainer"></iron-menu>
+
+    <slot></slot>
+
+    <!-- <template is="dom-if" id="[[!vertical]]"> -->
+      <!-- <iron-pages selected="{{selected}}">
+        <slot></slot>
+      </iron-pages> -->
+    <!-- </template> -->
+
+    <slot></slot>
+
 
   </template>
 
@@ -177,9 +168,8 @@ Custom property | Description | Default
       is: 'paper-stepper',
 
       behaviors: [
-        Polymer.IronMenuBehavior,
-        Polymer.NeonAnimationRunnerBehavior,
-        Polymer.IronResizableBehavior
+        Polymer.IronResizableBehavior,
+        Polymer.IronSelectableBehavior
       ],
 
       /**
@@ -193,13 +183,6 @@ Custom property | Description | Default
        * @event paper-stepper-completed
        */
       properties: {
-        opened: {
-          type: Boolean,
-          computed: '_computeOpened(_selectedIndex)',
-          observer: '_openedChanged',
-          notify: true,
-          reflectToAttribute: true
-        },
         alternativeLabel: {
           type: Boolean,
           value: false
@@ -209,30 +192,6 @@ Custom property | Description | Default
           value: false,
           notify: true,
           reflectToAttribute: true
-        },
-        backText: {
-          type: String,
-          value: 'BACK'
-        },
-        finishText: {
-          type: String,
-          value: 'FINISH'
-        },
-        continueText: {
-          type: String,
-          value: 'CONTINUE'
-        },
-        skipText: {
-          type: String,
-          value: 'SKIP'
-        },
-        optionalText: {
-          type: String,
-          value: 'Optional'
-        },
-        updateText: {
-          type: String,
-          value: 'UPDATE'
         },
         linear: {
           type: Boolean,
@@ -287,22 +246,6 @@ Custom property | Description | Default
           type: Boolean,
           value: false
         },
-        horizontalHigherEntryAnimation: {
-          type: String,
-          value: 'fade-in-slide-from-right-animation'
-        },
-        horizontalHigherExitAnimation: {
-          type: String,
-          value: 'fade-out-slide-right-animation'
-        },
-        horizontalLowerEntryAnimation: {
-          type: String,
-          value: 'fade-in-slide-from-left-animation'
-        },
-        horizontalLowerExitAnimation: {
-          type: String,
-          value: 'fade-out-slide-left-animation'
-        },
         _skipStepIndex: {
           type: Number,
           computed: '_compute_skipStepIndex(_selectedIndex)'
@@ -325,14 +268,8 @@ Custom property | Description | Default
           observer: '_selectedIndexChanged',
           readOnly: true,
           value: -1
-        },
-        _attrForSelectedStepPrimaryButtonText: {
-          type: String,
-          computed: '_compute__attrForSelectedStepPrimaryButtonText(_selectedIndex, stepNumber)'
         }
       },
-
-      _previousAnimatedStep: null,
 
       _previousSelected: null,
 
@@ -355,7 +292,6 @@ Custom property | Description | Default
         '_forwardHasBackStep(_hasBackStep, selectedItem)',
         '_forwardVertical(vertical)',
         '_forwardAlternativeLabel(alternativeLabel)',
-        '_forwardStepperData(linear, backText, optionalText, finishText, continueText, skipText, updateText, hasSkipButton, hasBackButton)'
       ],
 
       attached: function() {
@@ -411,31 +347,7 @@ Custom property | Description | Default
         }
         this.items.map(function(step) {
           step.saved = false;
-          step._set_previousSaved(false);
         });
-        this.items[0]._set_previousSaved(true);
-      },
-
-      get _isRTL() {
-        return window.getComputedStyle(this)['direction'] === 'rtl';
-      },
-
-      _onLeftKey: function(event) {
-        if (this._isRTL) {
-          this._focusNext();
-        } else {
-          this._focusPrevious();
-        }
-        event.detail.keyboardEvent.preventDefault();
-      },
-
-      _onRightKey: function(event) {
-        if (this._isRTL) {
-          this._focusPrevious();
-        } else {
-          this._focusNext();
-        }
-        event.detail.keyboardEvent.preventDefault();
       },
 
       /**
@@ -470,36 +382,11 @@ Custom property | Description | Default
         }
       },
 
-      _openedChanged: function(newValue, oldValue) {
-        if (!this.vertical && oldValue != undefined) {
-          this.toggleClass('collapsing', true);
-        }
-      },
-
-      _transitionEnd: function(e) {
-        // check to ignore event fired by paper-ripple
-        if (e.propertyName == 'max-height') {
-          this.toggleClass('collapsing', false);
-        }
-      },
-
-      _computeOpened: function(_selectedIndex) {
-        return _selectedIndex >= 0;
-      },
-
       _stepSaved: function(e) {
-        var previousStep = this.items[this.indexOf(e.target)+1];
-        if (previousStep) {
-          previousStep._set_previousSaved(true);
-        }
         this._setSavedStepNumber(this.savedStepNumber+1);
       },
 
       _stepUnsaved: function(e) {
-        var previousStep = this.items[this.indexOf(e.target)+1];
-        if (previousStep) {
-          previousStep._set_previousSaved(false);
-        }
         this._setSavedStepNumber(this.savedStepNumber-1);
       },
 
@@ -507,29 +394,19 @@ Custom property | Description | Default
         if (this.stepNumber) {
           this.items.map(function(step) {
             step._setVertical(vertical);
-          });
+            step.horizontalLabelContainer = this.$.horizontalLabelsContainer;
+          }.bind(this));
         }
         this.setAttribute('role', vertical ? 'menu': 'menubar');
       },
 
-      _forwardStepperData: function(linear, backText, optionalText, finishText, continueText, skipText, updateText, hasSkipButton, hasBackButton) {
-        if (this.stepNumber) {
-          this.items.map(function(step) {
-            step._set_stepperData({
-              linear: linear,
-              backText: backText,
-              optionalText: optionalText,
-              finishText: finishText,
-              continueText: continueText,
-              skipText: skipText,
-              updateText: updateText,
-              hasSkipButton: hasSkipButton,
-              hasBackButton: hasBackButton,
-              stepNumber: this.stepNumber
-            });
-          }.bind(this));
-        }
-      },
+      // if (this.stepNumber) {
+      //   this.items.map(function(step) {
+      //     step._set_stepperData({
+      //       stepNumber: this.stepNumber
+      //     });
+      //   }.bind(this));
+      // }
 
       _forwardAlternativeLabel: function(alternativeLabel) {
         if (this.stepNumber) {
@@ -597,17 +474,6 @@ Custom property | Description | Default
         selectedItem._set_hasBackStep(_hasBackStep);
       },
 
-      _compute__attrForSelectedStepPrimaryButtonText: function(selectedIndex) {
-        /* TODO: compute from selectedItem when https://github.com/PolymerElements/iron-selector/issues/118 is fixed*/
-        if (selectedIndex < 0) {
-          return null;
-        }
-        var _attrForPrimaryButtonText = this.selectedItem.saved ? 'updateText' :
-          ( (this.stepNumber - this.savedStepNumber) == 1 ? 'finishText' : 'continueText' );
-        this.selectedItem._set_attrForPrimaryButtonText(_attrForPrimaryButtonText);
-        return _attrForPrimaryButtonText;
-      },
-
       _initializeSteps: function() {
         var savedStepNumber = 0;
         var data = {
@@ -641,7 +507,6 @@ Custom property | Description | Default
           step._set_alternativeLabel(this.alternativeLabel);
           step._set_stepperData(data);
           // true for index 0
-          step._set_previousSaved(!i);
           if (step.saved) {
             savedStepNumber++;
           }

@@ -31,28 +31,11 @@ Missing Doc
       :host(:not([vertical]):hover){
         overflow: visible;
       }
-      :host(:not([opened]):not(.neon-animating)) #slideshowViewport{
-        display: none;
-      }
       #horizontalStepLabel {
         @apply(--layout-flex);
       }
-      #slideshowViewport {
-        position: absolute;
-        left: 0;
-        right: 0;
-        overflow: hidden;
-      }
-      #contentWrapper {
-        width: 100%;
-        pointer-events: auto;
-      }
       :host(:focus:not([opened]):not([saved])) step-horizontal-label ::content #badge {
         background: var(--paper-step-selectable-hovered-badge-background, --paper-grey-500);
-      }
-      #slideshowViewport {
-        @apply(--layout);
-        @apply(--layout-center-center);
       }
       :host([vertical]) {
         @apply(--layout-vertical);
@@ -79,28 +62,12 @@ Missing Doc
       /**
        * Vertical Buttons
        */
-      #buttonsWrapper {
-        height: 48px;
-        padding-top: 16px;
-        padding-bottom: 28px;
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-flex-none);
-      }
-      #buttonsWrapper > paper-button {
-        margin-right: 8px;
-        margin-left: 0;
-      }
-      #continueButton {
-        --paper-button: {
-          background: var(--paper-vertical-step-continue-button-background, --primary-color);
-          color: var(--paper-vertical-step-continue-button-color, --dark-theme-text-color);
-        };
-      }
       .iron-collapse-closed {
         display: none !important;
       }
     </style>
+
+    <slot></slot>
 
     <!-- horizontal step layout -->
 
@@ -117,10 +84,6 @@ Missing Doc
         saved="[[saved]]"
         stepper-data="[[_stepperData]]">
       </step-horizontal-label>
-      <div id="slideshowViewport">
-        <div id="contentWrapper">
-        </div>
-      </div>
     </template>
 
     <!-- vertical step layout -->
@@ -138,12 +101,12 @@ Missing Doc
         saved="[[saved]]">
       </step-vertical-label>
       <iron-collapse id="collapse" opened="[[opened]]">
-      <div id="contentConnectorLine"></div>
-      <div id="stepWrapper">
-        <div id="paperStepWrapper">
+        <div id="contentConnectorLine"></div>
+        <div id="stepWrapper">
+          <div id="paperStepWrapper">
+          </div>
         </div>
-      </div>
-    </iron-collapse>
+      </iron-collapse>
     </template>
   </template>
 
@@ -153,8 +116,6 @@ Missing Doc
       is: 'paper-step',
 
       behaviors: [
-        Polymer.IronValidatableBehavior,
-        Polymer.NeonAnimatableBehavior,
         Polymer.PaperItemBehavior,
         Polymer.PaperRippleBehavior
       ],
@@ -170,6 +131,7 @@ Missing Doc
        * @event paper-step-updated
        */
       properties: {
+
         /**
          * MISSING Doc
          */
@@ -192,13 +154,6 @@ Missing Doc
         index: {
           type: Number,
           notify: true,
-          readOnly: true
-        },
-        /**
-         * Missing Doc
-         */
-        _previousSaved: {
-          type: Boolean,
           readOnly: true
         },
         /**
@@ -242,52 +197,10 @@ Missing Doc
         /**
          * Missing Doc
          */
-        animationConfig: {
-          readOnly: true
-        },
-        /**
-         * Missing Doc
-         */
-        entryAnimation: {
-          readOnly: true
-        },
-        /**
-         * Missing Doc
-         */
-        exitAnimation: {
-          readOnly: true
-        },
-        /**
-         * Missing Doc
-         */
         vertical: {
           type: Boolean,
           readOnly: true,
           reflectToAttribute: true
-        },
-        /**
-         * Missing Doc
-         */
-        horizontalHigherEntryAnimation: {
-          type: String
-        },
-        /**
-         * Missing Doc
-         */
-        horizontalHigherExitAnimation: {
-          type: String
-        },
-        /**
-         * Missing Doc
-         */
-        horizontalLowerEntryAnimation: {
-          type: String
-        },
-        /**
-         * Missing Doc
-         */
-        horizontalLowerExitAnimation: {
-          type: String
         },
         /**
          * Missing Doc
@@ -328,6 +241,15 @@ Missing Doc
         _hasBackStep: {
           type: Boolean,
           readOnly: true
+        },
+        horizontalLabelContainer: {
+          type: HTMLElement
+        },
+        horizontalLabelElement: {
+          type: HTMLElement
+        },
+        labelElement: {
+          type: HTMLElement
         }
       },
 
@@ -339,12 +261,17 @@ Missing Doc
       },
 
       observers: [
-        '_toggleClassPosition(index, _stepperData.stepNumber, vertical)',
-        '_updateSlideshowViewportTop(optional, _alternativeLabel, vertical)',
+        '_toggleClassPosition(index, _stepperData.stepNumber, vertical, labelElement)',
         '_verticalChange(vertical)',
         '_focusedChanged(receivedFocusFromKeyboard)',
-        '_labelElementChanged(_labelElement)'
+        '_labelElementChanged(_labelElement)',
+        '_updateLabel(horizontalLabelContainer, horizontalLabelElement)'
       ],
+
+      _updateLabel(horizontalLabelContainer, horizontalLabelElement) {
+        console.log('prout')
+        Polymer.dom(horizontalLabelContainer).appendChild(horizontalLabelElement);
+      },
 
       _savedChanged: function(newValue, oldValue) {
         if (newValue && oldValue != undefined && !oldValue) {
@@ -422,56 +349,32 @@ Missing Doc
         return false;
       },
 
-      _updateSlideshowViewportTop: function(optional, _alternativeLabel, vertical) {
-        if (!vertical) {
-          this.async(function() {
-            this.$$('#slideshowViewport').style.top = this.clientHeight+'px';
-            this.fire('step-horizontal-label-resize');
-          }, 1);
-        }
-      },
-
-      _toggleClassPosition: function(index, stepNumber, vertical) {
+      _toggleClassPosition: function(index, stepNumber, vertical, labelElement) {
         this.async(function() {
-          var stepLabel = this.$$(vertical ? '#verticalStepLabel' : '#horizontalStepLabel');
-          this.toggleClass('first-step', (index == 1), stepLabel);
-          this.toggleClass('last-step', (index == stepNumber), stepLabel);
-        });
-      },
-
-      _updateAnimationConfig: function() {
-        /* TODO: call this method when horizontalHigher/LowerEntry/ExitAnimation change */
-        var animatedNode = this.$$('#contentWrapper');
-        this._setAnimationConfig({
-          'higher-step-entry': {
-            node: animatedNode,
-            name: this.horizontalHigherEntryAnimation
-          },
-          'higher-step-exit': {
-            node: animatedNode,
-            name: this.horizontalHigherExitAnimation
-          },
-          'lower-step-entry': {
-            node: animatedNode,
-            name: this.horizontalLowerEntryAnimation
-          },
-          'lower-step-exit': {
-            node: animatedNode,
-            name: this.horizontalLowerExitAnimation
-          }
+          this.toggleClass('first-step', (index == 1), labelElement);
+          this.toggleClass('last-step', (index == stepNumber), labelElement);
         });
       },
 
       _verticalChange: function(vertical) {
         this.async(function() {
-          // move or create the content tag
-          Polymer.dom(this.$$(vertical ? '#paperStepWrapper' : '#contentWrapper')).appendChild(this.$$('content') || this.create('content'));
+
+          if (vertical) {
+            if (!this.verticalLabelElement) {
+              this.verticalLabelElement = this.$$('#verticalStepLabel');
+            }
+          } else if(!this.horizontalLabelElement) {
+            this.horizontalLabelElement = this.$$('#horizontalStepLabel');
+          }
+
+          this.cc = this.getContentChildren()[0] || this.cc;
+          var slotContainer = vertical ? this.$$('#paperStepWrapper') : this;
+          Polymer.dom(slotContainer).appendChild(this.cc);
+
+          this.labelElement = vertical ? this.verticalLabelElement : this.horizontalLabelElement;
           // reset the ripple
           this._ripple = false;
-          this._rippleContainer = this.$$(vertical ? '#verticalStepLabel' : '#horizontalStepLabel');
-          if (!vertical) {
-            this._updateAnimationConfig();
-          }
+          this._rippleContainer = this.labelElement;
         }.bind(this));
       },
 
