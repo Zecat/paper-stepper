@@ -115,7 +115,9 @@ Missing Doc
         selectable="[[selectable]]"
         index="[[index]]"
         saved="[[saved]]"
-        stepper-data="[[_stepperData]]">
+        stepper-data="[[_stepperData]]"
+        icon-done="[[iconDone]]" 
+        icon-edit="[[iconEdit]]">                            
       </step-horizontal-label>
       <div id="slideshowViewport">
         <div id="contentWrapper">
@@ -135,7 +137,9 @@ Missing Doc
         selectable="[[selectable]]"
         stepper-data="[[_stepperData]]"
         index="[[index]]"
-        saved="[[saved]]">
+        saved="[[saved]]"
+        icon-done="[[iconDone]]"
+        icon-edit="[[iconEdit]]">                           
       </step-vertical-label>
       <iron-collapse id="collapse" opened="[[opened]]">
       <div id="contentConnectorLine"></div>
@@ -175,6 +179,11 @@ Missing Doc
        *
        * @event paper-step-saved
        */
+       /**
+       * Fired when a saved step is reverted to not saved.
+       *
+       * @event paper-step-unsaved
+       */
       /**
        * Fired when the step has been updated
        *
@@ -188,7 +197,7 @@ Missing Doc
           type: Boolean,
           value: false,
           notify: true,
-          readOnly: true
+          observer: '_savedObserver'
         },
         /**
          * Missing Doc
@@ -275,6 +284,23 @@ Missing Doc
           readOnly: true,
           reflectToAttribute: true
         },
+
+        /**
+         * `iconEdit` the icon to display saved and editable steps
+         */
+        iconEdit: {
+          type: String,
+          value: 'editor:mode-edit'
+        },
+
+        /**
+         * `iconDone` the icon to display saved (but not editable) steps
+         */
+        iconDone: {
+          type: String,
+          value: 'done'
+        },
+
         /**
          * Missing Doc
          */
@@ -400,11 +426,10 @@ Missing Doc
        */
       save: function() {
         if ((!this.saved || this.editable) && this.validate()) {
-          if (this.saved) {
-            this.fire('paper-step-updated');
+          if (!this.saved) {
+            this.set('saved',true);
           } else {
-            this._setSaved(true);
-            this.fire('paper-step-saved');
+            this.fire('paper-step-updated');
           }
           return true;
         }
@@ -412,7 +437,20 @@ Missing Doc
       },
 
       /**
-       * Atempte to save the step and select and to progress into the stepper.
+       * `_savedObserver` observe changes on `saved`. Fires `paper-step-saved` when the step is saved.
+       */
+      _savedObserver: function(saved, old) {
+        //we only fire if the stepper has been and initialized
+        if (saved && this._stepper && (this._stepper.savedStepNumber !== undefined)) {
+          return this.fire('paper-step-saved');
+        }
+        if(old) {
+          this.fire('paper-step-unsaved'); 
+        }
+      },
+
+      /**
+       * Attempt to save the step and select and to progress into the stepper.
        * @return {Boolean} True if the step is valid for saving.
        */
       continue: function() {

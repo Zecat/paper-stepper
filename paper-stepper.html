@@ -304,6 +304,15 @@ Custom property | Description | Default
           type: Number,
           value: 200
         },
+
+        /**
+         * `noFocusOnUnsave`. The default behavior is that the stepper select a step recently unsaved. Setting `noFocusOnUnsave` cancel this behavior.
+         */
+        noFocusOnUnsave: {
+          type: Boolean,
+          value: false
+        },
+
         animateInitialSelection: {
           type: Boolean,
           value: false
@@ -324,6 +333,7 @@ Custom property | Description | Default
           type: String,
           value: 'fade-out-slide-left-animation'
         },
+
         _skipStepIndex: {
           type: Number,
           computed: '_compute_skipStepIndex(_selectedIndex)'
@@ -365,6 +375,7 @@ Custom property | Description | Default
       listeners: {
         'iron-items-changed': '_initializeSteps',
         'paper-step-saved': '_stepSaved',
+        'paper-step-unsaved': '_stepUnsaved',
         'transitionend': '_transitionEnd',
         'step-horizontal-label-resize': '_updateStepperClosedMaxHeight',
         'iron-resize': '_resizeHandler',
@@ -431,7 +442,7 @@ Custom property | Description | Default
           return;
         }
         this.items.map(function(step) {
-          step._setSaved(false);
+          step.set('saved',false);
           step._set_previousSaved(false);
         });
         this.items[0]._set_previousSaved(true);
@@ -521,6 +532,24 @@ Custom property | Description | Default
           previousStep._set_previousSaved(true);
         }
         this._setSavedStepNumber(this.savedStepNumber+1);
+      },
+
+      _stepUnsaved: function(e) {
+        var index = this.indexOf(e.target);
+        var nextStep = this.items[index+1];
+        if (nextStep) {
+          nextStep._set_previousSaved(false);
+        }
+        this._setSavedStepNumber(this.savedStepNumber-1);
+
+        // focus on last unsaved item
+        if (!this.noFocusOnUnsave) {
+          this.__lastIndex = index;
+          this.debounce('paper-setpper-unsave-focus', function(){
+            this._selectedIndex = this.__lastIndex;
+            this.__lastIndex = false;
+          }, 100)
+        }
       },
 
       _forwardVertical: function(vertical) {
@@ -642,6 +671,7 @@ Custom property | Description | Default
           hasBackButton: this.hasBackButton,
           stepNumber: this.stepNumber
         };
+        var previous = {saved: true};
         this.items.map(function(step, i) {
           if (this.horizontalHigherEntryAnimation && !step.horizontalHigherEntryAnimation) {
             step.horizontalHigherEntryAnimation = this.horizontalHigherEntryAnimation;
@@ -661,7 +691,8 @@ Custom property | Description | Default
           step._set_alternativeLabel(this.alternativeLabel);
           step._set_stepperData(data);
           // true for index 0
-          step._set_previousSaved(!i);
+          step._set_previousSaved(previous.saved);
+          previous = step;
           if (step.saved) {
             savedStepNumber++;
           }
