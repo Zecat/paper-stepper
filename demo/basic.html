@@ -31,6 +31,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     div {
       padding: 24px;
     }
+    iron-pages {
+      background: yellow !important;
+    }
+
   </style>
 
   <div id="container">
@@ -38,18 +42,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </div>
 
   <dom-bind>
-<template is="dom-bind">
+<template is="dom-bind" id="scope">
 
   <paper-stepper
+    id="stepper"
     selected="{{selected}}"
   >
 
     <template slot="horizontal-steps-container-template">
-      <iron-pages slot="steps-container-template" selected="{{selected}}">
+      <iron-pages id="toto" slot="steps-container-template" selected="{{selected}}">
       </iron-pages>
     </template>
 
     <paper-step label="step 1" editable>
+      <paper-input label="aaa" value="123">
+      </paper-input>
       <div>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </div>
@@ -82,10 +89,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
     </paper-step>
 
-    <h1>Yooo</h1>
+    <!-- <h1>Yooo</h1> -->
 
   </paper-stepper>
 </template>
 </dom-bind>
+<script>
+var scope = document.getElementById('scope');
+  document.addEventListener('WebComponentsReady', function() {
+    setTimeout(function() {
+      var toto = scope.$.stepper.$.horizontalLabelsContainer;
+      Polymer.dom(document.getElementById('container')).appendChild(toto);
+    },0)
+  })
+</script>
   </body>
 </html>

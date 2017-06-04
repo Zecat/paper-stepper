@@ -116,7 +116,7 @@ Custom property | Description | Default
         max-height: var(--paper-stepper-vertical-max-height);
       }*/
       [hidden] {
-        display: none;
+        display: none !important;
       }
       #verticalStepsContainer {
         @apply --layout-vertical;
@@ -127,7 +127,7 @@ Custom property | Description | Default
       id="horizontalStepLabelTemplateSlot"
       name="horizontal-step-label-template"
     >
-      <template id="horizontalStepLabelTemplate">
+      <template>
         <step-horizontal-label
           editable="{{editable}}"
           label="{{label}}"
@@ -142,6 +142,25 @@ Custom property | Description | Default
       </template>
     </slot>
 
+    <slot
+      id="verticalStepLabelTemplateSlot"
+      name="vertical-step-label-template"
+    >
+      <template>
+        <step-vertical-label
+          editable="{{editable}}"
+          label="{{label}}"
+          optional="[[optional]]"
+          opened$="{{opened}}"
+          selectable="[[selectable]]"
+          index="{{index}}"
+          saved="{{saved}}"
+          disabled="[[disabled]]"
+          step="[[step]]"
+        ></step-vertical-label>
+      </template>
+    </slot>
+
     <!-- Hidden block with width equals to the responsive threshold -->
     <div id="verticalResponsiveWidth"></div>
 
@@ -152,8 +171,11 @@ Custom property | Description | Default
       on-iron-select="_handleHorizontalLabelsSelect"
     ></paper-horizontal-labels-container>
 
-    <slot id="horizontalStepsContainerTemplateSlot" name="horizontal-steps-container-template">
-      <template id="stepsContainerTemplate">
+    <slot
+      id="horizontalStepsContainerTemplateSlot"
+      name="horizontal-steps-container-template"
+    >
+      <template>
         <iron-pages selected="{{selected}}"></iron-pages>
       </template>
     </slot>
@@ -161,26 +183,16 @@ Custom property | Description | Default
     <paper-listbox
       id="verticalStepsContainer"
       hidden$="[[!vertical]]"
+      selectable="step-vertical-label"
     >
-      <template is="dom-repeat" items="{{items}}">
-        <step-vertical-label
-          editable="{{item.editable}}"
-          label="{{item.label}}"
-          optional="[[item.optional]]"
-          opened$="{{item.opened}}"
-          selectable="[[item.selectable]]"
-          index="{{item.index}}"
-          saved="{{item.saved}}"
-          disabled="[[disabled]]"
-          step="[[item.step]]"
-          style$="order: [[item.index]];"
-        ></step-vertical-label>
-      </template>
 
     </paper-listbox>
 
+<div hidden$="[[vertical]]">
+
     <!-- TODO: create the slot dynamically -->
     <slot id="stepsSlot"></slot>
+  </div>
 
 
 
@@ -300,7 +312,6 @@ Custom property | Description | Default
 
       observers: [
         '_verticalChanged(vertical)',
-        '_insertSteps(items, stepContainer)'
       ],
 
       attached: function() {
@@ -406,14 +417,12 @@ Custom property | Description | Default
         // TODO: check for template to be valid
         this.templatize(stepsContainerTemplate);
         this.horizontalStepContainer = this.stamp();
-        Polymer.dom(this.root).appendChild(this.horizontalStepContainer.root);
         // this.horizontalStepContainer._nodes[0] is the first node of the template, what's the better way to get it ?
         Polymer.dom(this.horizontalStepContainer._nodes[0]).appendChild(this.$.stepsSlot);
+        Polymer.dom(this.root).appendChild(this.horizontalStepContainer.root);
       },
 
       _ensureVertcalStepsContainerPopulated() {
-        console.log(this.$.stepsSlot);
-        Polymer.dom(this.$.verticalStepsContainer).appendChild(this.$.stepsSlot);
       },
 
       _verticalChanged: function(vertical) {
@@ -430,17 +439,6 @@ Custom property | Description | Default
         }
       },
 
-      _insertSteps(items, stepContainer) {
-      },
-
-      // if (this.stepNumber) {
-      //   this.items.map(function(step) {
-      //     step._set_stepperData({
-      //       stepNumber: this.stepNumber
-      //     });
-      //   }.bind(this));
-      // }
-      //
       _computeStepNumber: function(length) {
         return length;
       },
@@ -453,9 +451,27 @@ Custom property | Description | Default
         var horizontalStepLabelTemplate = this.getContentChildren('#horizontalStepLabelTemplateSlot')[0];
         this.templatize(horizontalStepLabelTemplate);
 
-        this.items.forEach(function(node, index) {
-          node.labelElement = this.stamp({step: node});
-          Polymer.dom(horizontalLabelsContainer).appendChild(node.labelElement.root);
+        this.items.forEach(function(step, i) {
+          step._setIndex(i + 1);
+          step._setVertical(this.vertical);
+          // true for index 0
+          if (step.saved) {
+            savedStepNumber++;
+          }
+
+          step.labelElement = this.stamp({step: step});
+          Polymer.dom(horizontalLabelsContainer).appendChild(step.labelElement.root);
+        }.bind(this));
+
+        var verticalLabelsContainer = this.$.verticalStepsContainer;
+        var verticalStepLabelTemplate = this.getContentChildren('#verticalStepLabelTemplateSlot')[0];
+        this.templatize(verticalStepLabelTemplate);
+
+        this.items.forEach(function(step, i) {
+          step.style.order = i*2+1;
+          step.verticalLabelElement = this.stamp({step: step});
+          step.verticalLabelElement._nodes[0].style.order = i*2;
+          Polymer.dom(verticalLabelsContainer).appendChild(step.verticalLabelElement.root);
         }.bind(this));
 
         var savedStepNumber = 0;
@@ -463,14 +479,6 @@ Custom property | Description | Default
           linear: this.linear,
           stepNumber: this.stepNumber
         };
-        this.items.map(function(step, i) {
-          step._setIndex(i + 1);
-          step._setVertical(this.vertical);
-          // true for index 0
-          if (step.saved) {
-            savedStepNumber++;
-          }
-        }.bind(this));
 
         this._setSavedStepNumber(savedStepNumber);
         // method from IronSelectableBehavior
