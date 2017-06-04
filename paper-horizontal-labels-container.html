@@ -1,0 +1,52 @@
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-menu-behavior/iron-menubar-behavior.html">
+<link rel="import" href="../polymer/polymer.html">
+
+<dom-module id="paper-horizontal-labels-container">
+  <template>
+    <style>
+      :host {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex-none);
+        @apply(--layout-justified);
+        background: var(--paper-stepper-horizontal-label-wrapper-background);
+        @apply(--paper-stepper-horizontal-header);
+      }
+    </style>
+
+    <slot id="labelTemplateSlot" name="label-template"></slot>
+    <slot></slot>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'paper-horizontal-labels-container',
+
+      behaviors: [
+        Polymer.IronMenubarBehavior
+      ],
+
+      properties: {
+        alternativeLabel: {
+          type: Boolean,
+          value: false
+        },
+      },
+
+      observers: [
+        '_updateAlternativeLabels(alternativeLabel, items.splices)'
+      ],
+
+      _updateAlternativeLabels(alternativeLabel, itemsSplices) {
+        // TODO
+        // if (this.stepNumber) {
+        //   this.items.map(function(step) {
+        //     step._set_alternativeLabel(alternativeLabel);
+        //   });
+        // }
+      },
+
+
+    });
+  </script>
+</dom-module>

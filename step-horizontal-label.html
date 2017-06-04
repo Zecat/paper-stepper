@@ -1,7 +1,9 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-icons/editor-icons.html">
+<!-- TODO: remove this import ? -->
 <link rel="import" href="../paper-styles/default-theme.html">
+<link rel="import" href="../paper-behaviors/paper-ripple-behavior.html">
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="step-label-behavior.html">
 <link rel="import" href="step-label-shared-styles.html">
@@ -11,7 +13,16 @@
     <style include="step-label-shared-styles">
       :host {
         overflow: hidden;
+        @apply(--layout);
+        @apply(--layout-flex);
       }
+      :host(:hover) {
+        overflow: visible;
+      }
+      /*TODO: check if this is working correctly, implement the same for vertical ? Goes into step-label shered-styles ?*/
+      /*:host(:focus:not([opened]):not([saved])) #badge {
+        background: var(--paper-step-selectable-hovered-badge-background, --paper-grey-500);
+      }*/
       :host([alternative-label]) {
         @apply(--layout);
       }
@@ -33,14 +44,14 @@
         @apply(--layout-center);
         height: 72px;
       }
-      :host(.firstStep:not([alternative-label])) #badge {
+      :host(:first-of-type:not([alternative-label])) #badge {
         margin-left: 24px;
       }
-      :host(.lastStep:not([alternative-label])) #textWrapper {
+      :host(:last-of-type:not([alternative-label])) #textWrapper {
         padding-right: 24px;
       }
-      :host(:not([alternative-label]):not(.first-step))::before, 
-      :host(:not([alternative-label]):not(.last-step))::after,
+      :host(:not([alternative-label]):not(:first-of-type))::before,
+      :host(:not([alternative-label]):not(:last-of-type))::after,
       :host([alternative-label]) #badgeWrapper::before,
       :host([alternative-label]) #badgeWrapper::after  {
         height: 1px;
@@ -49,8 +60,8 @@
         @apply(--layout-flex);
         content: '';
       }
-      :host([alternative-label].first-step) #badgeWrapper::before,
-      :host([alternative-label].last-step) #badgeWrapper::after {
+      :host([alternative-label]:first-of-type) #badgeWrapper::before,
+      :host([alternative-label]:last-of-type) #badgeWrapper::after {
         visibility: hidden;
       }
       :host([alternative-label]) #textWrapper{
@@ -74,11 +85,11 @@
         @apply(--layout-center);
         padding-bottom: 16px;
       }
-      :host(.first-step:not([alternative-label])) {
-        padding-left: 16px;
+      :host(:first-of-type:not([alternative-label])) {
+        padding-left: 16px
       }
-      :host(.last-step:not([alternative-label])) {
-        padding-right: 16px;
+      :host(:last-of-type:not([alternative-label])) {
+        padding-right: 16px
       }
     </style>
 
@@ -91,7 +102,7 @@
     <div id="textWrapper">
       <span id="textLabel">[[label]]</span>
       <template is="dom-if" if="[[optional]]">
-        <span id="optional">[[stepperData.optionalText]]</span>
+        <!-- <span id="optional">[[stepperData.optionalText]]</span> -->
       </template>
     </div>
   </template>
@@ -100,7 +111,8 @@
       is: 'step-horizontal-label',
 
       behaviors: [
-        Stepper.StepLabelBehavior
+        Stepper.StepLabelBehavior,
+        Polymer.PaperRippleBehavior
       ],
 
       properties: {
@@ -108,6 +120,26 @@
           type: Boolean,
           value: false,
           reflectToAttribute: true
+        },
+      },
+
+      // TODO: Use index to set flex order
+
+      observers: [
+        '_focusedChanged(focused)'
+      ],
+
+      _focusedChanged: function() {
+        if (this.receivedFocusFromKeyboard) {
+          // generate a ripple effect from the center of the badge
+          var badge = this.$.badge;
+          var badgePos = badge.getBoundingClientRect();
+          var rippleX = badgePos.left + 12;
+          var rippleY = badgePos.top + 12;
+          this._ripple.uiDownAction({detail: {x: rippleX, y: rippleY}});
+        }
+        if (this.hasRipple()) {
+          this._ripple.holdDown = this.receivedFocusFromKeyboard;
         }
       },
 

@@ -14,6 +14,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>Paper-stepper Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../../paper-input/paper-input.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../paper-stepper.html">
@@ -36,25 +37,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   </div>
 
+  <dom-bind>
+<template is="dom-bind">
+
   <paper-stepper
     selected="{{selected}}"
   >
 
-    <!-- <step-slider slot="horizontal-steps-container" selected="[[selected]]"> -->
-      <!--
-        When stepper is horizontal, all your step will be appended to this element
-        so the light dom of this element will look like
-        So it's up to this element to manage the "view" and selection
+    <template slot="horizontal-steps-container-template">
+      <iron-pages slot="steps-container-template" selected="{{selected}}">
+      </iron-pages>
+    </template>
 
-        <paper-step label="step 1" opened>You content</paper-step>
-        <paper-step label="step 2" >You content</paper-step>
-        <paper-step label="step 3" disabled>You content</paper-step>
-      -->
-
-      <!-- You coul even add a button toolbar here -->
-    <!-- </step-slider> -->
-
-    <paper-step label="step 1">
+    <paper-step label="step 1" editable>
       <div>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </div>
@@ -75,19 +70,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
     </paper-step>
 
-    <paper-step label="step 2">
+    <paper-step label="step 2" >
       <div>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </div>
     </paper-step>
 
-    <paper-step label="step 3">
+    <paper-step label="step 3" disabled>
       <div>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </div>
     </paper-step>
+
+    <h1>Yooo</h1>
 
   </paper-stepper>
-
+</template>
+</dom-bind>
   </body>
 </html>

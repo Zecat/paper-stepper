@@ -1,13 +1,6 @@
-<link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html">
-<link rel="import" href="../paper-item/paper-item-behavior.html">
-<link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../iron-collapse/iron-collapse.html">
-<link rel="import" href="../paper-behaviors/paper-ripple-behavior.html">
-<link rel="import" href="../neon-animation/neon-animatable-behavior.html">
-<link rel="import" href="../paper-styles/default-theme.html">
+<!-- <link rel="import" href="../iron-collapse/iron-collapse.html"> -->
+<!-- <link rel="import" href="../paper-styles/default-theme.html"> -->
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="step-horizontal-label.html">
-<link rel="import" href="step-vertical-label.html">
 
 <!--
 Missing Doc
@@ -21,33 +14,20 @@ Missing Doc
       :host {
         display: block;
         box-sizing: border-box;
-        outline: 0;
+        /*outline: 0;*/
       }
-      :host(:not([vertical])) {
-        overflow: hidden;
-        @apply(--layout);
-        @apply(--layout-flex);
-      }
-      :host(:not([vertical]):hover){
-        overflow: visible;
-      }
-      #horizontalStepLabel {
-        @apply(--layout-flex);
-      }
-      :host(:focus:not([opened]):not([saved])) step-horizontal-label ::content #badge {
-        background: var(--paper-step-selectable-hovered-badge-background, --paper-grey-500);
-      }
-      :host([vertical]) {
+
+      /*:host([vertical]) {
         @apply(--layout-vertical);
-      }
-      #collapse {
+      }*/
+      /*#collapse {
         --iron-collapse-transition-duration: var(--paper-vertical-step-transition-duration, 500ms);
         @apply(--layout-horizontal);
       }
       #stepWrapper {
-        @apply(--layout-flex);
+        @apply(--layout-flex);*/
         /*should be 48px on large screen?*/
-        padding-right: 24px;
+        /*padding-right: 24px;
       }
       #paperStepWrapper {
         max-height: calc(var(--paper-vertical-step-max-height, 400px) - 92px);
@@ -58,37 +38,23 @@ Missing Doc
         background: var(--divider-color, --paper-grey-300);
         margin-left: 36px;
         margin-right: 24px;
-      }
+      }*/
       /**
        * Vertical Buttons
        */
-      .iron-collapse-closed {
+      /*.iron-collapse-closed {
         display: none !important;
-      }
+      }*/
     </style>
 
-    <slot></slot>
+    <div id="contentContainer">
+      <slot></slot>
+    </div>
 
-    <!-- horizontal step layout -->
-
-    <template is="dom-if" if="[[!vertical]]">
-      <step-horizontal-label
-        id="horizontalStepLabel"
-        editable="[[editable]]"
-        label="[[label]]"
-        alternative-label="[[_alternativeLabel]]"
-        optional="[[optional]]"
-        opened="[[opened]]"
-        selectable="[[selectable]]"
-        index="[[index]]"
-        saved="[[saved]]"
-        stepper-data="[[_stepperData]]">
-      </step-horizontal-label>
-    </template>
 
     <!-- vertical step layout -->
 
-    <template is="dom-if" if="[[vertical]]">
+    <!-- <template>
       <step-vertical-label
         id="verticalStepLabel"
         editable="[[editable]]"
@@ -100,25 +66,21 @@ Missing Doc
         index="[[index]]"
         saved="[[saved]]">
       </step-vertical-label>
-      <iron-collapse id="collapse" opened="[[opened]]">
-        <div id="contentConnectorLine"></div>
-        <div id="stepWrapper">
-          <div id="paperStepWrapper">
-          </div>
-        </div>
-      </iron-collapse>
-    </template>
+    </template> -->
+
+    <!-- <iron-collapse id="collapse" opened="[[opened]]">
+    <div id="contentConnectorLine"></div>
+    <div id="stepWrapper">
+    <div id="paperStepWrapper">
+  </div>
+</div>
+</iron-collapse> -->
   </template>
 
   <script>
     Polymer({
 
       is: 'paper-step',
-
-      behaviors: [
-        Polymer.PaperItemBehavior,
-        Polymer.PaperRippleBehavior
-      ],
 
       /**
        * Fired when the step has been saved.
@@ -168,7 +130,7 @@ Missing Doc
          */
         selectable: {
           type: Boolean,
-          computed: '_computeSelectable(disabled, _stepperData.linear, saved, editable, _previousSaved)',
+          computed: '_computeSelectable(disabled, saved, editable)',
           reflectToAttribute: true,
           notify: true
         },
@@ -202,38 +164,6 @@ Missing Doc
           readOnly: true,
           reflectToAttribute: true
         },
-        /**
-         * Missing Doc
-         */
-        _alternativeLabel: {
-          type: Boolean,
-          readOnly: true
-        },
-        /**
-         * Missing Doc
-         */
-        _optionalText: {
-          type: Boolean,
-          readOnly: true
-        },
-        /**
-         * Missing Doc
-         */
-        _attrForPrimaryButtonText: {
-          type: String,
-          readOnly: true
-        },
-        /**
-         * A reference to the parent stepper
-         */
-        _stepper: {
-          type: Object,
-          readOnly: true
-        },
-        _stepperData: {
-          type: Object,
-          readOnly: true
-        },
         _canSkip: {
           type: Boolean,
           readOnly: true
@@ -242,35 +172,26 @@ Missing Doc
           type: Boolean,
           readOnly: true
         },
-        horizontalLabelContainer: {
-          type: HTMLElement
-        },
-        horizontalLabelElement: {
-          type: HTMLElement
-        },
-        labelElement: {
-          type: HTMLElement
-        }
       },
 
-      listeners: {
-        'paper-step-vertical-skip-tapped': 'skip',
-        'paper-step-vertical-back-tapped': 'back',
-        'paper-step-vertical-continue-tapped': 'continue',
-        'tap': '_tapHandler'
+      _instanceProps: {
+        label: true,
+        opened: true
       },
 
       observers: [
-        '_toggleClassPosition(index, _stepperData.stepNumber, vertical, labelElement)',
-        '_verticalChange(vertical)',
-        '_focusedChanged(receivedFocusFromKeyboard)',
-        '_labelElementChanged(_labelElement)',
-        '_updateLabel(horizontalLabelContainer, horizontalLabelElement)'
+        '_forwardLabelElementProp("label", label, labelElement)',
+        '_forwardLabelElementProp("editable", editable, labelElement)',
+        '_forwardLabelElementProp("optional", optional, labelElement)',
+        '_forwardLabelElementProp("opened", opened, labelElement)',
+        '_forwardLabelElementProp("selectable", selectable, labelElement)',
+        '_forwardLabelElementProp("index", index, labelElement)',
+        '_forwardLabelElementProp("saved", saved, labelElement)',
+        '_forwardLabelElementProp("disabled", disabled, labelElement)',
       ],
 
-      _updateLabel(horizontalLabelContainer, horizontalLabelElement) {
-        console.log('prout')
-        Polymer.dom(horizontalLabelContainer).appendChild(horizontalLabelElement);
+      _forwardLabelElementProp(prop, value, labelElement) {
+        labelElement[prop] = value;
       },
 
       _savedChanged: function(newValue, oldValue) {
@@ -281,26 +202,8 @@ Missing Doc
         }
       },
 
-      _focusedChanged: function(receivedFocusFromKeyboard) {
-        if (receivedFocusFromKeyboard) {
-          this.ensureRipple();
-          // generate a ripple effect from the center of the badge
-          var badge = this._rippleContainer.$.badge;
-          var badgePos = badge.getBoundingClientRect();
-          var rippleX = badgePos.left + 12;
-          var rippleY = badgePos.top + 12;
-          this._ripple.downAction({detail: {x: rippleX, y: rippleY}});
-        }
-        if (this.hasRipple()) {
-          this._ripple.holdDown = receivedFocusFromKeyboard;
-        }
-      },
-
-      _tapHandler: function(e) {
-        var rootTarget = Polymer.dom(e).rootTarget;
-        if (rootTarget !== this && rootTarget !== this._rippleContainer) {
-          e.stopImmediatePropagation();
-        }
+      select: function() {
+        this.fire('paper-step-select');
       },
 
       /**
@@ -308,7 +211,7 @@ Missing Doc
        */
       skip: function() {
         // would it be better to send an event?
-        this._stepper.progress();
+        this.fire('paper-stepper-forward');
       },
 
       /**
@@ -316,7 +219,7 @@ Missing Doc
        */
       back: function() {
         // would it be better to send an event?
-        this._stepper.back();
+        this.fire('paper-stepper-back');
       },
 
       /**
@@ -343,81 +246,16 @@ Missing Doc
       continue: function() {
         if (this.save()) {
           // would it be better to send an event?
-          this._stepper.progress();
+          this.fire('paper-stepper-forward');
           return true;
         }
         return false;
       },
 
-      _toggleClassPosition: function(index, stepNumber, vertical, labelElement) {
-        this.async(function() {
-          this.toggleClass('first-step', (index == 1), labelElement);
-          this.toggleClass('last-step', (index == stepNumber), labelElement);
-        });
-      },
-
-      _verticalChange: function(vertical) {
-        this.async(function() {
-
-          if (vertical) {
-            if (!this.verticalLabelElement) {
-              this.verticalLabelElement = this.$$('#verticalStepLabel');
-            }
-          } else if(!this.horizontalLabelElement) {
-            this.horizontalLabelElement = this.$$('#horizontalStepLabel');
-          }
-
-          this.cc = this.getContentChildren()[0] || this.cc;
-          var slotContainer = vertical ? this.$$('#paperStepWrapper') : this;
-          Polymer.dom(slotContainer).appendChild(this.cc);
-
-          this.labelElement = vertical ? this.verticalLabelElement : this.horizontalLabelElement;
-          // reset the ripple
-          this._ripple = false;
-          this._rippleContainer = this.labelElement;
-        }.bind(this));
-      },
-
-      _computeSelectable: function(disabled, linear, saved, editable, previousSaved) {
+      _computeSelectable: function(disabled) {
         // TODO: factorize the expression
-        return !disabled && ( (!linear || previousSaved) && (!saved || editable) || (editable && saved));
-      },
-
-      _computeDisabled: function(selectable) {
-        // disabled is used by IronMenuBehavior in paper-stepper
-        // TODO: remove selectable attribute and use disabled instead
-        return !selectable;
-      },
-
-      _choosePrimaryButtonText: function(_attrForPrimaryButtonText) {
-        return this._stepperData[_attrForPrimaryButtonText];
-      },
-
-      /**
-       * Overriden from paper-ripple-behavior
-       * TODO: post issue about that ?
-       */
-      ensureRipple: function(optTriggeringEvent) {
-      if (!this.hasRipple()) {
-        this._ripple = this._createRipple();
-        this._ripple.noink = this.noink;
-        var rippleContainer = this._rippleContainer || this.root;
-        if (rippleContainer) {
-          // ------- line changed -------
-          Polymer.dom(rippleContainer.root).appendChild(this._ripple);
-        }
-        if (optTriggeringEvent) {
-          // Check if the event happened inside of the ripple container
-          // Fall back to host instead of the root because distributed text
-          // nodes are not valid event targets
-          var domContainer = Polymer.dom(this._rippleContainer || this);
-          var target = Polymer.dom(optTriggeringEvent).rootTarget;
-          if (domContainer.deepContains( /** @type {Node} */(target))) {
-            this._ripple.uiDownAction(optTriggeringEvent);
-          }
-        }
+        return !disabled;
       }
-    },
 
     });
 

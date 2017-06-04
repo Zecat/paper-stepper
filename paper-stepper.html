@@ -1,18 +1,17 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-selector/iron-selectable.html">
-<link rel="import" href="../iron-menu-behavior/iron-menu-behavior.html">
-<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-styles/default-theme.html">
 <link rel="import" href="../paper-styles/shadow.html">
 <link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="animations/fade-in-slide-from-right-animation.html">
-<link rel="import" href="animations/fade-out-slide-right-animation.html">
-<link rel="import" href="animations/fade-in-slide-from-left-animation.html">
-<link rel="import" href="animations/fade-out-slide-left-animation.html">
 <link rel="import" href="paper-step.html">
+<link rel="import" href="paper-horizontal-labels-container.html">
+<link rel="import" href="step-horizontal-label.html">
+<link rel="import" href="step-vertical-label.html">
 
 <!--
 Missing Doc
@@ -101,54 +100,89 @@ Custom property | Description | Default
 @hero hero.svg
 -->
 <dom-module id="paper-stepper">
-  <template>
+  <template strip-whitespace>
     <style>
       :host {
         display: block;
         box-sizing: border-box;
-        @apply(--layout-vertical);
-        @apply(--shadow-elevation-2dp);
-        background: white;
-        border-radius: 1px;
       }
       #verticalResponsiveWidth {
         width: var(--paper-stepper-vertical-responsive-width, 0px);
         visibility: hidden;
       }
-
-      /* Horizontal layout styles */
-
-      :host([vertical]) {
+      /*:host([vertical]) {
         padding: 4px 0;
         @apply(--layout-scroll);
         max-height: var(--paper-stepper-vertical-max-height);
-      }
-      :host(:not([vertical])) {
-        position: relative;
-      }
-      :host(:not([vertical])) #content-wrapper {
-        @apply(--shadow-elevation-2dp);
-        @apply(--layout-horizontal);
-        @apply(--layout-flex-none);
-        @apply(--layout-justified);
-        background: var(--paper-stepper-horizontal-label-wrapper-background, --primary-background-color);
-        border-radius: 1px;
-        @apply(--paper-stepper-horizontal-header);
-      }
-      .flex {
-        @apply(--layout-flex);
-      }
+      }*/
       [hidden] {
         display: none;
       }
+      #verticalStepsContainer {
+        @apply --layout-vertical;
+      }
     </style>
+
+    <slot
+      id="horizontalStepLabelTemplateSlot"
+      name="horizontal-step-label-template"
+    >
+      <template id="horizontalStepLabelTemplate">
+        <step-horizontal-label
+          editable="{{editable}}"
+          label="{{label}}"
+          optional="[[optional]]"
+          opened$="{{opened}}"
+          selectable="[[selectable]]"
+          index="{{index}}"
+          saved="{{saved}}"
+          disabled="[[disabled]]"
+          step="[[step]]"
+        ></step-horizontal-label>
+      </template>
+    </slot>
 
     <!-- Hidden block with width equals to the responsive threshold -->
     <div id="verticalResponsiveWidth"></div>
 
-    <iron-menu id="horizontalLabelsContainer"></iron-menu>
+    <paper-horizontal-labels-container
+      id="horizontalLabelsContainer"
+      hidden$="[[vertical]]"
+      selected-attribute="opened"
+      on-iron-select="_handleHorizontalLabelsSelect"
+    ></paper-horizontal-labels-container>
 
-    <slot></slot>
+    <slot id="horizontalStepsContainerTemplateSlot" name="horizontal-steps-container-template">
+      <template id="stepsContainerTemplate">
+        <iron-pages selected="{{selected}}"></iron-pages>
+      </template>
+    </slot>
+
+    <paper-listbox
+      id="verticalStepsContainer"
+      hidden$="[[!vertical]]"
+    >
+      <template is="dom-repeat" items="{{items}}">
+        <step-vertical-label
+          editable="{{item.editable}}"
+          label="{{item.label}}"
+          optional="[[item.optional]]"
+          opened$="{{item.opened}}"
+          selectable="[[item.selectable]]"
+          index="{{item.index}}"
+          saved="{{item.saved}}"
+          disabled="[[disabled]]"
+          step="[[item.step]]"
+          style$="order: [[item.index]];"
+        ></step-vertical-label>
+      </template>
+
+    </paper-listbox>
+
+    <!-- TODO: create the slot dynamically -->
+    <slot id="stepsSlot"></slot>
+
+
 
     <!-- <template is="dom-if" id="[[!vertical]]"> -->
       <!-- <iron-pages selected="{{selected}}">
@@ -156,7 +190,7 @@ Custom property | Description | Default
       </iron-pages> -->
     <!-- </template> -->
 
-    <slot></slot>
+    <!-- <slot></slot> -->
 
 
   </template>
@@ -169,7 +203,8 @@ Custom property | Description | Default
 
       behaviors: [
         Polymer.IronResizableBehavior,
-        Polymer.IronSelectableBehavior
+        Polymer.IronSelectableBehavior,
+        Polymer.Templatizer
       ],
 
       /**
@@ -193,23 +228,11 @@ Custom property | Description | Default
           notify: true,
           reflectToAttribute: true
         },
-        linear: {
-          type: Boolean,
-          value: false
-        },
         completed: {
           type: Boolean,
           value: false,
           notify: true,
           computed: '_computeCompleted(stepNumber, savedStepNumber)'
-        },
-        hasSkipButton: {
-          type: Boolean,
-          value: false
-        },
-        hasBackButton: {
-          type: Boolean,
-          value: false
         },
         stepNumber: {
           type: Number,
@@ -225,26 +248,9 @@ Custom property | Description | Default
           value: 'opened',
           readOnly: true
         },
-        /**
-         * Note: if you decide to change this attribute, take care to only include `<paper-step>` elements in your `<paper-stepper>`
-         */
-        selectable: {
-          value: 'paper-step'
-        },
-        /**
-         * Multi mode is not allowed for now in paper-stepper.
-         */
-        mutli: {
-          value: false,
-          readOnly: true
-        },
         responsiveCheckFrequence: {
           type: Number,
           value: 200
-        },
-        animateInitialSelection: {
-          type: Boolean,
-          value: false
         },
         _skipStepIndex: {
           type: Number,
@@ -265,33 +271,36 @@ Custom property | Description | Default
         },
         _selectedIndex: {
           type: Number,
-          observer: '_selectedIndexChanged',
           readOnly: true,
           value: -1
+        },
+        activateEvent: {
+          type: String,
+          value: 'paper-step-select'
+        },
+        selectable: {
+          type: String,
+          value: 'paper-step'
         }
       },
 
-      _previousSelected: null,
-
-      keyBindings: {
-        'left': '_onLeftKey',
-        'right': '_onRightKey'
+      _handleHorizontalLabelsSelect: function(e) {
+        this.selectIndex(this.indexOf(e.detail.item.step));
       },
 
       listeners: {
-        'iron-items-changed': '_initializeSteps',
+        'iron-items-changed': '_ironItemsChanged',
         'paper-step-saved': '_stepSaved',
         'paper-step-unsaved': '_stepUnsaved',
-        'transitionend': '_transitionEnd',
         'iron-resize': '_resizeHandler',
-        'neon-animation-finish': '_onNeonAnimationFinish'
+        'paper-stepper-forward': 'skip',
+        'paper-stepper-back': 'back',
+        'paper-stepper-continue': 'continue',
       },
 
       observers: [
-        '_forwardCanSkip(_canSkip, selectedItem)',
-        '_forwardHasBackStep(_hasBackStep, selectedItem)',
-        '_forwardVertical(vertical)',
-        '_forwardAlternativeLabel(alternativeLabel)',
+        '_verticalChanged(vertical)',
+        '_insertSteps(items, stepContainer)'
       ],
 
       attached: function() {
@@ -353,34 +362,34 @@ Custom property | Description | Default
       /**
        * Work around: Override the method from IronSelectableBehavior to only allow the selection of selectable step. https://github.com/PolymerElements/iron-selector/issues/99
        */
-      _selectSelected: function(selected) {
-        var item = this._valueToItem(this.selected);
-        if (item) {
-          var selectable = item.selectable;
-          if (selectable == undefined) {
-            // if selectable isn't define it means the step is not yet ready for selection
-            // and this method will be recalled by the initialization method.
-            return;
-          } else if (!selectable) {
-            //reset previous selected if non null and selectable or deselect
-            if (this._previousSelected && this._previousSelected.selectable) {
-              this.selected = this._valueForItem(this.previousSelected);
-            } else {
-              this.selected = null;
-            }
-            this._previousSelected = null;
-            return;
-          }
-        }
-        this._selection.select(item);
-        this._previousSelected = item;
-        this._set_selectedIndex(this.indexOf(item));
-        // Check for items, since this array is populated only when attached
-        // Since Number(0) is falsy, explicitly check for undefined
-        if (this.fallbackSelection && this.items.length && (this._selection.get() === undefined)) {
-          this.selected = this.fallbackSelection;
-        }
-      },
+      // _selectSelected: function(selected) {
+      //   var item = this._valueToItem(this.selected);
+      //   if (item) {
+      //     var selectable = item.selectable;
+      //     if (selectable == undefined) {
+      //       // if selectable isn't define it means the step is not yet ready for selection
+      //       // and this method will be recalled by the initialization method.
+      //       return;
+      //     } else if (!selectable) {
+      //       //reset previous selected if non null and selectable or deselect
+      //       if (this._previousSelected && this._previousSelected.selectable) {
+      //         this.selected = this._valueForItem(this.previousSelected);
+      //       } else {
+      //         this.selected = null;
+      //       }
+      //       this._previousSelected = null;
+      //       return;
+      //     }
+      //   }
+      //   this._selection.select(item);
+      //   this._previousSelected = item;
+      //   this._set_selectedIndex(this.indexOf(item));
+      //   // Check for items, since this array is populated only when attached
+      //   // Since Number(0) is falsy, explicitly check for undefined
+      //   if (this.fallbackSelection && this.items.length && (this._selection.get() === undefined)) {
+      //     this.selected = this.fallbackSelection;
+      //   }
+      // },
 
       _stepSaved: function(e) {
         this._setSavedStepNumber(this.savedStepNumber+1);
@@ -390,14 +399,38 @@ Custom property | Description | Default
         this._setSavedStepNumber(this.savedStepNumber-1);
       },
 
-      _forwardVertical: function(vertical) {
+      _ensureHorizontalStepsContainerPopulated() {
+        // TODO: only populate if needed
+        // TODO: add Polymer 2 support
+        var stepsContainerTemplate = this.getContentChildren('#horizontalStepsContainerTemplateSlot')[0];
+        // TODO: check for template to be valid
+        this.templatize(stepsContainerTemplate);
+        this.horizontalStepContainer = this.stamp();
+        Polymer.dom(this.root).appendChild(this.horizontalStepContainer.root);
+        // this.horizontalStepContainer._nodes[0] is the first node of the template, what's the better way to get it ?
+        Polymer.dom(this.horizontalStepContainer._nodes[0]).appendChild(this.$.stepsSlot);
+      },
+
+      _ensureVertcalStepsContainerPopulated() {
+        console.log(this.$.stepsSlot);
+        Polymer.dom(this.$.verticalStepsContainer).appendChild(this.$.stepsSlot);
+      },
+
+      _verticalChanged: function(vertical) {
+        if (!vertical) {
+          this._ensureHorizontalStepsContainerPopulated();
+        } else {
+          this._ensureVertcalStepsContainerPopulated();
+        }
+
         if (this.stepNumber) {
           this.items.map(function(step) {
             step._setVertical(vertical);
-            step.horizontalLabelContainer = this.$.horizontalLabelsContainer;
           }.bind(this));
         }
-        this.setAttribute('role', vertical ? 'menu': 'menubar');
+      },
+
+      _insertSteps(items, stepContainer) {
       },
 
       // if (this.stepNumber) {
@@ -407,105 +440,32 @@ Custom property | Description | Default
       //     });
       //   }.bind(this));
       // }
-
-      _forwardAlternativeLabel: function(alternativeLabel) {
-        if (this.stepNumber) {
-          this.items.map(function(step) {
-            step._set_alternativeLabel(alternativeLabel);
-          });
-        }
-      },
-
+      //
       _computeStepNumber: function(length) {
         return length;
       },
 
-      _selectedIndexChanged: function(newValue, oldValue) {
-        if (!this.vertical && newValue >=0 && oldValue >= 0) {
-          var oldStep = this.items[oldValue], newStep = this.items[newValue];
-          if (newStep.classList.contains('neon-animating')) {
-            this.cancelAnimation();
-          }
-          if (this._previousAnimatedStep && this._previousAnimatedStep.classList.contains('neon-animating')) {
-            this.cancelAnimation();
-            this.toggleClass('neon-animating', false, this._previousAnimatedStep);
-          }
-          var forward = newValue - oldValue > 0;
+      _ironItemsChanged: function(e) {
 
-          this.animationConfig = {
-            'new-step-entry': {
-              animatable: newStep,
-              type: forward ?
-                newStep.horizontalHigherEntryAnimation && 'higher-step-entry' :
-                newStep.horizontalLowerEntryAnimation && 'lower-step-entry'
-            },
-            'old-step-exit': {
-              animatable: oldStep,
-              type: forward ?
-                oldStep.horizontalLowerExitAnimation && 'lower-step-exit' :
-                oldStep.horizontalHigherExitAnimation && 'higher-step-exit'
-            }
-          };
-          if (this.animationConfig['new-step-entry'].type) {
-            this.playAnimation('new-step-entry', {step: newStep});
-            this.toggleClass('neon-animating', true, newStep);
-          }
-          if (this.animationConfig['old-step-exit'].type) {
-            this.playAnimation('old-step-exit', {step: oldStep});
-            this.toggleClass('neon-animating', true, oldStep);
-          }
+        if (Polymer.dom(e).rootTarget != this) return;
 
-          this._previousAnimatedStep = oldStep;
-        }
-      },
+        var horizontalLabelsContainer = this.$.horizontalLabelsContainer;
+        var horizontalStepLabelTemplate = this.getContentChildren('#horizontalStepLabelTemplateSlot')[0];
+        this.templatize(horizontalStepLabelTemplate);
 
-      _onNeonAnimationFinish: function(event) {
-        var step = event.detail.step;
-        if (step) {
-          this.toggleClass('neon-animating', false, step);
-        }
-      },
+        this.items.forEach(function(node, index) {
+          node.labelElement = this.stamp({step: node});
+          Polymer.dom(horizontalLabelsContainer).appendChild(node.labelElement.root);
+        }.bind(this));
 
-      _forwardCanSkip: function(_canSkip, selectedItem) {
-        selectedItem._set_canSkip(_canSkip);
-      },
-
-      _forwardHasBackStep: function(_hasBackStep, selectedItem) {
-        selectedItem._set_hasBackStep(_hasBackStep);
-      },
-
-      _initializeSteps: function() {
         var savedStepNumber = 0;
         var data = {
           linear: this.linear,
-          backText: this.backText,
-          optionalText: this.optionalText,
-          finishText: this.finishText,
-          continueText: this.continueText,
-          skipText: this.skipText,
-          updateText: this.updateText,
-          hasSkipButton: this.hasSkipButton,
-          hasBackButton: this.hasBackButton,
           stepNumber: this.stepNumber
         };
         this.items.map(function(step, i) {
-          if (this.horizontalHigherEntryAnimation && !step.horizontalHigherEntryAnimation) {
-            step.horizontalHigherEntryAnimation = this.horizontalHigherEntryAnimation;
-          }
-          if (this.horizontalHigherExitAnimation && !step.horizontalHigherExitAnimation) {
-            step.horizontalHigherExitAnimation = this.horizontalHigherExitAnimation;
-          }
-          if (this.horizontalLowerEntryAnimation && !step.horizontalLowerEntryAnimation) {
-            step.horizontalLowerEntryAnimation = this.horizontalLowerEntryAnimation;
-          }
-          if (this.horizontalLowerExitAnimation && !step.horizontalLowerExitAnimation) {
-            step.horizontalLowerExitAnimation = this.horizontalLowerExitAnimation;
-          }
           step._setIndex(i + 1);
-          step._set_stepper(this);
           step._setVertical(this.vertical);
-          step._set_alternativeLabel(this.alternativeLabel);
-          step._set_stepperData(data);
           // true for index 0
           if (step.saved) {
             savedStepNumber++;
@@ -514,7 +474,7 @@ Custom property | Description | Default
 
         this._setSavedStepNumber(savedStepNumber);
         // method from IronSelectableBehavior
-        this._updateSelected();
+        // this._updateSelected();
       },
 
       _compute_skipStepIndex: function(_selectedIndex) {
@@ -550,10 +510,6 @@ Custom property | Description | Default
           return true;
         }
         return false;
-      },
-
-      _choosePrimaryButtonText: function(_attrForSelectedStepPrimaryButtonText) {
-        return this[_attrForSelectedStepPrimaryButtonText];
       },
 
       _resizeHandler: function() {
