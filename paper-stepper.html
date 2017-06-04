@@ -411,6 +411,14 @@ Custom property | Description | Default
       },
 
       _ensureHorizontalStepsContainerPopulated() {
+        if (this.horizontalStepContainer) return;
+          this.items.forEach((step, i) => {
+            step.setAttribute('slot', 'step'+i);
+            var a = document.createElement('content');
+            a.setAttribute('name', 'step0')
+            Polymer.dom(this).appendChild(a);
+          })
+
         // TODO: only populate if needed
         // TODO: add Polymer 2 support
         var stepsContainerTemplate = this.getContentChildren('#horizontalStepsContainerTemplateSlot')[0];
