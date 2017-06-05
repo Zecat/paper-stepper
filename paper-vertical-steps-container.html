@@ -12,6 +12,29 @@
 
     <slot id="slot"></slot>
 
+
+        <!-- <template>
+          <step-vertical-label
+            id="verticalStepLabel"
+            editable="[[editable]]"
+            label="[[label]]"
+            optional="[[optional]]"
+            opened="[[opened]]"
+            selectable="[[selectable]]"
+            stepper-data="[[_stepperData]]"
+            index="[[index]]"
+            saved="[[saved]]">
+          </step-vertical-label>
+        </template>
+
+        <iron-collapse id="collapse" opened="[[opened]]">
+        <div id="contentConnectorLine"></div>
+        <div id="stepWrapper">
+        <div id="paperStepWrapper">
+      </div>
+    </div>
+  </iron-collapse>-->
+
   </template>
   <script>
     Polymer({
@@ -21,6 +44,18 @@
         Polymer.IronMenuBehavior
       ],
 
+      listeners: {
+        'iron-items-changed': '_handleIronItemsChanged'
+      },
+
+      _handleIronItemsChanged: function(e) {
+        e.detail.addedNodes.forEach(function(node) {
+          if (node.localName === 'paper-step') {
+            this.prepareStepInsertion(node);
+          }
+        }.bind(this));
+      },
+
       prepareStepInsertion: function(step) {
         var i = step.index;
         this.addVerticalStepSlot(i);
@@ -29,9 +64,7 @@
       },
 
       addVerticalStepSlot: function(index) {
-        setTimeout(function() {
-          Polymer.dom(this.root).insertBefore(this.createSlot('vertical-step-' + index), this.$.slot);
-        }.bind(this), 500)
+        Polymer.dom(this.root).insertBefore(this.createSlot('vertical-step-' + index), this.$.slot);
       },
 
       createSlot: function(name) {

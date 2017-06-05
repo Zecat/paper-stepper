@@ -187,23 +187,6 @@ Custom property | Description | Default
       hidden$="[[!vertical]]"
     >
     </paper-vertical-steps-container>
-    <!-- <paper-listbox
-      id="verticalStepsContainer"
-      hidden$="[[!vertical]]"
-      selectable="step-vertical-label"
-    >
-      <slot name="vertical-step-0"></slot>
-      <slot name="vertical-step-1"></slot>
-      <h2>TTTTT</h2>
-      <slot name="vertical-step-2"></slot>
-    </paper-listbox> -->
-
-    <!-- <paper-vertical-steps-container
-      id="paperVerticalStepsContainer"
-      hidden$="[[!vertical]]"
-    >
-
-    </paper-vertical-steps-container> -->
 
 <div hidden$="[[vertical]]">
 
@@ -343,7 +326,6 @@ Custom property | Description | Default
           this.items.forEach(function(step, i) {
             // TODO: this should not be here
             step._setIndex(++i);
-            verticalStepsContainer.prepareStepInsertion(step);
           }.bind(this))
           Polymer.dom(verticalStepsContainer).appendChild(this.$.stepsSlot);
         }
