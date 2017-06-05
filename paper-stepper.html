@@ -11,7 +11,6 @@
 <link rel="import" href="paper-step.html">
 <link rel="import" href="paper-horizontal-labels-container.html">
 <link rel="import" href="paper-vertical-steps-container.html">
-<link rel="import" href="step-horizontal-label.html">
 <link rel="import" href="step-vertical-label.html">
 
 <!--
@@ -124,24 +123,6 @@ Custom property | Description | Default
       }
     </style>
 
-    <slot
-      id="horizontalStepLabelTemplateSlot"
-      name="horizontal-step-label-template"
-    >
-      <template>
-        <step-horizontal-label
-          editable="{{editable}}"
-          label="{{label}}"
-          optional="[[optional]]"
-          opened$="{{opened}}"
-          selectable="[[selectable]]"
-          index="{{index}}"
-          saved="{{saved}}"
-          disabled="[[disabled]]"
-          step="[[step]]"
-        ></step-horizontal-label>
-      </template>
-    </slot>
 
     <slot
       id="verticalStepLabelTemplateSlot"
@@ -170,7 +151,9 @@ Custom property | Description | Default
       hidden$="[[vertical]]"
       selected-attribute="opened"
       on-iron-select="_handleHorizontalLabelsSelect"
-    ></paper-horizontal-labels-container>
+    >
+      <slot name="horizontal-step-label-template"></slot>
+    </paper-horizontal-labels-container>
 
     <slot
       id="horizontalStepsContainerTemplateSlot"
@@ -355,21 +338,25 @@ Custom property | Description | Default
 
         if (Polymer.dom(e).rootTarget != this) return;
 
-        var horizontalLabelsContainer = this.$.horizontalLabelsContainer;
-        var horizontalStepLabelTemplate = this.getContentChildren('#horizontalStepLabelTemplateSlot')[0];
-        this.templatize(horizontalStepLabelTemplate);
-
         this.items.forEach(function(step, i) {
-          step._setIndex(i + 1);
-          step._setVertical(this.vertical);
-          // true for index 0
-          if (step.saved) {
-            savedStepNumber++;
-          }
+            step._setIndex(i + 1);
+        });
 
-          step.labelElement = this.stamp({step: step});
-          Polymer.dom(horizontalLabelsContainer).appendChild(step.labelElement.root);
-        }.bind(this));
+        if (!this.vertical) {
+          this.$.horizontalLabelsContainer.labelizeSteps(this.items);
+        }
+        // var horizontalLabelsContainer = this.$.horizontalLabelsContainer;
+        // var horizontalStepLabelTemplate = this.getContentChildren('#horizontalStepLabelTemplateSlot')[0];
+        // this.templatize(horizontalStepLabelTemplate);
+        //
+        //   // true for index 0
+        //   if (step.saved) {
+        //     savedStepNumber++;
+        //   }
+        //
+        //   step.labelElement = this.stamp({step: step});
+        //   Polymer.dom(horizontalLabelsContainer).appendChild(step.labelElement.root);
+        // }.bind(this));
 
         var verticalLabelsContainer = this.$.verticalStepsContainer;
         var verticalStepLabelTemplate = this.getContentChildren('#verticalStepLabelTemplateSlot')[0];

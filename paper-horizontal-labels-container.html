@@ -1,6 +1,7 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-menu-behavior/iron-menubar-behavior.html">
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="step-horizontal-label.html">
 
 <dom-module id="paper-horizontal-labels-container">
   <template>
@@ -14,7 +15,22 @@
       }
     </style>
 
-    <slot id="labelTemplateSlot" name="label-template"></slot>
+    <slot id="labelTemplateSlot" name="label-template">
+      <template>
+        <step-horizontal-label
+          editable="{{editable}}"
+          label="{{label}}"
+          optional="[[optional]]"
+          opened$="{{opened}}"
+          selectable="[[selectable]]"
+          index="{{index}}"
+          saved="{{saved}}"
+          disabled="[[disabled]]"
+          step="[[step]]"
+        ></step-horizontal-label>
+      </template>
+    </slot>
+
     <slot></slot>
 
   </template>
@@ -23,7 +39,8 @@
       is: 'paper-horizontal-labels-container',
 
       behaviors: [
-        Polymer.IronMenubarBehavior
+        Polymer.IronMenubarBehavior,
+        Polymer.Templatizer
       ],
 
       properties: {
@@ -36,6 +53,45 @@
       observers: [
         '_updateAlternativeLabels(alternativeLabel, items.splices)'
       ],
+
+      listeners: {
+        'iron-items-changed': '_handleIronItemsChanged'
+      },
+
+      updateTemplate: function() {
+        var labelTemplateSlot = this.getContentChildren('#labelTemplateSlot')[0];
+        this.templatize(labelTemplateSlot);
+      },
+
+      labelizeSteps: function(steps) {
+        this.updateTemplate();
+        steps.forEach(function(step) {
+          step.labelElement = this.stamp({step: step});
+          Polymer.dom(this).appendChild(step.labelElement.root);
+        }.bind(this));
+      },
+
+      _handleIronItemsChanged: function(e) {
+
+        var horizontalLabelsContainer = this.$.horizontalLabelsContainer;
+        console.log(e.detail.addedNodes);
+
+        // this.items.forEach(function(step, i) {
+        //   step._setIndex(i + 1);
+        //   step._setVertical(this.vertical);
+        //   // true for index 0
+        //   if (step.saved) {
+        //     savedStepNumber++;
+        //   }
+        //
+        // }.bind(this));
+        //
+        // e.detail.addedNodes.forEach(function(node) {
+        //   if (node.localName === 'paper-step') {
+        //     this.prepareStepInsertion(node);
+        //   }
+        // }.bind(this));
+      },
 
       _updateAlternativeLabels(alternativeLabel, itemsSplices) {
         // TODO
