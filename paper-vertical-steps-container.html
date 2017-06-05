@@ -1,0 +1,51 @@
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-menu-behavior/iron-menu-behavior.html">
+<link rel="import" href="../polymer/polymer.html">
+
+<dom-module id="paper-vertical-steps-container">
+  <template>
+    <style>
+      :host {
+        @apply(--layout-vertical);
+      }
+    </style>
+
+    <slot id="slot"></slot>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'paper-vertical-steps-container',
+
+      behaviors: [
+        Polymer.IronMenuBehavior
+      ],
+
+      prepareStepInsertion: function(step) {
+        var i = step.index;
+        this.addVerticalStepSlot(i);
+        step.setAttribute('slot', 'vertical-step-' + i);
+        step.style.order = i*2;
+      },
+
+      addVerticalStepSlot: function(index) {
+        setTimeout(function() {
+          Polymer.dom(this.root).insertBefore(this.createSlot('vertical-step-' + index), this.$.slot);
+        }.bind(this), 500)
+      },
+
+      createSlot: function(name) {
+        var slot;
+        if (Polymer.Element) {
+          slot = document.createElement('slot');
+          if (name) slot.setAttribute('name', name);
+        } else {
+          slot = document.createElement('content');
+          if (name) slot.setAttribute('select', "[slot='" + name + "']");
+        }
+        return slot;
+      },
+
+    });
+  </script>
+</dom-module>
