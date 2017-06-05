@@ -185,7 +185,10 @@ Custom property | Description | Default
       hidden$="[[!vertical]]"
       selectable="step-vertical-label"
     >
-
+      <slot name="vertical-step-0"></slot>
+      <slot name="vertical-step-1"></slot>
+      <h2>TTTTT</h2>
+      <slot name="vertical-step-2"></slot>
     </paper-listbox>
 
 <div hidden$="[[vertical]]">
@@ -412,12 +415,12 @@ Custom property | Description | Default
 
       _ensureHorizontalStepsContainerPopulated() {
         if (this.horizontalStepContainer) return;
-          this.items.forEach((step, i) => {
-            step.setAttribute('slot', 'step'+i);
-            var a = document.createElement('content');
-            a.setAttribute('name', 'step0')
-            Polymer.dom(this).appendChild(a);
-          })
+          // this.items.forEach((step, i) => {
+          //   step.setAttribute('slot', 'step'+i);
+          //   var a = document.createElement('content');
+          //   a.setAttribute('name', 'step0')
+          //   Polymer.dom(this).appendChild(a);
+          // })
 
         // TODO: only populate if needed
         // TODO: add Polymer 2 support
@@ -431,13 +434,25 @@ Custom property | Description | Default
       },
 
       _ensureVertcalStepsContainerPopulated() {
+        // this.items.forEach(function(step, i) {
+        //   step.setAttribute('slot', 'vertical-step-' + i);
+        //   console.log(step);
+        // })
       },
 
       _verticalChanged: function(vertical) {
         if (!vertical) {
           this._ensureHorizontalStepsContainerPopulated();
+          this.items.forEach(function(step, i) {
+            step.removeAttribute('slot');
+          })
         } else {
           this._ensureVertcalStepsContainerPopulated();
+          this.items.forEach(function(step, i) {
+            step.setAttribute('slot', 'vertical-step-' + i);
+            step.style.order = i*2+1;
+            step.verticalLabelElement._nodes[0].style.order = i*2;
+          })
         }
 
         if (this.stepNumber) {
@@ -476,9 +491,7 @@ Custom property | Description | Default
         this.templatize(verticalStepLabelTemplate);
 
         this.items.forEach(function(step, i) {
-          step.style.order = i*2+1;
           step.verticalLabelElement = this.stamp({step: step});
-          step.verticalLabelElement._nodes[0].style.order = i*2;
           Polymer.dom(verticalLabelsContainer).appendChild(step.verticalLabelElement.root);
         }.bind(this));
 
