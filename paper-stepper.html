@@ -257,17 +257,6 @@ Custom property | Description | Default
           notify: true,
           reflectToAttribute: true
         },
-        completed: {
-          type: Boolean,
-          value: false,
-          notify: true,
-          computed: '_computeCompleted(stepNumber, savedStepNumber)'
-        },
-        stepNumber: {
-          type: Number,
-          notify: true,
-          computed: '_computeStepNumber(items.length)'
-        },
         savedStepNumber: {
           type: Number,
           notify: true,
@@ -280,28 +269,6 @@ Custom property | Description | Default
         responsiveCheckFrequence: {
           type: Number,
           value: 200
-        },
-        _skipStepIndex: {
-          type: Number,
-          computed: '_compute_skipStepIndex(_selectedIndex)'
-        },
-        _canSkip: {
-          type: Boolean,
-          notify: true,
-          computed: '_isntNull(_skipStepIndex)'
-        },
-        _backStepIndex: {
-          type: Number,
-          computed: '_compute_backStepIndex(_selectedIndex)'
-        },
-        _hasBackStep: {
-          type: Boolean,
-          computed: '_isntNull(_backStepIndex)'
-        },
-        _selectedIndex: {
-          type: Number,
-          readOnly: true,
-          value: -1
         },
         activateEvent: {
           type: String,
@@ -334,90 +301,6 @@ Custom property | Description | Default
       attached: function() {
         this._responsiveCheck();
       },
-
-      /**
-       * Missing Doc
-       */
-      back: function() {
-        this.selectIndex(this._backStepIndex);
-      },
-
-      /**
-       * @return {Boolean} Try to continue the current step (if no step opened, use the first one).
-       */
-      continue: function() {
-        if (this.selectedItem) {
-          if (this.selectedItem.save()) {
-            this.progress();
-          }
-        }
-      },
-
-      /**
-       * Loops around the steps from the current (if no step opened, from the first one)
-       * in order to open the next selectable unsaved step. Returns true if a step has been opened.
-       */
-      progress: function() {
-        if (!this.stepNumber) {
-          return false;
-        }
-        if (this.completed) {
-          this.selected = null;
-          return true;
-        }
-        for (var i = (this._selectedIndex+1)%this.stepNumber; i != this._selectedIndex; i = (i+1)%this.stepNumber) {
-          if (this.items[i].selectable && !this.items[i].saved) {
-            this.selectIndex(i);
-            this.fire('paper-stepper-progressed');
-            return true;
-          }
-        }
-        return false;
-      },
-
-      /* Deselect and set the steps as unsaved*/
-      reset: function() {
-        this._setSavedStepNumber(0);
-        this.selected = null;
-        if (!this.items.length) {
-          return;
-        }
-        this.items.map(function(step) {
-          step.saved = false;
-        });
-      },
-
-      /**
-       * Work around: Override the method from IronSelectableBehavior to only allow the selection of selectable step. https://github.com/PolymerElements/iron-selector/issues/99
-       */
-      // _selectSelected: function(selected) {
-      //   var item = this._valueToItem(this.selected);
-      //   if (item) {
-      //     var selectable = item.selectable;
-      //     if (selectable == undefined) {
-      //       // if selectable isn't define it means the step is not yet ready for selection
-      //       // and this method will be recalled by the initialization method.
-      //       return;
-      //     } else if (!selectable) {
-      //       //reset previous selected if non null and selectable or deselect
-      //       if (this._previousSelected && this._previousSelected.selectable) {
-      //         this.selected = this._valueForItem(this.previousSelected);
-      //       } else {
-      //         this.selected = null;
-      //       }
-      //       this._previousSelected = null;
-      //       return;
-      //     }
-      //   }
-      //   this._selection.select(item);
-      //   this._previousSelected = item;
-      //   this._set_selectedIndex(this.indexOf(item));
-      //   // Check for items, since this array is populated only when attached
-      //   // Since Number(0) is falsy, explicitly check for undefined
-      //   if (this.fallbackSelection && this.items.length && (this._selection.get() === undefined)) {
-      //     this.selected = this.fallbackSelection;
-      //   }
-      // },
 
       _stepSaved: function(e) {
         this._setSavedStepNumber(this.savedStepNumber+1);
@@ -486,10 +369,6 @@ Custom property | Description | Default
         return slot;
       },
 
-      _computeStepNumber: function(length) {
-        return length;
-      },
-
       _ironItemsChanged: function(e) {
 
         if (Polymer.dom(e).rootTarget != this) return;
@@ -529,41 +408,6 @@ Custom property | Description | Default
         this._setSavedStepNumber(savedStepNumber);
         // method from IronSelectableBehavior
         // this._updateSelected();
-      },
-
-      _compute_skipStepIndex: function(_selectedIndex) {
-        if (_selectedIndex >= 0 && !this.completed) {
-          for (var i=(_selectedIndex+1)%this.stepNumber; i!=_selectedIndex; i=(i+1)%this.stepNumber) {
-            if (this.items[i].selectable && !this.items[i].saved) {
-              return i;
-            }
-          }
-        }
-        return null;
-      },
-
-      _compute_backStepIndex: function(_selectedIndex) {
-        if (_selectedIndex >= 0) {
-          for (var i=_selectedIndex - 1; i >= 0; i--) {
-            if (this.items[i].selectable) {
-              return i;
-            }
-          }
-        }
-        return null
-      },
-
-      _isntNull: function(n) {
-        return n != null;
-      },
-
-      _computeCompleted: function(savedStepNumber, stepNumber) {
-        var completed = stepNumber == savedStepNumber;
-        if (completed) {
-          this.fire('paper-stepper-completed');
-          return true;
-        }
-        return false;
       },
 
       _resizeHandler: function() {
