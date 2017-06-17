@@ -34,7 +34,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     iron-pages {
       background: yellow !important;
     }
-
+    #container {
+      /*background: yellow;*/
+    }
   </style>
 
   <div id="container">
@@ -47,7 +49,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <paper-stepper
     id="stepper"
     selected="{{selected}}"
-    alternative-label
     attr-for-selected="name"
   >
 
@@ -82,13 +83,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </template>
 </dom-bind>
 <script>
-// var scope = document.getElementById('scope');
-//   document.addEventListener('WebComponentsReady', function() {
-//     setTimeout(function() {
-//       var toto = scope.$.stepper.$.horizontalLabelsContainer;
-//       Polymer.dom(document.getElementById('container')).appendChild(toto);
-//     },0)
-//   })
+var scope = document.getElementById('scope');
+  document.addEventListener('WebComponentsReady', function() {
+    setTimeout(function() {
+      var toto = scope.$.stepper.horizontalLabelsContainer;
+      scope.selected="step C"
+      // Polymer.dom(document.getElementById('container')).appendChild(toto);
+    },0)
+  })
 </script>
   </body>
 </html>

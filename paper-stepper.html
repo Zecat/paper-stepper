@@ -99,7 +99,7 @@ Custom property | Description | Default
 @hero hero.svg
 -->
 <dom-module id="paper-stepper">
-  <template strip-whitespace>
+  <template>
     <style>
       :host {
         display: block;
@@ -125,15 +125,16 @@ Custom property | Description | Default
     <!-- Hidden block with width equals to the responsive threshold -->
     <div id="verticalResponsiveWidth"></div>
 
-    <paper-horizontal-labels-container
-      id="horizontalLabelsContainer"
-      hidden$="[[vertical]]"
-      selected="{{selected}}"
-      selected-attribute="opened"
-      attr-for-selected="[[attrForSelected]]"
-    >
-      <slot name="horizontal-step-label-template"></slot>
-    </paper-horizontal-labels-container>
+    <template is="dom-if" if="[[!vertical]]" on-dom-change="_handleHorizontalLabelsContainerDomChange">
+      <paper-horizontal-labels-container
+        id="horizontalLabelsContainer"
+        selected="{{selected}}"
+        selected-attribute="opened"
+        attr-for-selected="[[attrForSelected]]"
+      >
+        <slot name="horizontal-step-label-template"></slot>
+      </paper-horizontal-labels-container>
+    </template>
 
     <slot
       id="horizontalStepsContainerTemplateSlot"
@@ -147,16 +148,17 @@ Custom property | Description | Default
       </template>
     </slot>
 
-    <paper-vertical-steps-container
-      id="verticalStepsContainer"
-      selectable="step-vertical-label"
-      hidden$="[[!vertical]]"
-    >
-      <slot
-        name="vertical-step-label-template"
-        slot="vertical-step-label-template"
-      ></slot>
-    </paper-vertical-steps-container>
+    <template is="dom-if" if="[[vertical]]" on-dom-change="_handleVerticalLabelsContainerDomChange">
+      <paper-vertical-steps-container
+        id="verticalStepsContainer"
+        selectable="step-vertical-label"
+      >
+        <slot
+          name="vertical-step-label-template"
+          slot="vertical-step-label-template"
+        ></slot>
+      </paper-vertical-steps-container>
+    </template>
 
   </template>
 
@@ -189,7 +191,7 @@ Custom property | Description | Default
         },
         vertical: {
           type: Boolean,
-          value: false,
+          value: undefined,
           notify: true,
           reflectToAttribute: true
         },
@@ -214,9 +216,9 @@ Custom property | Description | Default
           type: String,
           value: 'paper-step'
         },
-        //TODO: should be a computed property
         stepsSlotContainer: {
-          type: HTMLElement
+          type: HTMLElement,
+          computed: '_computeStepsSlotContainer(verticalStepsContainer, vertical)'
         },
         stepsSlot: {
           type: HTMLElement,
@@ -224,11 +226,15 @@ Custom property | Description | Default
             return this.createSlot();
           }
         },
+        horizontalLabelsContainer: {
+          type: HTMLElement,
+          value: null
+        },
+        verticalStepsContainer: {
+          type: HTMLElement,
+          value: null
+        },
       },
-
-      // _handleHorizontalLabelsSelect: function(e) {
-      //   this.selectIndex(this.indexOf(e.detail.item.step));
-      // },
 
       listeners: {
         'iron-items-changed': '_ironItemsChanged',
@@ -238,20 +244,53 @@ Custom property | Description | Default
         'paper-stepper-forward': 'skip',
         'paper-stepper-back': 'back',
         'paper-stepper-continue': 'continue',
+        'iron-activate' : '_handleIronActivate'
+      },
+
+      _handleIronActivate(e) {
+        if (e.detail.item.disabled) {
+          e.preventDefault();
+        }
       },
 
       observers: [
-        '_verticalChanged(vertical)',
-        '_updateHorizontalStepsLabel(vertical, items, isAttached)',
-        '_updateStepsSlotParent(stepsSlot, stepsSlotContainer)'
+        '_updateHorizontalStepsLabel(horizontalLabelsContainer, vertical, items)',
+        '_updateStepsSlotParent(stepsSlot, stepsSlotContainer)',
       ],
 
       attached: function() {
         this._responsiveCheck();
       },
 
-      _updateHorizontalStepsLabel(vertical, items) {
-        this.$.horizontalLabelsContainer.steps = vertical ? [] : items;
+      _computeStepsSlotContainer: function(verticalStepsContainer, vertical) {
+        if (!vertical) {
+          return this._getHorizontalStepsContainer();
+        } else if (verticalStepsContainer) {
+          return verticalStepsContainer
+        }
+      },
+
+      // TODO: listner on dom-change event could be remove once the element is defined
+      _handleHorizontalLabelsContainerDomChange: function() {
+        if (!this.horizontalLabelsContainer && !this.vertical) {
+          this.horizontalLabelsContainer = this.$$('#horizontalLabelsContainer');
+        }
+      },
+
+      // TODO: listner on dom-change event could be remove once the element is defined
+      _handleVerticalLabelsContainerDomChange: function() {
+        if (!this.verticalStepsContainer && this.vertical) {
+          this.verticalStepsContainer = this.$$('#verticalStepsContainer');
+        }
+      },
+
+      _updateHorizontalStepsLabel(horizontalLabelsContainer, vertical, items) {
+        if (!horizontalLabelsContainer) return;
+        if (!vertical) {
+          horizontalLabelsContainer.steps = items;
+        } else if (horizontalLabelsContainer.steps) {
+          horizontalLabelsContainer.steps = [];
+        }
       },
 
       _updateStepsSlotParent(stepsSlot, stepsSlotContainer) {
@@ -282,12 +321,6 @@ Custom property | Description | Default
         return this._stampedHorizontalStepContainer._nodes[0];
       },
 
-      _verticalChanged: function(vertical) {
-        this.stepsSlotContainer = vertical ?
-          this.$.verticalStepsContainer :
-          this._getHorizontalStepsContainer();
-      },
-
       //TODO: create a method for getContentChildren
 
       createSlot: function(name) {
@@ -314,16 +347,6 @@ Custom property | Description | Default
             step._setIndex(i + 1);
         });
 
-        // var verticalLabelsContainer = this.$.verticalStepsContainer;
-        // var verticalStepLabelTemplate = this.getContentChildren('#verticalStepLabelTemplateSlot')[0];
-        // this.templatize(verticalStepLabelTemplate);
-        //
-        // this.items.forEach(function(step, i) {
-        //   step.verticalLabelElement = this.stamp({step: step});
-        //   Polymer.dom(verticalLabelsContainer).appendChild(step.verticalLabelElement.root);
-        //   step.verticalLabelElement._nodes[0].style.order = i*2;
-        // }.bind(this));
-
         var savedStepNumber = 0;
 
         this._setSavedStepNumber(savedStepNumber);
@@ -342,7 +365,40 @@ Custom property | Description | Default
         if (verticalResponsiveWidth) {
           this.vertical = !(this.clientWidth > verticalResponsiveWidth);
         }
-      }
+      },
+
+      /**
+       * Work around: Override the method from IronSelectableBehavior to only
+       * allow the selection of selectable step.
+       * See https://github.com/PolymerElements/iron-selector/issues/99
+       */
+      _selectSelected: function(selected) {
+        var item = this._valueToItem(this.selected);
+        if (item) {
+          var selectable = item.selectable;
+          if (selectable == undefined) {
+            // if selectable isn't define it means the step is not yet ready for selection
+            // and this method will be recalled by the initialization method.
+            return;
+          } else if (!selectable) {
+            //reset previous selected if non null and selectable or deselect
+            if (this._previousSelected && this._previousSelected.selectable) {
+              this.selected = this._valueForItem(this.previousSelected);
+            } else {
+              this.selected = null;
+            }
+            this._previousSelected = null;
+            return;
+          }
+        }
+        this._selection.select(item);
+        this._previousSelected = item;
+        // Check for items, since this array is populated only when attached
+        // Since Number(0) is falsy, explicitly check for undefined
+        if (this.fallbackSelection && this.items.length && (this._selection.get() === undefined)) {
+          this.selected = this.fallbackSelection;
+        }
+      },
 
     });
 

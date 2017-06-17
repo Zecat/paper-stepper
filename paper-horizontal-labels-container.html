@@ -84,7 +84,7 @@
       _updateAlternativeLabels(alternativeLabel) {
         if (this.items && this.items.length) {
           this.items.forEach(function(step) {
-            step.alternativeLabel = true;
+            step.alternativeLabel = alternativeLabel;
           });
         }
       },

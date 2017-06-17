@@ -28,6 +28,9 @@
         margin-left: 36px;
         margin-right: 24px;
       }
+      .iron-collapse-closed {
+        display: none !important;
+      }
     </style>
 
     <slot
@@ -38,6 +41,7 @@
         <iron-collapse id="collapse" opened="[[opened]]">
           <div id="contentConnectorLine"></div>
           <div id="stepWrapper" class="vertical-step-slot-container">
+            <slot></slot>
           </div>
         </iron-collapse>
       </template>
@@ -96,10 +100,8 @@
         this.templatize(verticalStepLabelTemplate);
         Array.prototype.forEach.call(steps, this._ensureVerticalLabel.bind(this));
 
-        this.async(()=> {
-          this.templatize(verticalStepWrapperTemplateSlot);
-          Array.prototype.forEach.call(steps, this._processStepInsertion.bind(this));
-        }, 1)
+        this.templatize(verticalStepWrapperTemplateSlot);
+        Array.prototype.forEach.call(steps, this._processStepInsertion.bind(this));
 
       },
 
@@ -130,16 +132,27 @@
       },
 
       _processStepInsertion: function(step) {
-        var i = step.index;
-        var stepContainer = step.verticalStepWrapper = this.stamp({opened: step.opened});
-        Polymer.dom(this.root).insertBefore(stepContainer.root, Polymer.dom(step.verticalLabelElement._nodes[0]).nextElementSibling);
-        this.listen(step, 'opened-changed', '_handleStepOpenedChanged')
-        var slotContainer = this.$$('.vertical-step-slot-container');
-        if (slotContainer) {
-          this.toggleClass('vertical-step-slot-container', false, slotContainer);
-          Polymer.dom(slotContainer).appendChild(this.createSlot('vertical-step-' + i));
+        var
+          index = step.index,
+          stepContainer = step.verticalStepWrapper = this.stamp({opened: step.opened}),
+          stepContainerRoot = stepContainer.root,
+          stepContainerChildren = stepContainerRoot.children,
+          slot = this._findSlot(stepContainerChildren);
+          
+        if (slot) {
+          this._setSlotName(slot, 'vertical-step-' + index);
         }
-        step.setAttribute('slot', 'vertical-step-' + i);
+        step.setAttribute('slot', 'vertical-step-' + index);
+        Polymer.dom(this.root).insertBefore(stepContainerRoot, Polymer.dom(step.verticalLabelElement._nodes[0]).nextElementSibling);
+        this.listen(step, 'opened-changed', '_handleStepOpenedChanged')
+      },
+
+      _findSlot(nodes) {
+        var slot, slotLocalName = Polymer.element ? 'slot' : 'content';
+        for (var i = 0; !slot && i < nodes.length; i++) {
+          slot = Polymer.dom(nodes[i]).querySelector(slotLocalName);
+        };
+        return slot;
       },
 
       _ensureVerticalLabel: function(step) {
@@ -186,6 +199,14 @@
         }
         return slot;
       },
+
+      _setSlotName: function(slot, name) {
+        if (Polymer.Element) {
+          slot.setAttribute('name', name);
+        } else {
+          slot.setAttribute('select', "[slot='" + name + "']");
+        }
+      }
 
     });
   </script>

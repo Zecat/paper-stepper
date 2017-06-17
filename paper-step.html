@@ -16,65 +16,10 @@ Missing Doc
         box-sizing: border-box;
         /*outline: 0;*/
       }
-
-      /*:host([vertical]) {
-        @apply(--layout-vertical);
-      }*/
-      /*#collapse {
-        --iron-collapse-transition-duration: var(--paper-vertical-step-transition-duration, 500ms);
-        @apply(--layout-horizontal);
-      }
-      #stepWrapper {
-        @apply(--layout-flex);*/
-        /*should be 48px on large screen?*/
-        /*padding-right: 24px;
-      }
-      #paperStepWrapper {
-        max-height: calc(var(--paper-vertical-step-max-height, 400px) - 92px);
-        @apply(--layout-scroll);
-      }
-      #contentConnectorLine {
-        width: 1px;
-        background: var(--divider-color, --paper-grey-300);
-        margin-left: 36px;
-        margin-right: 24px;
-      }*/
-      /**
-       * Vertical Buttons
-       */
-      /*.iron-collapse-closed {
-        display: none !important;
-      }*/
     </style>
 
-    <!-- <div id="contentContainer"> -->
-      <slot></slot>
-    <!-- </div> -->
+    <slot></slot>
 
-
-    <!-- vertical step layout -->
-
-    <!-- <template>
-      <step-vertical-label
-        id="verticalStepLabel"
-        editable="[[editable]]"
-        label="[[label]]"
-        optional="[[optional]]"
-        opened="[[opened]]"
-        selectable="[[selectable]]"
-        stepper-data="[[_stepperData]]"
-        index="[[index]]"
-        saved="[[saved]]">
-      </step-vertical-label>
-    </template>
-
-    <iron-collapse id="collapse" opened="[[opened]]">
-    <div id="contentConnectorLine"></div>
-    <div id="stepWrapper">
-    <div id="paperStepWrapper">
-  </div>
-</div>
-</iron-collapse> -->
   </template>
 
   <script>
