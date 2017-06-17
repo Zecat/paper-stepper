@@ -164,6 +164,10 @@ Missing Doc
           readOnly: true,
           reflectToAttribute: true
         },
+        alternativeLabel: {
+          type: Boolean,
+          value: false
+        },
         _canSkip: {
           type: Boolean,
           readOnly: true
@@ -188,6 +192,7 @@ Missing Doc
         '_forwardLabelElementProp("index", index, labelElement)',
         '_forwardLabelElementProp("saved", saved, labelElement)',
         '_forwardLabelElementProp("disabled", disabled, labelElement)',
+        '_forwardLabelElementProp("alternativeLabel", alternativeLabel, labelElement)',
       ],
 
       _forwardLabelElementProp(prop, value, labelElement) {

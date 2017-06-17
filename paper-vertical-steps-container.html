@@ -1,5 +1,4 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../iron-menu-behavior/iron-menu-behavior.html">
 <link rel="import" href="../polymer/polymer.html">
 
 <dom-module id="paper-vertical-steps-container">
@@ -40,30 +39,67 @@
     Polymer({
       is: 'paper-vertical-steps-container',
 
-      behaviors: [
-        Polymer.IronMenuBehavior
-      ],
-
-      listeners: {
-        'iron-items-changed': '_handleIronItemsChanged'
+      attached: function() {
+        this._observeItems(this);
       },
 
-      _handleIronItemsChanged: function(e) {
-        e.detail.addedNodes.forEach(function(node) {
-          if (node.localName === 'paper-step') {
-            this.prepareStepInsertion(node);
-          }
-        }.bind(this));
+      // observe items change under the given node.
+      _observeItems: function(node) {
+        return Polymer.dom(node).observeNodes(function(mutation) {
+          mutation.addedNodes.length &&
+          this._processAddedSteps(this._filterSteps(mutation.addedNodes));
+
+          mutation.removedNodes.length &&
+          this._processRemovedSteps(this._filterSteps(mutation.removedNodes));
+        });
       },
 
-      prepareStepInsertion: function(step) {
+      _processAddedSteps: function(steps) {
+        Array.prototype.forEach.call(steps, this._prepareStepInsertion.bind(this));
+      },
+
+      _processRemovedSteps: function(steps) {
+        Array.prototype.forEach.call(steps, this._resetStepInsertion);
+      },
+
+      _filterSteps: function(nodes) {
+        return Array.prototype.filter.call(nodes, this.isStep);
+      },
+
+      /**
+       * Return true if the node is a step.
+       * @param  {HTMLElement} node The node to test.
+       * @return {Boolean}          True if the ode is a step.
+       */
+      isStep: function(node) {
+        return node.localName === 'paper-step';
+      },
+
+      _resetStepInsertion: function(step) {
+        step.removeAttribute('slot');
+      },
+
+      _prepareStepInsertion: function(step) {
         var i = step.index;
-        this.addVerticalStepSlot(i);
+        this.ensureVerticalStepSlot(i);
         step.setAttribute('slot', 'vertical-step-' + i);
         step.style.order = i*2;
       },
 
-      addVerticalStepSlot: function(index) {
+      ensureVerticalStepSlot(index) {
+        if (!this._getVerticalStepSlot(index)) {
+          this._addVerticalStepSlot(index);
+        }
+      },
+
+      _getVerticalStepSlot: function(index) {
+        return this.$$( Polymer.Element ?
+          'slot[name=\'vertical-step-' + index + '\']' :
+          'content[select="[slot=\'vertical-step-' + index + '\']"]'
+        );
+      },
+
+      _addVerticalStepSlot: function(index) {
         Polymer.dom(this.root).insertBefore(this.createSlot('vertical-step-' + index), this.$.slot);
       },
 

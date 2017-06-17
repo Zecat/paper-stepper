@@ -171,11 +171,11 @@ Custom property | Description | Default
     >
     </paper-vertical-steps-container>
 
-<div hidden$="[[vertical]]">
+    <div hidden$="[[vertical]]">
 
-    <!-- TODO: create the slot dynamically -->
-    <slot id="stepsSlot"></slot>
-  </div>
+      <!-- TODO: create the slot dynamically -->
+      <slot id="stepsSlot"></slot>
+    </div>
 
 
 
@@ -290,13 +290,6 @@ Custom property | Description | Default
         Polymer.dom(this.horizontalStepContainer._nodes[0]).appendChild(this.$.stepsSlot);
       },
 
-      _ensureVertcalStepsContainerPopulated() {
-        // this.items.forEach(function(step, i) {
-        //   step.setAttribute('slot', 'vertical-step-' + i);
-        //   console.log(step);
-        // })
-      },
-
       _verticalChanged: function(vertical) {
         if (!vertical) {
           this._ensureHorizontalStepsContainerPopulated();
@@ -304,7 +297,6 @@ Custom property | Description | Default
             step.removeAttribute('slot');
           })
         } else {
-          this._ensureVertcalStepsContainerPopulated();
           var verticalStepsContainer = this.$.verticalStepsContainer;
           this.items.forEach(function(step, i) {
             // TODO: this should not be here
@@ -336,27 +328,21 @@ Custom property | Description | Default
 
       _ironItemsChanged: function(e) {
 
+        // Ingore events comming from nested childrens
         if (Polymer.dom(e).rootTarget != this) return;
 
+        // TODO: Could be done more efficiently by listening added and removed steps
+
+        // Set the steps index
         this.items.forEach(function(step, i) {
             step._setIndex(i + 1);
         });
 
+        // If horizontal layout
         if (!this.vertical) {
+          // Create horizontal steps label
           this.$.horizontalLabelsContainer.labelizeSteps(this.items);
         }
-        // var horizontalLabelsContainer = this.$.horizontalLabelsContainer;
-        // var horizontalStepLabelTemplate = this.getContentChildren('#horizontalStepLabelTemplateSlot')[0];
-        // this.templatize(horizontalStepLabelTemplate);
-        //
-        //   // true for index 0
-        //   if (step.saved) {
-        //     savedStepNumber++;
-        //   }
-        //
-        //   step.labelElement = this.stamp({step: step});
-        //   Polymer.dom(horizontalLabelsContainer).appendChild(step.labelElement.root);
-        // }.bind(this));
 
         var verticalLabelsContainer = this.$.verticalStepsContainer;
         var verticalStepLabelTemplate = this.getContentChildren('#verticalStepLabelTemplateSlot')[0];
@@ -369,10 +355,6 @@ Custom property | Description | Default
         }.bind(this));
 
         var savedStepNumber = 0;
-        var data = {
-          linear: this.linear,
-          stepNumber: this.stepNumber
-        };
 
         this._setSavedStepNumber(savedStepNumber);
         // method from IronSelectableBehavior

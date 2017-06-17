@@ -51,11 +51,11 @@
       },
 
       observers: [
-        '_updateAlternativeLabels(alternativeLabel, items.splices)'
+        '_updateAlternativeLabels(alternativeLabel, items.*)'
       ],
 
       listeners: {
-        'iron-items-changed': '_handleIronItemsChanged'
+        // 'iron-items-changed': '_handleIronItemsChanged'
       },
 
       updateTemplate: function() {
@@ -74,7 +74,7 @@
       _handleIronItemsChanged: function(e) {
 
         var horizontalLabelsContainer = this.$.horizontalLabelsContainer;
-        console.log(e.detail.addedNodes);
+        // console.log(e.detail.addedNodes);
 
         // this.items.forEach(function(step, i) {
         //   step._setIndex(i + 1);
@@ -93,13 +93,12 @@
         // }.bind(this));
       },
 
-      _updateAlternativeLabels(alternativeLabel, itemsSplices) {
-        // TODO
-        // if (this.stepNumber) {
-        //   this.items.map(function(step) {
-        //     step._set_alternativeLabel(alternativeLabel);
-        //   });
-        // }
+      _updateAlternativeLabels(alternativeLabel) {
+        if (this.items && this.items.length) {
+          this.items.forEach(function(step) {
+            step.alternativeLabel = true;
+          });
+        }
       },
 
 
