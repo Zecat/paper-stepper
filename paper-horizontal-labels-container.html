@@ -48,49 +48,37 @@
           type: Boolean,
           value: false
         },
+        steps: {
+          type: Array
+        }
       },
 
       observers: [
-        '_updateAlternativeLabels(alternativeLabel, items.*)'
+        '_updateAlternativeLabels(alternativeLabel, items.*)',
+        '_stepsChanged(steps)'
       ],
-
-      listeners: {
-        // 'iron-items-changed': '_handleIronItemsChanged'
-      },
 
       updateTemplate: function() {
         var labelTemplateSlot = this.getContentChildren('#labelTemplateSlot')[0];
         this.templatize(labelTemplateSlot);
       },
 
-      labelizeSteps: function(steps) {
+      _stepsChanged: function(steps) {
         this.updateTemplate();
-        steps.forEach(function(step) {
-          step.labelElement = this.stamp({step: step});
-          Polymer.dom(this).appendChild(step.labelElement.root);
-        }.bind(this));
+        Array.prototype.forEach.call(steps, this._ensureStepLabel.bind(this));
       },
 
-      _handleIronItemsChanged: function(e) {
-
-        var horizontalLabelsContainer = this.$.horizontalLabelsContainer;
-        // console.log(e.detail.addedNodes);
-
-        // this.items.forEach(function(step, i) {
-        //   step._setIndex(i + 1);
-        //   step._setVertical(this.vertical);
-        //   // true for index 0
-        //   if (step.saved) {
-        //     savedStepNumber++;
-        //   }
-        //
-        // }.bind(this));
-        //
-        // e.detail.addedNodes.forEach(function(node) {
-        //   if (node.localName === 'paper-step') {
-        //     this.prepareStepInsertion(node);
-        //   }
-        // }.bind(this));
+      _ensureStepLabel: function(step) {
+        // If the label for this step doesn't exist or isn't inserted into
+        // this element's shadow DOM
+        var label = step.horizontalLabelElement && step.horizontalLabelElement._nodes[0];
+        if (!label || Polymer.dom(label).parentNode != this) {
+          label = step.labelElement = step.horizontalLabelElement = this.stamp({step: step});
+          Polymer.dom(this).appendChild(label.root);
+          var labelNode = label._nodes[0];
+          labelNode.style.order = step.index - 1;
+          labelNode.setAttribute(this.attrForSelected, step.getAttribute(this.attrForSelected));
+        }
       },
 
       _updateAlternativeLabels(alternativeLabel) {
@@ -100,7 +88,6 @@
           });
         }
       },
-
 
     });
   </script>

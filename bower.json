@@ -27,8 +27,8 @@
     "iron-icon": "PolymerElements/iron-icon#1 - 2",
     "iron-flex-layout": "PolymerElements/iron-flex-layout#1 - 2",
     "iron-collapse": "PolymerElements/iron-collapse#1 - 2",
-    "iron-pages": "PolymerElements/iron-pages#^2.0.0",
-    "paper-listbox": "PolymerElements/paper-listbox#^2.0.0"
+    "iron-pages": "PolymerElements/iron-pages#1 - 2",
+    "paper-listbox": "PolymerElements/paper-listbox#1 - 2"
   },
   "devDependencies": {
     "web-component-tester": "^6.0.0",

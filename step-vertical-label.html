@@ -39,10 +39,10 @@
       #badge {
         margin: 8px 0;
       }
-      :host(.first-step) #badgeWrapper::before {
+      :host(:first-of-type) #badgeWrapper::before {
         visibility: hidden;
       }
-      :host(.last-step:not([opened])) #badgeWrapper::after {
+      :host(:last-of-type:not([opened])) #badgeWrapper::after {
         display: none;
       }
     </style>

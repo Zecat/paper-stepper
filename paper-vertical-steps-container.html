@@ -1,5 +1,7 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="step-vertical-label.html">
 
 <dom-module id="paper-vertical-steps-container">
   <template>
@@ -7,43 +9,74 @@
       :host {
         @apply(--layout-vertical);
       }
+      #collapse {
+        --iron-collapse-transition-duration: var(--paper-vertical-step-transition-duration, 500ms);
+        @apply(--layout-horizontal);
+      }
+      #stepWrapper {
+        @apply(--layout-flex);
+        /*should be 48px on large screen?*/
+        padding-right: 24px;
+      }
+      #paperStepWrapper {
+        max-height: calc(var(--paper-vertical-step-max-height, 400px) - 92px);
+        @apply(--layout-scroll);
+      }
+      #contentConnectorLine {
+        width: 1px;
+        background: var(--divider-color, --paper-grey-300);
+        margin-left: 36px;
+        margin-right: 24px;
+      }
     </style>
 
-    <slot id="slot"></slot>
-
-
-        <!-- <template>
-          <step-vertical-label
-            id="verticalStepLabel"
-            editable="[[editable]]"
-            label="[[label]]"
-            optional="[[optional]]"
-            opened="[[opened]]"
-            selectable="[[selectable]]"
-            stepper-data="[[_stepperData]]"
-            index="[[index]]"
-            saved="[[saved]]">
-          </step-vertical-label>
-        </template>
-
+    <slot
+      id="verticalStepWrapperTemplateSlot"
+      name="vertical-step-wrapper-template"
+    >
+      <template>
         <iron-collapse id="collapse" opened="[[opened]]">
-        <div id="contentConnectorLine"></div>
-        <div id="stepWrapper">
-        <div id="paperStepWrapper">
-      </div>
-    </div>
-  </iron-collapse>-->
+          <div id="contentConnectorLine"></div>
+          <div id="stepWrapper" class="vertical-step-slot-container">
+          </div>
+        </iron-collapse>
+      </template>
+    </slot>
+
+    <slot
+      id="verticalStepLabelTemplateSlot"
+      name="vertical-step-label-template"
+    >
+      <template>
+        <step-vertical-label
+          editable="{{editable}}"
+          label="{{label}}"
+          optional="[[optional]]"
+          opened$="{{opened}}"
+          selectable="[[selectable]]"
+          index="{{index}}"
+          saved="{{saved}}"
+          disabled="[[disabled]]"
+          step="[[step]]"
+        ></step-vertical-label>
+      </template>
+    </slot>
+
+    <slot id="slot"></slot>
 
   </template>
   <script>
     Polymer({
       is: 'paper-vertical-steps-container',
 
+      behaviors: [
+        Polymer.Templatizer
+      ],
+
       attached: function() {
         this._observeItems(this);
       },
 
-      // observe items change under the given node.
       _observeItems: function(node) {
         return Polymer.dom(node).observeNodes(function(mutation) {
           mutation.addedNodes.length &&
@@ -55,11 +88,23 @@
       },
 
       _processAddedSteps: function(steps) {
-        Array.prototype.forEach.call(steps, this._prepareStepInsertion.bind(this));
+        // TODO: check template validity
+        var
+          verticalStepLabelTemplate = this.getContentChildren('#verticalStepLabelTemplateSlot')[0],
+          verticalStepWrapperTemplateSlot = this.getContentChildren('#verticalStepWrapperTemplateSlot')[0];
+
+        this.templatize(verticalStepLabelTemplate);
+        Array.prototype.forEach.call(steps, this._ensureVerticalLabel.bind(this));
+
+        this.async(()=> {
+          this.templatize(verticalStepWrapperTemplateSlot);
+          Array.prototype.forEach.call(steps, this._processStepInsertion.bind(this));
+        }, 1)
+
       },
 
       _processRemovedSteps: function(steps) {
-        Array.prototype.forEach.call(steps, this._resetStepInsertion);
+        Array.prototype.forEach.call(steps, this._resetStepInsertion.bind(this));
       },
 
       _filterSteps: function(nodes) {
@@ -79,11 +124,38 @@
         step.removeAttribute('slot');
       },
 
-      _prepareStepInsertion: function(step) {
+      _handleStepOpenedChanged: function(e) {
+        var step = Polymer.dom(e).rootTarget;
+        step.verticalStepWrapper.set('opened', e.detail.value)
+      },
+
+      _processStepInsertion: function(step) {
         var i = step.index;
-        this.ensureVerticalStepSlot(i);
+        var stepContainer = step.verticalStepWrapper = this.stamp({opened: step.opened});
+        Polymer.dom(this.root).insertBefore(stepContainer.root, Polymer.dom(step.verticalLabelElement._nodes[0]).nextElementSibling);
+        this.listen(step, 'opened-changed', '_handleStepOpenedChanged')
+        var slotContainer = this.$$('.vertical-step-slot-container');
+        if (slotContainer) {
+          this.toggleClass('vertical-step-slot-container', false, slotContainer);
+          Polymer.dom(slotContainer).appendChild(this.createSlot('vertical-step-' + i));
+        }
         step.setAttribute('slot', 'vertical-step-' + i);
-        step.style.order = i*2;
+      },
+
+      _ensureVerticalLabel: function(step) {
+        var label = step.verticalLabelElement && step.verticalLabelElement._nodes[0];
+        // If the label for this step doesn't exist or isn't inserted into
+        // this element's shadow DOM
+        if (!label || Polymer.dom(label).parentNode != this.root) {
+          label = step.labelElement = step.verticalLabelElement = this.stamp({step: step});
+          Polymer.dom(this.root).insertBefore(label.root, this.$.slot);
+          var labelNode = label._nodes[0];
+          this.listen(labelNode, 'tap', '_handleLabelTap');
+        }
+      },
+
+      _handleLabelTap: function(e) {
+        Polymer.dom(e).rootTarget.step.select();
       },
 
       ensureVerticalStepSlot(index) {
