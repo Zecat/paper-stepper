@@ -1,0 +1,58 @@
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="../polymer/polymer.html">
+
+<dom-module id="paper-vertical-step-collapse">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+      #collapse {
+        --iron-collapse-transition-duration: var(--paper-vertical-step-transition-duration, 500ms);
+        @apply(--layout-horizontal);
+      }
+      #stepWrapper {
+        @apply(--layout-flex);
+        /*should be 48px on large screen?*/
+        padding-right: 24px;
+      }
+      #paperStepWrapper {
+        max-height: calc(var(--paper-vertical-step-max-height, 400px) - 92px);
+        @apply(--layout-scroll);
+      }
+      #contentConnectorLine {
+        width: 1px;
+        background: var(--divider-color, --paper-grey-300);
+        margin-left: 36px;
+        margin-right: 24px;
+      }
+      .iron-collapse-closed {
+        display: none !important;
+      }
+    </style>
+
+    <iron-collapse id="collapse" opened="[[opened]]">
+      <div id="contentConnectorLine"></div>
+      <div id="stepWrapper">
+        <slot></slot>
+      </div>
+    </iron-collapse>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'paper-vertical-step-collapse',
+
+      properties: {
+        opened: {
+          type: Boolean,
+          value: false
+        },
+      }
+
+    });
+  </script>
+</dom-module>

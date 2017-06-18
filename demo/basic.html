@@ -18,13 +18,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <!-- <link rel="import" href="../../iron-demo-helpers/demo-snippet.html"> -->
     <!-- <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html"> -->
     <link rel="import" href="../paper-stepper.html">
+    <link rel="import" href="../paper-vertical-step-collapse.html">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:300" rel="stylesheet" type="text/css">
   </head>
   <body unresolved>
 
   <style is="custom-style" include="demo-pages-shared-style">
     paper-stepper {
-      --paper-stepper-vertical-responsive-width: 500px;
+      /*--paper-stepper-vertical-responsive-width: 500px;*/
       box-shadow: none;
       background: transparent;
     }
@@ -50,7 +51,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     id="stepper"
     selected="{{selected}}"
     attr-for-selected="name"
+    vertical
   >
+
+  <template slot="vertical-step-wrapper-template">
+    <paper-vertical-step-collapse opened="[[opened]]">
+      <slot></slot>
+      <h2>toto</h2>
+    </paper-vertical-step-collapse>
+  </template>
 
     <template slot="horizontal-steps-container-template">
       <iron-pages id="toto" slot="steps-container-template" selected="{{selected}}">

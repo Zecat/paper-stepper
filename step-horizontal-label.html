@@ -110,8 +110,7 @@
       is: 'step-horizontal-label',
 
       behaviors: [
-        Stepper.StepLabelBehavior,
-        Polymer.PaperRippleBehavior
+        Stepper.StepLabelBehavior
       ],
 
       properties: {
@@ -123,24 +122,6 @@
       },
 
       // TODO: Use index to set flex order
-
-      observers: [
-        '_focusedChanged(focused)'
-      ],
-
-      _focusedChanged: function() {
-        if (this.receivedFocusFromKeyboard) {
-          // generate a ripple effect from the center of the badge
-          var badge = this.$.badge;
-          var badgePos = badge.getBoundingClientRect();
-          var rippleX = badgePos.left + 12;
-          var rippleY = badgePos.top + 12;
-          this._ripple.uiDownAction({detail: {x: rippleX, y: rippleY}});
-        }
-        if (this.hasRipple()) {
-          this._ripple.holdDown = this.receivedFocusFromKeyboard;
-        }
-      },
 
     });
   </script>

@@ -2,6 +2,7 @@
 <link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="step-vertical-label.html">
+<link rel="import" href="paper-vertical-step-collapse.html">
 
 <dom-module id="paper-vertical-steps-container">
   <template>
@@ -9,47 +10,11 @@
       :host {
         @apply(--layout-vertical);
       }
-      #collapse {
-        --iron-collapse-transition-duration: var(--paper-vertical-step-transition-duration, 500ms);
-        @apply(--layout-horizontal);
-      }
-      #stepWrapper {
-        @apply(--layout-flex);
-        /*should be 48px on large screen?*/
-        padding-right: 24px;
-      }
-      #paperStepWrapper {
-        max-height: calc(var(--paper-vertical-step-max-height, 400px) - 92px);
-        @apply(--layout-scroll);
-      }
-      #contentConnectorLine {
-        width: 1px;
-        background: var(--divider-color, --paper-grey-300);
-        margin-left: 36px;
-        margin-right: 24px;
-      }
-      .iron-collapse-closed {
-        display: none !important;
-      }
     </style>
 
     <slot
-      id="verticalStepWrapperTemplateSlot"
-      name="vertical-step-wrapper-template"
-    >
-      <template>
-        <iron-collapse id="collapse" opened="[[opened]]">
-          <div id="contentConnectorLine"></div>
-          <div id="stepWrapper" class="vertical-step-slot-container">
-            <slot></slot>
-          </div>
-        </iron-collapse>
-      </template>
-    </slot>
-
-    <slot
-      id="verticalStepLabelTemplateSlot"
-      name="vertical-step-label-template"
+    id="verticalStepLabelTemplateSlot"
+    name="vertical-step-label-template"
     >
       <template>
         <step-vertical-label
@@ -63,6 +28,17 @@
           disabled="[[disabled]]"
           step="[[step]]"
         ></step-vertical-label>
+      </template>
+    </slot>
+
+    <slot
+      id="verticalStepWrapperTemplateSlot"
+      name="vertical-step-wrapper-template"
+    >
+      <template>
+        <paper-vertical-step-collapse opened="[[opened]]">
+          <slot></slot>
+        </paper-vertical-step-collapse>
       </template>
     </slot>
 
@@ -138,7 +114,7 @@
           stepContainerRoot = stepContainer.root,
           stepContainerChildren = stepContainerRoot.children,
           slot = this._findSlot(stepContainerChildren);
-          
+
         if (slot) {
           this._setSlotName(slot, 'vertical-step-' + index);
         }
