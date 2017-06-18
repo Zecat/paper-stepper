@@ -28,7 +28,8 @@
     "iron-collapse": "PolymerElements/iron-collapse#1 - 2",
     "iron-pages": "PolymerElements/iron-pages#1 - 2",
     "paper-listbox": "PolymerElements/paper-listbox#1 - 2",
-    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#1 - 2"
+    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#1 - 2",
+    "iron-menu-behavior": "PolymerElements/iron-menu-behavior#1 - 2"
   },
   "devDependencies": {
     "web-component-tester": "^6.0.0",
@@ -40,7 +41,6 @@
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#1 - 2",
     "paper-toggle-button": "PolymerElements/paper-toggle-button#1 - 2",
     "app-layout": "PolymerElements/app-layout#1 - 2",
-    "paper-menu": "PolymerElements/paper-menu#1 - 2",
     "paper-item": "PolymerElements/paper-item#1 - 2",
     "paper-toast": "PolymerElements/paper-toast#1 - 2",
     "paper-checkbox": "PolymerElements/paper-checkbox#1 - 2"

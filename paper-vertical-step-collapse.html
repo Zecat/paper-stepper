@@ -12,20 +12,20 @@
       }
       #collapse {
         --iron-collapse-transition-duration: var(--paper-vertical-step-transition-duration, 500ms);
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
       }
       #stepWrapper {
-        @apply(--layout-flex);
+        @apply --layout-flex;
         /*should be 48px on large screen?*/
         padding-right: 24px;
       }
       #paperStepWrapper {
         max-height: calc(var(--paper-vertical-step-max-height, 400px) - 92px);
-        @apply(--layout-scroll);
+        @apply --layout-scroll;
       }
       #contentConnectorLine {
         width: 1px;
-        background: var(--divider-color, --paper-grey-300);
+        background: var(--divider-color, var(--paper-grey-300));
         margin-left: 36px;
         margin-right: 24px;
       }

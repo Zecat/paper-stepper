@@ -7,11 +7,11 @@
   <template>
     <style>
       :host {
-        @apply(--layout-horizontal);
-        @apply(--layout-flex-none);
-        @apply(--layout-justified);
+        @apply --layout-horizontal;
+        @apply --layout-flex-none;
+        @apply --layout-justified;
         background: var(--paper-stepper-horizontal-label-wrapper-background);
-        @apply(--paper-stepper-horizontal-header);
+        @apply --paper-stepper-horizontal-header;
       }
     </style>
 
@@ -72,13 +72,14 @@
       _ensureStepLabel: function(step) {
         // If the label for this step doesn't exist or isn't inserted into
         // this element's shadow DOM
-        var label = step.horizontalLabelElement && step.horizontalLabelElement._nodes[0];
+        var label = step.horizontalLabelNode;
+        // TODO: replace the seconde condition with step.horizontalLabelElement == step.labelElement ?
         if (!label || Polymer.dom(label).parentNode != this) {
           label = step.labelElement = step.horizontalLabelElement = this.stamp({step: step});
           Polymer.dom(this).appendChild(label.root);
-          var labelNode = label._nodes[0];
-          labelNode.style.order = step.index - 1;
-          labelNode.setAttribute(this.attrForSelected, step.getAttribute(this.attrForSelected));
+          step.horizontalLabelNode = Polymer.Element ? label.root.nodeList[0] : label._nodes[0];
+          step.horizontalLabelNode.style.order = step.index - 1;
+          step.horizontalLabelNode.setAttribute(this.attrForSelected, step.getAttribute(this.attrForSelected));
         }
       },
 

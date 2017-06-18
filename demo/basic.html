@@ -24,6 +24,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </head>
   <body unresolved>
 
+<custom-style>
   <style is="custom-style" include="demo-pages-shared-style">
     body {
       margin: 0;
@@ -43,6 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       /*background: yellow;*/
     }
   </style>
+</custom-style>
 
   <div id="container">
 
@@ -90,7 +92,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </iron-pages>
     </template>
 
-    <paper-step label="step 1" editable name="step A">
+    <paper-step label="step 1" editable name="step A" saved>
       <paper-input label="aaa" value="123">
       </paper-input>
       <div>
@@ -98,13 +100,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
     </paper-step>
 
-    <paper-step label="step 2" slot="stepa" name="step B">
+    <paper-step label="step 2" name="step B">
       <div>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </div>
     </paper-step>
 
     <paper-step label="step 3" disabled name="step C">
+      <div>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </div>
+    </paper-step>
+    <paper-step label="step 4" name="step D">
       <div>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </div>
@@ -116,14 +123,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </template>
 </dom-bind>
 <script>
-var scope = document.getElementById('scope');
-  document.addEventListener('WebComponentsReady', function() {
-    setTimeout(function() {
-      var toto = scope.$.stepper.horizontalLabelsContainer;
-      scope.selected="step C"
-      // Polymer.dom(document.getElementById('container')).appendChild(toto);
-    },0)
-  })
+// var scope = document.getElementById('scope');
+//   document.addEventListener('WebComponentsReady', function() {
+//     setTimeout(function() {
+//       var toto = scope.$.stepper.horizontalLabelsContainer;
+//       scope.selected="step C"
+//       // Polymer.dom(document.getElementById('container')).appendChild(toto);
+//     },0)
+//   })
 </script>
   </body>
 </html>

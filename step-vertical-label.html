@@ -9,29 +9,29 @@
   <template>
     <style include="step-label-shared-styles">
       :host {
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
       }
       #textWrapper {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
         padding: 20px 0 20px 12px;
       }
       #badgeWrapper {
-        @apply(--layout-vertical);
-        @apply(--layout-center);
+        @apply --layout-vertical;
+        @apply --layout-center;
         margin-left: 24px;
       }
       :host #badgeWrapper::before,
       :host #badgeWrapper::after {
         display: block;
         content: '';
-        background: var(--paper-step-connector-line-color, --divider-color);
+        background: var(--paper-step-connector-line-color, var(--divider-color));
         width: 1px;
       }
       :host #badgeWrapper::before {
         height: 10px;
       }
       :host #badgeWrapper::after {
-        @apply(--layout-flex);
+        @apply --layout-flex;
       }
       #badge {
         margin: 8px 0;

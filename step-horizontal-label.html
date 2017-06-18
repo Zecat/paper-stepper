@@ -8,8 +8,8 @@
     <style include="step-label-shared-styles">
       :host {
         overflow: hidden;
-        @apply(--layout);
-        @apply(--layout-flex);
+        @apply --layout;
+        @apply --layout-flex;
       }
       :host(:hover) {
         overflow: visible;
@@ -19,10 +19,10 @@
         background: var(--paper-step-selectable-hovered-badge-background, --paper-grey-500);
       }*/
       :host([alternative-label]) {
-        @apply(--layout);
+        @apply --layout;
       }
       #textWrapper {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
         padding-right: 8px;
         overflow: hidden;
       }
@@ -35,8 +35,8 @@
         margin: 0 8px;
       }
       :host(:not([alternative-label])) {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
         height: 72px;
       }
       :host(:first-of-type:not([alternative-label])) #badge {
@@ -51,8 +51,8 @@
       :host([alternative-label]) #badgeWrapper::after  {
         height: 1px;
         min-width: 16px;
-        background: var(--paper-step-connector-line-color, --divider-color);
-        @apply(--layout-flex);
+        background: var(--paper-step-connector-line-color, var(--divider-color));
+        @apply --layout-flex);
         content: '';
       }
       :host([alternative-label]:first-of-type) #badgeWrapper::before,
@@ -61,23 +61,23 @@
       }
       :host([alternative-label]) #textWrapper{
         padding: 0 16px;
-        @apply(--layout-vertical);
-        @apply(--layout-center);
+        @apply --layout-vertical;
+        @apply --layout-center;
       }
       :host([alternative-label]) #textLabel,
       :host([alternative-label]) #optional{
         text-align: center;
-        @apply(--layout-self-stretch);
+        @apply --layout-self-stretch;
       }
       :host([alternative-label]){
-        @apply(--layout-vertical);
-        @apply(--layout-self-stretch);
+        @apply --layout-vertical;
+        @apply --layout-self-stretch;
         padding: 24px 0;
         width: 100%;
       }
       :host([alternative-label]) #badgeWrapper {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
         padding-bottom: 16px;
       }
       :host(:first-of-type:not([alternative-label])) {

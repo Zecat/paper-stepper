@@ -125,8 +125,10 @@ Missing Doc
       ],
 
       _forwardLabelElementProp(prop, value, labelElement) {
-        console.log(prop, value, labelElement);
-        labelElement[prop] = value;
+        // use this.set ?
+        if (labelElement) {
+          labelElement[prop] = value;
+        }
       },
 
       _savedChanged: function(newValue, oldValue) {

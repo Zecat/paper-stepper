@@ -19,7 +19,8 @@ window.Stepper = window.Stepper || {};
       opened: {
         type: Boolean,
         reflectToAttribute: true,
-        notify: true
+        notify: true,
+        value: false
       },
       selectable: {
         type: Boolean,
@@ -27,24 +28,29 @@ window.Stepper = window.Stepper || {};
       },
       editable: {
         type: Boolean,
-        reflectToAttribute: true
+        reflectToAttribute: true,
+        value: false
       },
       label: {
-        type: String
+        type: String,
+        value: ''
       },
       optional: {
-        type: Boolean
+        type: Boolean,
+        value: false
       },
       saved: {
         type: Boolean,
-        reflectToAttribute: true
+        reflectToAttribute: true,
+        value: false
       },
       index: {
         type: Number
       },
       disabled: {
         type: Boolean,
-        reflectToAttribute: true
+        reflectToAttribute: true,
+        value: false
       },
       step: {
         type: HTMLElement
@@ -70,7 +76,7 @@ window.Stepper = window.Stepper || {};
     },
 
     _computeIcon: function(saved, editable) {
-      return saved ? ( editable ? 'editor:mode-edit' : 'done' ) : '';
+      return saved ? ( editable ? 'paper-stepper:edit' : 'paper-stepper:done' ) : '';
     },
 
     _computeIsIconBadge: function(icon) {

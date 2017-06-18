@@ -8,7 +8,7 @@
   <template>
     <style>
       :host {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
       }
     </style>
 
@@ -58,26 +58,38 @@
       },
 
       _observeItems: function(node) {
-        return Polymer.dom(node).observeNodes(function(mutation) {
+        Polymer.dom(node).observeNodes(function(mutation) {
+          // TODO: keep a reference to the templatized, inserted, appended, labelized step
           mutation.addedNodes.length &&
           this._processAddedSteps(this._filterSteps(mutation.addedNodes));
 
           mutation.removedNodes.length &&
           this._processRemovedSteps(this._filterSteps(mutation.removedNodes));
-        });
+        }.bind(this));
       },
 
       _processAddedSteps: function(steps) {
-        // TODO: check template validity
-        var
-          verticalStepLabelTemplate = this.getContentChildren('#verticalStepLabelTemplateSlot')[0],
-          verticalStepWrapperTemplateSlot = this.getContentChildren('#verticalStepWrapperTemplateSlot')[0];
-
-        this.templatize(verticalStepLabelTemplate);
+        // TODO: check templates validity
+        if (Polymer.Element) {
+          if (!this.LabelTemplateClass) {
+            var verticalStepLabelTemplate = this.getContentChildren('#verticalStepLabelTemplateSlot')[0];
+            this.LabelTemplateClass = Polymer.Templatize.templatize(verticalStepLabelTemplate, this);
+          }
+          if (!this.StepTemplateClass) {
+            var verticalStepWrapperTemplateSlot = this.getContentChildren('#verticalStepWrapperTemplateSlot')[0];
+            this.StepTemplateClass = Polymer.Templatize.templatize(verticalStepWrapperTemplateSlot, this);
+          }
+        } else {
+          var verticalStepLabelTemplate = this.getContentChildren('#verticalStepLabelTemplateSlot')[0];
+          this.templatize(verticalStepLabelTemplate);
+        }
         Array.prototype.forEach.call(steps, this._ensureVerticalLabel.bind(this));
 
-        this.templatize(verticalStepWrapperTemplateSlot);
-        Array.prototype.forEach.call(steps, this._processStepInsertion.bind(this));
+        if (!Polymer.Element) {
+          var verticalStepWrapperTemplateSlot = this.getContentChildren('#verticalStepWrapperTemplateSlot')[0];
+          this.templatize(verticalStepWrapperTemplateSlot);
+        }
+        Array.prototype.forEach.call(steps, this._ensureStepInsertion.bind(this));
 
       },
 
@@ -99,7 +111,7 @@
       },
 
       _resetStepInsertion: function(step) {
-        step.removeAttribute('slot');
+        // step.removeAttribute('slot');
       },
 
       _handleStepOpenedChanged: function(e) {
@@ -107,24 +119,40 @@
         step.verticalStepWrapper.set('opened', e.detail.value)
       },
 
-      _processStepInsertion: function(step) {
+      _ensureStepInsertion: function(step) {
+        // WORKAROUND: This is not the good way to do it
+        if (step.verticalStepWrapper) return;
+
         var
-          index = step.index,
-          stepContainer = step.verticalStepWrapper = this.stamp({opened: step.opened}),
+          stepContainer = step.verticalStepWrapper = Polymer.Element ?
+           new this.StepTemplateClass({opened: step.opened}): this.stamp({opened: step.opened}),
           stepContainerRoot = stepContainer.root,
           stepContainerChildren = stepContainerRoot.children,
-          slot = this._findSlot(stepContainerChildren);
+          slot = this._findSlot(stepContainerChildren),
+          slotName = 'vertical-step-' + step.index;
+
+        if (Polymer.Element) {
+          stepContainer.opened = step.opened;
+        }
 
         if (slot) {
-          this._setSlotName(slot, 'vertical-step-' + index);
+          this._setSlotName(slot, slotName);
         }
-        step.setAttribute('slot', 'vertical-step-' + index);
-        Polymer.dom(this.root).insertBefore(stepContainerRoot, Polymer.dom(step.verticalLabelElement._nodes[0]).nextElementSibling);
-        this.listen(step, 'opened-changed', '_handleStepOpenedChanged')
+        step.setAttribute('slot', slotName);
+        Polymer.dom(this.root).insertBefore(stepContainerRoot, Polymer.dom(step.verticalLabelNode).nextElementSibling);
+        this.listen(step, 'opened-changed', '_handleStepOpenedChanged');
+
+        if (Polymer.Element) {
+          // For native shadow DOM v1, a default slot doesn't match children with an explicit slot name
+          var slot = document.createElement('slot');
+          slot.setAttribute('name', slotName);
+          slot.setAttribute('slot', slotName);
+          Polymer.dom(this).appendChild(slot);
+        }
       },
 
       _findSlot(nodes) {
-        var slot, slotLocalName = Polymer.element ? 'slot' : 'content';
+        var slot, slotLocalName = Polymer.Element ? 'slot' : 'content';
         for (var i = 0; !slot && i < nodes.length; i++) {
           slot = Polymer.dom(nodes[i]).querySelector(slotLocalName);
         };
@@ -132,14 +160,20 @@
       },
 
       _ensureVerticalLabel: function(step) {
-        var label = step.verticalLabelElement && step.verticalLabelElement._nodes[0];
+        var label = step.verticalLabelNode;
         // If the label for this step doesn't exist or isn't inserted into
         // this element's shadow DOM
+        // TODO: replace the seconde condition with step.horizontalLabelElement == step.labelElement ?
         if (!label || Polymer.dom(label).parentNode != this.root) {
-          label = step.labelElement = step.verticalLabelElement = this.stamp({step: step});
+          label = step.labelElement = step.verticalLabelElement = Polymer.Element ?
+           new this.LabelTemplateClass({step: step}): this.stamp({step: step});
+          if (Polymer.Element) {
+            // work-around for LabelTemplateClass({step: step}) that doesn't set step
+            step.labelElement.step = step;
+          }
           Polymer.dom(this.root).insertBefore(label.root, this.$.slot);
-          var labelNode = label._nodes[0];
-          this.listen(labelNode, 'tap', '_handleLabelTap');
+          step.verticalLabelNode = Polymer.Element ? label.root.nodeList[0] : label._nodes[0];
+          this.listen(step.verticalLabelNode, 'tap', '_handleLabelTap');
         }
       },
 

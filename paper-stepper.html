@@ -157,6 +157,10 @@ Custom property | Description | Default
           name="vertical-step-label-template"
           slot="vertical-step-label-template"
         ></slot>
+        <slot
+          name="vertical-step-wrapper-template"
+          slot="vertical-step-wrapper-template"
+        ></slot>
       </paper-vertical-steps-container>
 
     </template>
@@ -323,15 +327,14 @@ Custom property | Description | Default
       _appendHorizontalStepsContainer() {
         // if (!this._stampedHorizontalStepContainer) {
           // TODO: only populate if needed
-          // TODO: add Polymer 2 support
           var stepsContainerTemplate = this.getContentChildren('#horizontalStepsContainerTemplateSlot')[0];
           // TODO: check for template to be valid
           this.templatize(stepsContainerTemplate);
-          var stampedHorizontalStepContainer = this.stamp();
-          // this.horizontalStepsContainer._nodes[0] is the first node of the template, what's the better way to get it ?
-          Polymer.dom(this.root).appendChild(stampedHorizontalStepContainer.root);
+          var stamped = this.stamp();
+          Polymer.dom(this.root).appendChild(stamped.root);
         // }
-        return stampedHorizontalStepContainer._nodes[0];
+        // this.horizontalStepsContainer._nodes[0] is the first node of the template, what's the better way to get it ?
+        return Polymer.Element ? stamped.root.nodeList[0] : stamped._nodes[0];
       },
 
       //TODO: create a method for getContentChildren
