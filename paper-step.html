@@ -12,7 +12,6 @@ Missing Doc
       :host {
         display: block;
         box-sizing: border-box;
-        /*outline: 0;*/
       }
     </style>
 
@@ -106,19 +105,7 @@ Missing Doc
           type: Boolean,
           readOnly: true,
           reflectToAttribute: true
-        },
-        alternativeLabel: {
-          type: Boolean,
-          value: false
-        },
-        _canSkip: {
-          type: Boolean,
-          readOnly: true
-        },
-        _hasBackStep: {
-          type: Boolean,
-          readOnly: true
-        },
+        }
       },
 
       _instanceProps: {
@@ -134,11 +121,11 @@ Missing Doc
         '_forwardLabelElementProp("selectable", selectable, labelElement)',
         '_forwardLabelElementProp("index", index, labelElement)',
         '_forwardLabelElementProp("saved", saved, labelElement)',
-        '_forwardLabelElementProp("disabled", disabled, labelElement)',
-        '_forwardLabelElementProp("alternativeLabel", alternativeLabel, labelElement)',
+        '_forwardLabelElementProp("disabled", disabled, labelElement)'
       ],
 
       _forwardLabelElementProp(prop, value, labelElement) {
+        console.log(prop, value, labelElement);
         labelElement[prop] = value;
       },
 

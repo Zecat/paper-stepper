@@ -15,6 +15,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <title>Paper-stepper Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../../paper-input/paper-input.html">
+    <link rel="import" href="../../paper-checkbox/paper-checkbox.html">
+    <link rel="import" href="../step-vertical-label.html">
     <link rel="import" href="../paper-stepper.html">
     <link rel="import" href="../paper-stepper-icons.html">
     <link rel="import" href="../paper-vertical-step-collapse.html">
@@ -23,6 +25,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <body unresolved>
 
   <style is="custom-style" include="demo-pages-shared-style">
+    body {
+      margin: 0;
+    }
     paper-stepper {
       --paper-stepper-vertical-responsive-width: 500px;
       box-shadow: none;
@@ -46,11 +51,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <dom-bind>
 <template is="dom-bind" id="scope">
 
+  <paper-checkbox checked="{{alternativeLabel}}"></paper-checkbox>
+
   <paper-stepper
     id="stepper"
     selected="{{selected}}"
     attr-for-selected="name"
+    alternative-label="[[alternativeLabel]]"
   >
+
+  <!-- <template slot="horizontal-step-label-template">
+    <step-vertical-label
+    editable="{{editable}}"
+    label="{{label}}"
+    optional="[[optional]]"
+    opened$="{{opened}}"
+    selectable="[[selectable]]"
+    index="{{index}}"
+    saved="{{saved}}"
+    disabled="[[disabled]]"
+    step="[[step]]"
+    alternative-label="[[alternativeLabel]]"
+    ></step-vertical-label>
+  </template> -->
 
   <template slot="vertical-step-wrapper-template">
     <paper-vertical-step-collapse opened="[[opened]]">
@@ -60,7 +83,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
     <template slot="horizontal-steps-container-template">
-      <iron-pages id="toto" slot="steps-container-template" selected="{{selected}}">
+      <iron-pages
+        id="toto"
+        selected="{{selected}}"
+        attr-for-selected="[[attrForSelected]]">
       </iron-pages>
     </template>
 

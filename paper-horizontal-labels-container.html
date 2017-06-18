@@ -15,7 +15,7 @@
       }
     </style>
 
-    <slot id="labelTemplateSlot" name="label-template">
+    <slot id="labelTemplateSlot" name="horizontal-step-label-template">
       <template>
         <step-horizontal-label
           editable="{{editable}}"
@@ -27,6 +27,7 @@
           saved="{{saved}}"
           disabled="[[disabled]]"
           step="[[step]]"
+          alternative-label="[[alternativeLabel]]"
         ></step-horizontal-label>
       </template>
     </slot>

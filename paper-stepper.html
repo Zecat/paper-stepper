@@ -121,30 +121,34 @@ Custom property | Description | Default
     <!-- Hidden block with width equals to the responsive threshold -->
     <div id="verticalResponsiveWidth"></div>
 
-    <template is="dom-if" if="[[!vertical]]" on-dom-change="_handleHorizontalLabelsContainerDomChange">
+    <template is="dom-if" if="[[!vertical]]" on-dom-change="_handleHorizontalDomChange">
+
       <paper-horizontal-labels-container
         id="horizontalLabelsContainer"
         selected="{{selected}}"
         selected-attribute="opened"
         attr-for-selected="[[attrForSelected]]"
+        alternative-label="{{alternativeLabel}}"
       >
         <slot name="horizontal-step-label-template"></slot>
       </paper-horizontal-labels-container>
+
+      <slot
+        id="horizontalStepsContainerTemplateSlot"
+        name="horizontal-steps-container-template"
+      >
+        <template>
+          <iron-pages
+            selected="{{selected}}"
+            attr-for-selected="[[attrForSelected]]"
+          ></iron-pages>
+        </template>
+      </slot>
+
     </template>
 
-    <slot
-      id="horizontalStepsContainerTemplateSlot"
-      name="horizontal-steps-container-template"
-    >
-      <template>
-        <iron-pages
-          selected="{{selected}}"
-          attr-for-selected="[[attrForSelected]]"
-        ></iron-pages>
-      </template>
-    </slot>
+    <template is="dom-if" if="[[vertical]]" on-dom-change="_handleVerticalDomChange">
 
-    <template is="dom-if" if="[[vertical]]" on-dom-change="_handleVerticalLabelsContainerDomChange">
       <paper-vertical-steps-container
         id="verticalStepsContainer"
         selectable="step-vertical-label"
@@ -154,6 +158,7 @@ Custom property | Description | Default
           slot="vertical-step-label-template"
         ></slot>
       </paper-vertical-steps-container>
+
     </template>
 
   </template>
@@ -214,7 +219,7 @@ Custom property | Description | Default
         },
         stepsSlotContainer: {
           type: HTMLElement,
-          computed: '_computeStepsSlotContainer(verticalStepsContainer, vertical)'
+          computed: '_computeStepsSlotContainer(horizontalStepsContainer, verticalStepsContainer, vertical)'
         },
         stepsSlot: {
           type: HTMLElement,
@@ -224,18 +229,28 @@ Custom property | Description | Default
         },
         horizontalLabelsContainer: {
           type: HTMLElement,
-          value: null
+          computed: '_computeHorizontalLabelsContainer(_horizontalDomStamped)'
+        },
+        horizontalStepsContainer: {
+          type: HTMLElement,
+          computed: '_computeHorizontalStepsContainer(_horizontalDomStamped)'
         },
         verticalStepsContainer: {
           type: HTMLElement,
-          value: null
+          computed: '_computeVerticalStepsContainer(_verticalDomStamped)'
         },
+        _horizontalDomStamped: {
+          type: Boolean,
+          value: false
+        },
+        _verticalDomStamped: {
+          type: Boolean,
+          value: false
+        }
       },
 
       listeners: {
         'iron-items-changed': '_ironItemsChanged',
-        'paper-step-saved': '_stepSaved',
-        'paper-step-unsaved': '_stepUnsaved',
         'iron-resize': '_resizeHandler',
         'paper-stepper-forward': 'skip',
         'paper-stepper-back': 'back',
@@ -244,44 +259,55 @@ Custom property | Description | Default
       },
 
       _handleIronActivate(e) {
+        // If the step is disabled
         if (e.detail.item.disabled) {
+          // Prevent selection
           e.preventDefault();
         }
       },
 
       observers: [
         '_updateHorizontalStepsLabel(horizontalLabelsContainer, vertical, items)',
-        '_updateStepsSlotParent(stepsSlot, stepsSlotContainer)',
+        '_updateStepsSlotParent(stepsSlot, stepsSlotContainer)'
       ],
 
       attached: function() {
         this._responsiveCheck();
       },
 
-      _computeStepsSlotContainer: function(verticalStepsContainer, vertical) {
-        if (!vertical) {
-          return this._getHorizontalStepsContainer();
-        } else if (verticalStepsContainer) {
-          return verticalStepsContainer
+      _handleHorizontalDomChange: function() {
+        if (!this.vertical) {
+          this._horizontalDomStamped = true;
         }
       },
 
-      // TODO: listner on dom-change event could be remove once the element is defined
-      _handleHorizontalLabelsContainerDomChange: function() {
-        if (!this.horizontalLabelsContainer && !this.vertical) {
-          this.horizontalLabelsContainer = this.$$('#horizontalLabelsContainer');
+      _handleVerticalDomChange: function() {
+        if (this.vertical) {
+          this._verticalDomStamped = true;
         }
       },
 
-      // TODO: listner on dom-change event could be remove once the element is defined
-      _handleVerticalLabelsContainerDomChange: function() {
-        if (!this.verticalStepsContainer && this.vertical) {
-          this.verticalStepsContainer = this.$$('#verticalStepsContainer');
-        }
+      _computeStepsSlotContainer: function(horizontalStepsContainer, verticalStepsContainer, vertical) {
+        return vertical ? verticalStepsContainer : horizontalStepsContainer;
+      },
+
+      _computeHorizontalLabelsContainer: function(_horizontalDomStamped) {
+        return _horizontalDomStamped ?
+          this.$$('#horizontalLabelsContainer') : null;
+      },
+
+      _computeHorizontalStepsContainer: function(_horizontalDomStamped) {
+        return _horizontalDomStamped ?
+          this._appendHorizontalStepsContainer() : null;
+      },
+
+      _computeVerticalStepsContainer: function(_verticalDomStamped) {
+        return _verticalDomStamped ?
+          this.$$('#verticalStepsContainer') : null;
       },
 
       _updateHorizontalStepsLabel(horizontalLabelsContainer, vertical, items) {
-        if (!horizontalLabelsContainer) return;
+        if (!horizontalLabelsContainer || !items || vertical == null) return;
         if (!vertical) {
           horizontalLabelsContainer.steps = items;
         } else if (horizontalLabelsContainer.steps) {
@@ -294,27 +320,18 @@ Custom property | Description | Default
           Polymer.dom(stepsSlotContainer).appendChild(stepsSlot);
         }
       },
-
-      _stepSaved: function(e) {
-        this._setSavedStepNumber(this.savedStepNumber+1);
-      },
-
-      _stepUnsaved: function(e) {
-        this._setSavedStepNumber(this.savedStepNumber-1);
-      },
-
-      _getHorizontalStepsContainer() {
-        if (!this._stampedHorizontalStepContainer) {
+      _appendHorizontalStepsContainer() {
+        // if (!this._stampedHorizontalStepContainer) {
           // TODO: only populate if needed
           // TODO: add Polymer 2 support
           var stepsContainerTemplate = this.getContentChildren('#horizontalStepsContainerTemplateSlot')[0];
           // TODO: check for template to be valid
           this.templatize(stepsContainerTemplate);
-          this._stampedHorizontalStepContainer = this.stamp();
-          // this.horizontalStepContainer._nodes[0] is the first node of the template, what's the better way to get it ?
-          Polymer.dom(this.root).appendChild(this._stampedHorizontalStepContainer.root);
-        }
-        return this._stampedHorizontalStepContainer._nodes[0];
+          var stampedHorizontalStepContainer = this.stamp();
+          // this.horizontalStepsContainer._nodes[0] is the first node of the template, what's the better way to get it ?
+          Polymer.dom(this.root).appendChild(stampedHorizontalStepContainer.root);
+        // }
+        return stampedHorizontalStepContainer._nodes[0];
       },
 
       //TODO: create a method for getContentChildren
