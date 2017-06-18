@@ -22,6 +22,27 @@ window.Stepper = window.Stepper || {};
     },
 
     /**
+     * Loops around the steps from the current (if no step opened, from the first one)
+     * in order to open the next selectable unsaved step. Returns true if a step has been opened.
+     */
+    progress: function() {
+      if (!this.items || !this.items.length) {
+        return false;
+      }
+      var stepNumber = this.items.length, selectedIndex = this.indexOf(this.selectedItem), item;
+      for (var i = (selectedIndex+1)%stepNumber; i != selectedIndex; i = (i+1)%stepNumber) {
+        item = this.items[i];
+        if (!item.disabled && !item.saved || item.editable) {
+          this.selectIndex(i);
+          this.fire('paper-stepper-progress');
+          return true;
+        }
+      }
+      return false;
+    },
+
+
+    /**
      * Work around: Override the method from IronSelectableBehavior to only
      * allow the selection of selectable step.
      * See https://github.com/PolymerElements/iron-selector/issues/99

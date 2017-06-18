@@ -16,6 +16,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../../paper-input/paper-input.html">
     <link rel="import" href="../../paper-checkbox/paper-checkbox.html">
+    <link rel="import" href="../../paper-button/paper-button.html">
     <link rel="import" href="../step-vertical-label.html">
     <link rel="import" href="../paper-stepper.html">
     <link rel="import" href="../paper-stepper-icons.html">
@@ -50,9 +51,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   </div>
 
-  <dom-bind>
-<template is="dom-bind" id="scope">
 
+  <dom-bind id="scopeV2">
+<template is="dom-bind" id="scopeV1">
+
+  <paper-button on-tap="progress">Progress</paper-button>
   <paper-checkbox checked="{{alternativeLabel}}"></paper-checkbox>
 
   <paper-stepper
@@ -108,14 +111,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </template>
 </dom-bind>
 <script>
-// var scope = document.getElementById('scope');
-//   document.addEventListener('WebComponentsReady', function() {
-//     setTimeout(function() {
-//       var toto = scope.$.stepper.horizontalLabelsContainer;
-//       scope.selected="step C"
-//       // Polymer.dom(document.getElementById('container')).appendChild(toto);
-//     },0)
-//   })
+  document.addEventListener('WebComponentsReady', function() {
+    var scope = document.getElementById('scope' + (Polymer.Element ? 'V2' : 'V1'));
+    scope.progress = function() {
+      scope.$.stepper.progress();
+    }
+  })
 </script>
   </body>
 </html>
