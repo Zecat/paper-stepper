@@ -27,7 +27,7 @@
       #optional{
         font-size: var(--paper-step-label-optional-text-font-size, 12px);
       }
-      :host([selectable]) #textWrapper {
+      :host(:not([disabled])) #textWrapper {
         color: var(--paper-step-selectable-label-text-color, var(--paper-grey-600));
       }
       :host([opened]) #textLabel {

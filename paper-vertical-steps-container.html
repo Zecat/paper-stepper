@@ -22,7 +22,6 @@
           label="{{label}}"
           optional="[[optional]]"
           opened$="{{opened}}"
-          selectable="[[selectable]]"
           index="{{index}}"
           saved="{{saved}}"
           disabled="[[disabled]]"
@@ -94,7 +93,7 @@
       },
 
       _processRemovedSteps: function(steps) {
-        Array.prototype.forEach.call(steps, this._resetStepInsertion.bind(this));
+        // Array.prototype.forEach.call(steps, this._resetStepInsertion.bind(this));
       },
 
       _filterSteps: function(nodes) {
@@ -112,6 +111,7 @@
 
       _resetStepInsertion: function(step) {
         // step.removeAttribute('slot');
+        // TODO
       },
 
       _handleStepOpenedChanged: function(e) {
@@ -120,16 +120,19 @@
       },
 
       _ensureStepInsertion: function(step) {
+        var slotName = 'vertical-step-' + step.index;
+
+        step.setAttribute('slot', slotName);
+
         // WORKAROUND: This is not the good way to do it
         if (step.verticalStepWrapper) return;
 
         var
           stepContainer = step.verticalStepWrapper = Polymer.Element ?
-           new this.StepTemplateClass({opened: step.opened}): this.stamp({opened: step.opened}),
+            new this.StepTemplateClass({opened: step.opened}): this.stamp({opened: step.opened}),
           stepContainerRoot = stepContainer.root,
           stepContainerChildren = stepContainerRoot.children,
-          slot = this._findSlot(stepContainerChildren),
-          slotName = 'vertical-step-' + step.index;
+          slot = this._findSlot(stepContainerChildren);
 
         if (Polymer.Element) {
           stepContainer.opened = step.opened;
@@ -138,7 +141,6 @@
         if (slot) {
           this._setSlotName(slot, slotName);
         }
-        step.setAttribute('slot', slotName);
         Polymer.dom(this.root).insertBefore(stepContainerRoot, Polymer.dom(step.verticalLabelNode).nextElementSibling);
         this.listen(step, 'opened-changed', '_handleStepOpenedChanged');
 

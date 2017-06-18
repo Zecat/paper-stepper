@@ -70,15 +70,6 @@ Missing Doc
         /**
          * Missing Doc
          */
-        selectable: {
-          type: Boolean,
-          computed: '_computeSelectable(disabled, saved, editable)',
-          reflectToAttribute: true,
-          notify: true
-        },
-        /**
-         * Missing Doc
-         */
         disabled: {
           type: Boolean,
           value: false
@@ -118,7 +109,6 @@ Missing Doc
         '_forwardLabelElementProp("editable", editable, labelElement)',
         '_forwardLabelElementProp("optional", optional, labelElement)',
         '_forwardLabelElementProp("opened", opened, labelElement)',
-        '_forwardLabelElementProp("selectable", selectable, labelElement)',
         '_forwardLabelElementProp("index", index, labelElement)',
         '_forwardLabelElementProp("saved", saved, labelElement)',
         '_forwardLabelElementProp("disabled", disabled, labelElement)'
@@ -187,11 +177,6 @@ Missing Doc
           return true;
         }
         return false;
-      },
-
-      _computeSelectable: function(disabled) {
-        // TODO: factorize the expression
-        return !disabled;
       }
 
     });

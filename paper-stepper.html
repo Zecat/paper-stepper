@@ -253,6 +253,8 @@ Custom property | Description | Default
         }
       },
 
+      _previousSelected: null,
+
       listeners: {
         'iron-items-changed': '_ironItemsChanged',
         'iron-resize': '_resizeHandler',
@@ -321,23 +323,20 @@ Custom property | Description | Default
 
       _updateStepsSlotParent(stepsSlot, stepsSlotContainer) {
         if (stepsSlotContainer && stepsSlot) {
+          this.items.forEach(function(item) {
+            item.slot = "";
+          });
           Polymer.dom(stepsSlotContainer).appendChild(stepsSlot);
         }
       },
       _appendHorizontalStepsContainer() {
-        // if (!this._stampedHorizontalStepContainer) {
-          // TODO: only populate if needed
-          var stepsContainerTemplate = this.getContentChildren('#horizontalStepsContainerTemplateSlot')[0];
-          // TODO: check for template to be valid
-          this.templatize(stepsContainerTemplate);
-          var stamped = this.stamp();
-          Polymer.dom(this.root).appendChild(stamped.root);
-        // }
-        // this.horizontalStepsContainer._nodes[0] is the first node of the template, what's the better way to get it ?
+        var stepsContainerTemplate = this.getContentChildren('#horizontalStepsContainerTemplateSlot')[0];
+        // TODO: check for template to be valid
+        this.templatize(stepsContainerTemplate);
+        var stamped = this.stamp();
+        Polymer.dom(this.root).appendChild(stamped.root);
         return Polymer.Element ? stamped.root.nodeList[0] : stamped._nodes[0];
       },
-
-      //TODO: create a method for getContentChildren
 
       createSlot: function(name) {
         var slot;
@@ -352,22 +351,13 @@ Custom property | Description | Default
       },
 
       _ironItemsChanged: function(e) {
-
         // Ingore events comming from nested childrens
         if (Polymer.dom(e).rootTarget != this) return;
-
-        // TODO: Could be done more efficiently by listening added and removed steps
-
         // Set the steps index
+        // TODO: Could be done more efficiently by listening added and removed steps
         this.items.forEach(function(step, i) {
             step._setIndex(i + 1);
         });
-
-        var savedStepNumber = 0;
-
-        this._setSavedStepNumber(savedStepNumber);
-        // method from IronSelectableBehavior
-        // this._updateSelected();
       },
 
       _resizeHandler: function() {
@@ -389,30 +379,30 @@ Custom property | Description | Default
        * See https://github.com/PolymerElements/iron-selector/issues/99
        */
       _selectSelected: function(selected) {
-        var item = this._valueToItem(this.selected);
-        if (item) {
-          var selectable = item.selectable;
-          if (selectable == undefined) {
-            // if selectable isn't define it means the step is not yet ready for selection
-            // and this method will be recalled by the initialization method.
-            return;
-          } else if (!selectable) {
-            //reset previous selected if non null and selectable or deselect
-            if (this._previousSelected && this._previousSelected.selectable) {
-              this.selected = this._valueForItem(this.previousSelected);
-            } else {
-              this.selected = null;
-            }
-            this._previousSelected = null;
-            return;
-          }
+        if (!this.items) {
+          return;
         }
-        this._selection.select(item);
-        this._previousSelected = item;
+        var item = this._valueToItem(this.selected), disabled = item && item.disabled;
+        if (disabled) {
+          // Reset previous selected if defined and not disabled or deselect
+          this.selected = this._previousSelected && !this._previousSelected.disabled ?
+            this._valueForItem(this.previousSelected) : null;
+          this._previousSelected = null;
+        } else {
+          if (item) {
+            this._selection.select(item);
+          } else {
+            this._selection.clear();
+          }
+          this._previousSelected = item;
+        }
         // Check for items, since this array is populated only when attached
         // Since Number(0) is falsy, explicitly check for undefined
         if (this.fallbackSelection && this.items.length && (this._selection.get() === undefined)) {
-          this.selected = this.fallbackSelection;
+          var fallbackItem = this._valueToItem(this.fallbackSelection);
+          if (!fallbackItem.disabled) {
+            this.selected = this.fallbackSelection;
+          }
         }
       },
 
