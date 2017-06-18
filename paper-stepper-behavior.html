@@ -1,0 +1,64 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-selector/iron-selectable.html">
+
+<script>
+
+window.Stepper = window.Stepper || {};
+
+  /*
+  * @polymerBehavior Stepper.PaperStepperBehavior
+  */
+  Stepper.PaperStepperBehaviorImpl = {
+
+    properties: {
+      selectable: {
+        type: String,
+        value: 'paper-step'
+      },
+      selectedAttribute: {
+        value: 'opened',
+        readOnly: true
+      },
+    },
+
+    /**
+     * Work around: Override the method from IronSelectableBehavior to only
+     * allow the selection of selectable step.
+     * See https://github.com/PolymerElements/iron-selector/issues/99
+     */
+    _selectSelected: function(selected) {
+      if (!this.items) {
+        return;
+      }
+      var item = this._valueToItem(this.selected), disabled = item && item.disabled;
+      if (disabled) {
+        // Reset previous selected if defined and not disabled or deselect
+        this.selected = this._previousSelected && !this._previousSelected.disabled ?
+          this._valueForItem(this.previousSelected) : null;
+        this._previousSelected = null;
+      } else {
+        if (item) {
+          this._selection.select(item);
+        } else {
+          this._selection.clear();
+        }
+        this._previousSelected = item;
+      }
+      // Check for items, since this array is populated only when attached
+      // Since Number(0) is falsy, explicitly check for undefined
+      if (this.fallbackSelection && this.items.length && (this._selection.get() === undefined)) {
+        var fallbackItem = this._valueToItem(this.fallbackSelection);
+        if (!fallbackItem.disabled) {
+          this.selected = this.fallbackSelection;
+        }
+      }
+    },
+
+  };
+
+    /** @polymerBehavior */
+  Stepper.PaperStepperBehavior = [
+    Polymer.IronSelectableBehavior,
+    Stepper.PaperStepperBehaviorImpl
+  ];
+</script>
