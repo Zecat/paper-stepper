@@ -20,7 +20,6 @@
   "dependencies": {
     "polymer": "Polymer/polymer#1.9 - 2",
     "paper-button": "PolymerElements/paper-button#1 - 2",
-    "iron-icons": "PolymerElements/iron-icons#1 - 2",
     "paper-styles": "PolymerElements/paper-styles#1 - 2",
     "paper-ripple": "PolymerElements/paper-ripple#1 - 2",
     "iron-selector": "PolymerElements/iron-selector#1 - 2",
@@ -28,7 +27,8 @@
     "iron-flex-layout": "PolymerElements/iron-flex-layout#1 - 2",
     "iron-collapse": "PolymerElements/iron-collapse#1 - 2",
     "iron-pages": "PolymerElements/iron-pages#1 - 2",
-    "paper-listbox": "PolymerElements/paper-listbox#1 - 2"
+    "paper-listbox": "PolymerElements/paper-listbox#1 - 2",
+    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#1 - 2"
   },
   "devDependencies": {
     "web-component-tester": "^6.0.0",
