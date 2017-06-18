@@ -18,6 +18,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <link rel="import" href="../../paper-toggle-button/paper-toggle-button.html">
     <link rel="import" href="../../paper-input/paper-textarea.html">
     <link rel="import" href="../../paper-styles/shadow.html">
+    <link rel="import" href="../../paper-styles/typography.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-form/iron-form.html">
@@ -159,7 +160,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <p>Steppers display progress through a sequence by breaking it up into multiple logical and numbered steps. They may also be used for navigation.</p>
         <p>Spec recommendation: Avoid using steppers to break up sections in a short form, or multiple times on one page and don’t embed steppers within steppers.</p>
         <p>Start using now <strong>bower install -S Zecat/paper-stepper#v2.0-beta.5</strong></p>
-        <p>Note, it is still a beta release, attributes and methods might change suddenly.</p>  
+        <p>Note, it is still a beta release, attributes and methods might change suddenly.</p>
       </div>
       <div>
         <h2>Configuration</h2>
@@ -291,7 +292,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               --paper-stepper-vertical-responsive-width: 500px;
             }
           </style>
-          
+
           <div id="visualResponsiveWidth"></div>
 
           <paper-stepper id="responsiveStepper" responsive-check-frequence="500">
@@ -461,7 +462,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-step label="step 2" ></paper-step>
           </paper-stepper>
           <paper-toast id="toast"></paper-toast>
-          
+
           <script>
             scope = document.getElementById('eventScope');
             scope.completed = function() { this.$.toast.show('Stepper completed'); }
@@ -497,7 +498,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-step label="step 2" id="step2"></paper-step>
             <paper-step label="step 3"></paper-step>
           </paper-stepper>
-          
+
           <script>
             scope = document.getElementById('methodScope');
             scope.progress = function() { this.$.controledStepper.progress()};
@@ -554,7 +555,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </demo-snippet>
 
       <p>By-product: This demo is made with <a href="https://github.com/Zecat/iron-scroll-spy" target="_blank">iron-scroll-spy</a>, fork!</p>
-      
+
       </div>
       <div>
       <h2>Sandbox</h2>
