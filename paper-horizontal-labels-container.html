@@ -60,8 +60,15 @@
       ],
 
       updateTemplate: function() {
-        var labelTemplateSlot = this.getContentChildren('#labelTemplateSlot')[0];
-        this.templatize(labelTemplateSlot);
+        if (Polymer.Element) {
+          if (!this.LabelTemplateClass) {
+            var labelTemplateSlot = this.getContentChildren('#labelTemplateSlot')[0];
+            this.LabelTemplateClass = Polymer.Templatize.templatize(labelTemplateSlot, this);
+          }
+        } else {
+          var labelTemplateSlot = this.getContentChildren('#labelTemplateSlot')[0];
+          this.templatize(labelTemplateSlot);
+        }
       },
 
       _stepsChanged: function(steps) {
@@ -75,7 +82,11 @@
         var label = step.horizontalLabelNode;
         // TODO: replace the seconde condition with step.horizontalLabelElement == step.labelElement ?
         if (!label || Polymer.dom(label).parentNode != this) {
-          label = step.labelElement = step.horizontalLabelElement = this.stamp({step: step});
+          label = step.labelElement = step.horizontalLabelElement = Polymer.Element ?
+            new this.LabelTemplateClass({step: step}): this.stamp({step: step});
+          if (Polymer.Element) {
+            label.step = step;
+          }
           Polymer.dom(this).appendChild(label.root);
           step.horizontalLabelNode = Polymer.Element ? label.root.nodeList[0] : label._nodes[0];
           step.horizontalLabelNode.style.order = step.index - 1;
