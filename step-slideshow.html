@@ -1,0 +1,121 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-selector/iron-selectable.html">
+
+<!--
+`step-slideshow`
+
+@demo step-slideshow/demo/index.html
+-->
+
+<dom-module id="step-slideshow">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+      #slider {
+        @apply --layout-horizontal;
+      }
+      #slider > ::slotted(*) {
+        min-width: 100%;
+        opacity: 0;
+      }
+      #slider > ::slotted(*.neon-selected:not(.neon-animating)) {
+        opacity: 1;
+      }
+      #slider > ::slotted(*:not(.neon-selected):not(.neon-animating)) {
+        display: none !important;
+      }
+    </style>
+
+    <div id="slider">
+      <slot></slot>
+    </div>
+
+  </template>
+  <script>
+
+    Polymer({
+
+      is: 'step-slideshow',
+
+      properties: {
+        selected: {
+          type: String,
+          notify: true,
+          observer: '_selectedChanged'
+        },
+        selectedItem: {
+          type: Object
+        },
+      },
+
+      previousAnimatedItem: null,
+
+      slideAnimation: null,
+
+      _selectedChanged(newValue, oldValue) {
+        this.debounce('selected-step-changed', function() {
+          var
+            selectedItem = this.selectedItem,
+            oldAnimatedItem = this.previousAnimatedItem;
+
+          selectedItem.classList.add('neon-selected');
+          if (oldAnimatedItem) {
+            oldAnimatedItem.classList.remove('neon-selected');
+          }
+
+          this.previousAnimatedItem = this.selectedItem;
+
+          if (!HTMLElement.prototype.animate) return;
+
+          if (this.slideAnimation) {
+            this.slideAnimation.cancel();
+          }
+
+          if (oldAnimatedItem) {
+            var startXTranslate = 0, endXTranslate = 0;
+
+            // If right direction
+            if (oldAnimatedItem.index - selectedItem.index > 0) {
+              startXTranslate = -100;
+            } else {
+              endXTranslate = -100;
+            }
+            var opacityTiming = {duration: 300};
+            selectedItem.animate([
+              {opacity: 0},
+              {opacity: 1}
+            ], {duration: 300, delay: 200})
+            oldAnimatedItem.animate([
+              {opacity: 1},
+              {opacity: 0}
+            ], {duration: 300})
+
+            selectedItem.classList.add('neon-animating');
+            oldAnimatedItem.classList.add('neon-animating');
+
+            this.slideAnimation = this.$.slider.animate([
+              { transform: 'translateX(' + startXTranslate + '%)' },
+              { transform: 'translateX(' + endXTranslate + '%)' }
+            ], {
+              duration: 500,
+              easing: 'ease-in-out'
+            });
+
+            this.slideAnimation.onfinish = () => {
+              selectedItem.classList.remove('neon-animating');
+              oldAnimatedItem.classList.remove('neon-animating');
+            }
+          }
+
+        }.bind(this), 1);
+      }
+
+    });
+
+  </script>
+</dom-module>

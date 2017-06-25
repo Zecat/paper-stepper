@@ -56,7 +56,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <template is="dom-bind" id="scopeV1">
 
   <paper-button on-tap="progress">Progress</paper-button>
-  <paper-checkbox checked="{{alternativeLabel}}"></paper-checkbox>
+  <paper-checkbox checked="{{alternativeLabel}}">Alternative label</paper-checkbox>
 
   <paper-stepper
     id="stepper"
@@ -72,13 +72,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </paper-vertical-step-collapse>
     </template>
 
-    <template slot="horizontal-steps-container-template">
+    <!-- <template slot="horizontal-steps-container-template">
       <iron-pages
-        id="toto"
         selected="{{selected}}"
         attr-for-selected="[[attrForSelected]]">
       </iron-pages>
-    </template>
+    </template> -->
 
     <paper-step label="step 1" editable name="step A" saved>
       <paper-input label="aaa" value="123">

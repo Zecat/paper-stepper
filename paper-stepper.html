@@ -1,12 +1,12 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
-<link rel="import" href="../iron-pages/iron-pages.html">
 <link rel="import" href="../paper-listbox/paper-listbox.html">
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="paper-step.html">
 <link rel="import" href="paper-stepper-behavior.html">
 <link rel="import" href="paper-horizontal-labels-container.html">
 <link rel="import" href="paper-vertical-steps-container.html">
+<link rel="import" href="step-slideshow.html">
 
 <!--
 Missing Doc
@@ -130,10 +130,7 @@ Custom property | Description | Default
         name="horizontal-steps-container-template"
       >
         <template>
-          <iron-pages
-            selected="{{selected}}"
-            attr-for-selected="[[attrForSelected]]"
-          ></iron-pages>
+          <step-slideshow selected="[[selected]]" selected-item="[[selectedItem]]"></step-slideshow>
         </template>
       </slot>
 
@@ -229,6 +226,10 @@ Custom property | Description | Default
         _verticalDomStamped: {
           type: Boolean,
           value: false
+        },
+        selectedClass: {
+          type: String,
+          value: null
         }
       },
 
