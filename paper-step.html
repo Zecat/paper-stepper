@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
 
 <!--
 Missing Doc
@@ -23,6 +24,10 @@ Missing Doc
     Polymer({
 
       is: 'paper-step',
+
+      behaviors: [
+        Polymer.IronResizableBehavior
+      ],
 
       /**
        * Fired when the step has been saved.
