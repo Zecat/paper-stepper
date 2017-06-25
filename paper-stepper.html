@@ -232,6 +232,8 @@ Custom property | Description | Default
         }
       },
 
+      _horizontalStepsContainerInstance: null,
+
       _previousSelected: null,
 
       listeners: {
@@ -308,16 +310,38 @@ Custom property | Description | Default
           Polymer.dom(stepsSlotContainer).appendChild(stepsSlot);
         }
       },
-      _appendHorizontalStepsContainer() {
+
+      _forwardParentProp: function(prop, value){
+        this._instance[prop] = value;
+      },
+
+      _appendHorizontalStepsContainer: function() {
         if (!Polymer.Element) {
           Polymer.dom.flush();
         }
-        var stepsContainerTemplate = this.getContentChildren('#horizontalStepsContainerTemplateSlot')[0];
+
         // TODO: check for template to be valid
-        this.templatize(stepsContainerTemplate);
-        var stamped = this.stamp();
-        Polymer.dom(this.root).appendChild(stamped.root);
-        return Polymer.Element ? stamped.root.nodeList[0] : stamped._nodes[0];
+        var stepsContainerTemplate = this.getContentChildren('#horizontalStepsContainerTemplateSlot')[0];
+
+        if (Polymer.Element) {
+          var ctor = Polymer.Templatize.templatize(stepsContainerTemplate, this, {
+            forwardHostProp(prop, value) {
+              if(this._horizontalStepsContainerInstance) {
+                this._horizontalStepsContainerInstance.forwardHostProp(prop, value);
+              }
+            }
+          });
+          this._horizontalStepsContainerInstance = new ctor();
+        } else {
+          this.templatize(stepsContainerTemplate);
+          this._horizontalStepsContainerInstance = this.stamp();
+        }
+
+        Polymer.dom(this.root).appendChild(this._horizontalStepsContainerInstance.root);
+
+        return Polymer.Element ?
+          this._horizontalStepsContainerInstance.root.nodeList[0] :
+          this._horizontalStepsContainerInstance._nodes[0];
       },
 
       createSlot: function(name) {
