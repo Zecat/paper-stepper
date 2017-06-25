@@ -309,7 +309,9 @@ Custom property | Description | Default
         }
       },
       _appendHorizontalStepsContainer() {
-        Polymer.dom.flush();
+        if (!Polymer.Element) {
+          Polymer.dom.flush();
+        }
         var stepsContainerTemplate = this.getContentChildren('#horizontalStepsContainerTemplateSlot')[0];
         // TODO: check for template to be valid
         this.templatize(stepsContainerTemplate);
