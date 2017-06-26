@@ -74,6 +74,7 @@
           var previousStep = this.currentStep;
 
           selectedStep.classList.add('neon-selected');
+          selectedStep.notifyResize();
           if (previousStep) {
             previousStep.classList.remove('neon-selected');
           }
