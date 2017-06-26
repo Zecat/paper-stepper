@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../iron-selector/iron-selectable.html">
 
 <!--
 `step-slideshow`
@@ -47,33 +48,37 @@
       ],
 
       properties: {
-        selected: {
-          type: String,
-          notify: true,
-          observer: '_selectedChanged'
-        },
-        selectedItem: {
+        selectedStep: {
           type: Object
-        },
+        }
       },
 
-      previousAnimatedItem: null,
+      observers: [
+        '_selectedStepChanged(selectedStep)'
+      ],
+
+      currentStep: null,
 
       slideAnimation: null,
 
-      _selectedChanged(newValue, oldValue) {
+      _selectedStepChanged(selectedStep) {
+        // Use a debouncer because the selectedItem is undefined between every change.
+        // See https://github.com/PolymerElements/iron-selector/issues/118
         this.debounce('selected-step-changed', function() {
-          var
-            selectedItem = this.selectedItem,
-            oldAnimatedItem = this.previousAnimatedItem;
 
-          selectedItem.classList.add('neon-selected');
-          selectedItem.notifyResize();
-          if (oldAnimatedItem) {
-            oldAnimatedItem.classList.remove('neon-selected');
+          if (!selectedStep) {
+            this.currentStep = null;
+            return;
           }
 
-          this.previousAnimatedItem = this.selectedItem;
+          var previousStep = this.currentStep;
+
+          selectedStep.classList.add('neon-selected');
+          if (previousStep) {
+            previousStep.classList.remove('neon-selected');
+          }
+
+          this.currentStep = selectedStep;
 
           if (!HTMLElement.prototype.animate) return;
 
@@ -81,27 +86,27 @@
             this.slideAnimation.cancel();
           }
 
-          if (oldAnimatedItem) {
+          if (previousStep) {
             var startXTranslate = 0, endXTranslate = 0;
 
             // If right direction
-            if (oldAnimatedItem.index - selectedItem.index > 0) {
+            if (previousStep.index - selectedStep.index > 0) {
               startXTranslate = -100;
             } else {
               endXTranslate = -100;
             }
             var opacityTiming = {duration: 300};
-            selectedItem.animate([
+            selectedStep.animate([
               {opacity: 0},
               {opacity: 1}
             ], {duration: 300, delay: 200})
-            oldAnimatedItem.animate([
+            previousStep.animate([
               {opacity: 1},
               {opacity: 0}
             ], {duration: 300})
 
-            selectedItem.classList.add('neon-animating');
-            oldAnimatedItem.classList.add('neon-animating');
+            selectedStep.classList.add('neon-animating');
+            previousStep.classList.add('neon-animating');
 
             this.slideAnimation = this.$.slider.animate([
               { transform: 'translateX(' + startXTranslate + '%)' },
@@ -112,8 +117,8 @@
             });
 
             this.slideAnimation.onfinish = () => {
-              selectedItem.classList.remove('neon-animating');
-              oldAnimatedItem.classList.remove('neon-animating');
+              selectedStep.classList.remove('neon-animating');
+              previousStep.classList.remove('neon-animating');
             }
           }
 
