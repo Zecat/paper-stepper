@@ -52,6 +52,19 @@
         Polymer.Templatizer
       ],
 
+      /**
+       * The set of excluded elements where the key is the `localName`
+       * of the element that will be ignored from the item list.
+       *
+       * @default {template: 1}
+       */
+      _excludedLocalNames: {
+        'template': true,
+        'dom-bind': true,
+        'dom-if': true,
+        'dom-repeat': true
+      },
+
       attached: function() {
         this._observeItems(this);
       },
@@ -97,7 +110,7 @@
       },
 
       _filterSteps: function(nodes) {
-        return Array.prototype.filter.call(nodes, this.isStep);
+        return Array.prototype.filter.call(nodes, this.isStep.bind(this));
       },
 
       /**
@@ -106,7 +119,7 @@
        * @return {Boolean}          True if the ode is a step.
        */
       isStep: function(node) {
-        return node.localName === 'paper-step';
+        return node.localName && !this._excludedLocalNames[node.localName];
       },
 
       _resetStepInsertion: function(step) {
