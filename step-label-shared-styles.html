@@ -14,7 +14,7 @@
         @apply --layout-flex;
       }
       #textWrapper {
-        color: var(--paper-step-disabled-label-text-color, --paper-grey-400);
+        color: var(--paper-step-disabled-label-text-color, var(--paper-grey-400));
       }
       #textLabel {
         font-size: var(--paper-step-label-text-font-size, 14px);
@@ -23,10 +23,10 @@
         font-size: var(--paper-step-label-optional-text-font-size, 12px);
       }
       :host([selectable]) #textWrapper {
-        color: var(--paper-step-selectable-label-text-color, --paper-grey-600);
+        color: var(--paper-step-selectable-label-text-color, var(--paper-grey-600));
       }
       :host([opened]) #textLabel {
-        color: var(--paper-step-opened-label-text-color, --light-theme-text-color);
+        color: var(--paper-step-opened-label-text-color, var(--light-theme-text-color));
         font-weight: 500;
       }
       #label {
@@ -46,28 +46,28 @@
       #badge {
         width: 24px;
         height: 24px;
-        background: var(--paper-step-badge-background, --paper-grey-300);
+        background: var(--paper-step-badge-background, var(--paper-grey-300));
         border-radius: 50%;
-        color: var(--paper-step-badge-color, --dark-theme-text-color);
+        color: var(--paper-step-badge-color, var(--dark-theme-text-color));
         font-size: 12px;
         @apply --layout;
         @apply --layout-center-center;
       }
       #badge iron-icon {
         --iron-icon-height: var(--paper-step-badge-icon-width, 16px);
-        --iron-icon-width: var(--paper-step-badge-icon-height, 16px);  
+        --iron-icon-width: var(--paper-step-badge-icon-height, 16px);
       }
       :host([opened]) #badge {
-        background: var(--paper-step-opened-badge-background, --primary-color);
+        background: var(--paper-step-opened-badge-background, var(--primary-color));
       }
       :host([saved]) #badge {
-        background: var(--paper-step-saved-badge-background, --primary-color);
+        background: var(--paper-step-saved-badge-background, var(--primary-color));
       }
       :host([selectable]:not([opened]):not([saved])) #label:hover #badge {
-        background: var(--paper-step-selectable-hovered-badge-background, --paper-grey-500);
+        background: var(--paper-step-selectable-hovered-badge-background, var(--paper-grey-500));
       }
       paper-ripple {
-        color: var(--paper-step-ink-color, --paper-grey-400);
+        color: var(--paper-step-ink-color, var(--paper-grey-400));
       }
     </style>
   </template>
