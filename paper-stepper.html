@@ -13,7 +13,7 @@
 <link rel="import" href="animations/fade-in-slide-from-left-animation.html">
 <link rel="import" href="animations/fade-out-slide-left-animation.html">
 <link rel="import" href="paper-step.html">
-<link rel="import" href="../bower_components/neon-animation/web-animation.html">
+<link rel="import" href="../neon-animation/web-animations.html">
 
 <!--
 Missing Doc
@@ -170,10 +170,10 @@ Custom property | Description | Default
         overflow: visible;
       }
     </style>
-    
+
     <!-- Hidden block with width equals to the responsive threshold -->
     <div id="verticalResponsiveWidth"></div>
-    
+
     <!-- This wrapper contains the horizontal stepper header or the full vertical stepper -->
     <div id="content-wrapper">
       <slot></slot>
@@ -454,7 +454,7 @@ Custom property | Description | Default
         }
         event.detail.keyboardEvent.preventDefault();
       },
-      
+
       _onRightKey: function(event) {
         if (this._isRTL) {
           this._focusPrevious();
@@ -677,7 +677,7 @@ Custom property | Description | Default
             savedStepNumber++;
           }
         }.bind(this));
-         
+
         this._setSavedStepNumber(savedStepNumber);
         // method from IronSelectableBehavior
         this._updateSelected();
