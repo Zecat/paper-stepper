@@ -29,7 +29,8 @@
     "neon-animation": "PolymerElements/neon-animation#1 - 2",
     "iron-validatable-behavior": "PolymerElements/iron-validatable-behavior#1 - 2",
     "iron-collapse": "PolymerElements/iron-collapse#1 - 2",
-    "web-animations-js": "web-animations/web-animations-js"
+    "web-animations-js": "web-animations/web-animations-js",
+    "iron-menu-behavior": "PolymerElements/iron-menu-behavior#^2.0.0"
   },
   "devDependencies": {
     "paper-input": "PolymerElements/paper-input#1 - 2",
