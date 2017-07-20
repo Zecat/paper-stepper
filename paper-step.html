@@ -46,7 +46,7 @@ Missing Doc
         pointer-events: auto;
       }
       :host(:focus:not([opened]):not([saved])) step-horizontal-label ::content #badge {
-        background: var(--paper-step-selectable-hovered-badge-background, --paper-grey-500);
+        background: var(--paper-step-selectable-hovered-badge-background, var(--paper-grey-500));
       }
     </style>
 
@@ -87,7 +87,7 @@ Missing Doc
         Polymer.PaperItemBehavior,
         Polymer.PaperRippleBehavior
       ],
-      
+
       /**
        * Fired when the step has been saved.
        *
