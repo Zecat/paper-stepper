@@ -25,15 +25,31 @@ window.Stepper = window.Stepper || {};
       if (!this.items || !this.items.length) {
         return false;
       }
-      var stepNumber = this.items.length, selectedIndex = this.indexOf(this.selectedItem), item;
+
+      var
+        stepNumber = this.items.length,
+        selectedIndex = this.indexOf(this.selectedItem),
+        item,
+        nextEditableStepIndex;
+
       for (var i = (selectedIndex+1)%stepNumber; i != selectedIndex; i = (i+1)%stepNumber) {
         item = this.items[i];
-        if (!item.disabled && !item.saved || item.editable) {
+        if (item.disabled) break;
+        if (!item.saved) {
           this.selectIndex(i);
           this.fire('paper-stepper-progress');
           return true;
+        } else if (item.editable && nextEditableStepIndex === undefined) {
+          nextEditableStepIndex = i;
         }
       }
+
+      if (nextEditableStepIndex !== undefined) {
+        this.selectIndex(nextEditableStepIndex);
+        this.fire('paper-stepper-progress');
+        return true;
+      }
+
       return false;
     },
 
