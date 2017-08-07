@@ -117,10 +117,14 @@
               easing: 'ease-in-out'
             });
 
-            this.slideAnimation.onfinish = () => {
+            removeNeonAnimating = () => {
               selectedStep.classList.remove('neon-animating');
               previousStep.classList.remove('neon-animating');
             }
+
+            this.slideAnimation.onfinish =
+            this.slideAnimation.oncancel = removeNeonAnimating;
+              
           }
 
         }.bind(this), 1);
