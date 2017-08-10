@@ -47,16 +47,16 @@
       }
       :host(:not([alternative-label]):not(:first-of-type))::before,
       :host(:not([alternative-label]):not(:last-of-type))::after,
-      :host([alternative-label]) #badgeWrapper::before,
-      :host([alternative-label]) #badgeWrapper::after  {
+      :host([alternative-label]) #badgeWrapper .before,
+      :host([alternative-label]) #badgeWrapper .after  {
         height: 1px;
         min-width: 16px;
         background: var(--paper-step-connector-line-color, var(--divider-color));
         @apply --layout-flex);
         content: '';
       }
-      :host([alternative-label]:first-of-type) #badgeWrapper::before,
-      :host([alternative-label]:last-of-type) #badgeWrapper::after {
+      :host([alternative-label]:first-of-type) #badgeWrapper .before,
+      :host([alternative-label]:last-of-type) #badgeWrapper .after {
         visibility: hidden;
       }
       :host([alternative-label]) #textWrapper{
@@ -89,10 +89,12 @@
     </style>
 
     <div id="badgeWrapper">
+      <div class="before"></div>
       <div id="badge">
         <iron-icon hidden$="{{!_computeIsIconBadge(icon)}}" icon="{{icon}}"></iron-icon>
         <span hidden$="{{_computeIsIconBadge(icon)}}">{{index}}</span>
       </div>
+      <div class="after"></div>
     </div>
     <div id="textWrapper">
       <span id="textLabel">[[label]]</span>
