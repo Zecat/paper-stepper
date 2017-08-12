@@ -219,12 +219,21 @@ Missing Doc
           type: Boolean,
           value: false
         },
+
+        /* 
+         * `alwaysSelectable` flat to mage sure the step is always selectable.
+         */
+         alwaysSelectable : {
+           type:  Boolean,
+           value: false
+         },  
+
         /**
          * Missing Doc
          */
         selectable: {
           type: Boolean,
-          computed: '_computeSelectable(_stepperData.linear, saved, editable, _previousSaved)',
+          computed: '_computeSelectable(alwaysSelectable, _stepperData.linear, saved, editable, _previousSaved)',
           reflectToAttribute: true,
           notify: true
         },
@@ -477,9 +486,9 @@ Missing Doc
         }.bind(this));
       },
 
-      _computeSelectable: function(linear, saved, editable, previousSaved) {
+      _computeSelectable: function(alwaysSelectable, linear, saved, editable, previousSaved) {
         // TODO: factorize the expression
-        return (!linear || previousSaved) && (!saved || editable) || (editable && saved);
+        return alwaysSelectable || ((!linear || previousSaved) && (!saved || editable) || (editable && saved));
       },
 
       _computeDisabled: function(selectable) {
