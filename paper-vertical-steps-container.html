@@ -144,7 +144,7 @@
           stepContainer = step.verticalStepWrapper = Polymer.Element ?
             new this.StepTemplateClass({opened: step.opened}): this.stamp({opened: step.opened}),
           stepContainerRoot = stepContainer.root,
-          stepContainerChildren = stepContainerRoot.children,
+          stepContainerChildren = stepContainerRoot.childNodes,
           slot = this._findSlot(stepContainerChildren);
 
         if (Polymer.Element) {
@@ -169,7 +169,9 @@
       _findSlot(nodes) {
         var slot, slotLocalName = Polymer.Element ? 'slot' : 'content';
         for (var i = 0; !slot && i < nodes.length; i++) {
-          slot = Polymer.dom(nodes[i]).querySelector(slotLocalName);
+          if (nodes[i].nodeType != Node.TEXT_NODE) {
+            slot = Polymer.dom(nodes[i]).querySelector(slotLocalName);
+          }
         };
         return slot;
       },
