@@ -65,19 +65,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     alternative-label="[[alternativeLabel]]"
   >
 
+    <template slot="vertical-step-label-template">
+      <step-vertical-label
+        editable="[[editable]]"
+        label="[[label]]"
+        optional="[[optional]]"
+        opened$="[[opened]]"
+        index="[[index]]"
+        saved="[[saved]]"
+        disabled="[[disabled]]"
+        step="[[step]]"
+      ></step-vertical-label>
+    </template> 
+
     <template slot="vertical-step-wrapper-template">
       <paper-vertical-step-collapse opened="[[opened]]">
         <slot></slot>
         <h2>toto</h2>
       </paper-vertical-step-collapse>
     </template>
-
-    <!-- <template slot="horizontal-steps-container-template">
-      <iron-pages
-        selected="{{selected}}"
-        attr-for-selected="[[attrForSelected]]">
-      </iron-pages>
-    </template> -->
 
     <paper-step label="step 1" editable name="step A" saved>
       <paper-input label="aaa" value="123">
