@@ -14,6 +14,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>Paper-stepper Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script>
+    /**
+     * HACK
+     * <slot> inside a template throw error in shady DOM since webcomponentsjs#1.0.2,
+     * method `_addAssignedToFlattenedNodes` assumes that its second parameter is an array
+     * but get called with undefined value.
+     *
+     * See https://github.com/webcomponents/shadydom/issues/165
+     */
+      var tmp = ShadowRoot.prototype.c;
+      // Override the method to ensure parameter `b` is defined
+      ShadowRoot.prototype.c = function(a, b) { b && tmp.call(this, a, b) } 
+    </script>
     <link rel="import" href="../../paper-input/paper-input.html">
     <link rel="import" href="../../paper-checkbox/paper-checkbox.html">
     <link rel="import" href="../../paper-button/paper-button.html">
