@@ -57,6 +57,13 @@
         '_selectedStepChanged(selectedStep)'
       ],
 
+      attached() {
+        /* Hack for safari */
+        if (navigator.userAgent.indexOf("Safari") != -1) {
+          this.$.slider.removeAttribute('id');
+        }
+      },
+
       currentStep: null,
 
       slideAnimation: null,

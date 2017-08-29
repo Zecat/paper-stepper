@@ -130,6 +130,22 @@ Custom property | Description | Default
         name="horizontal-steps-container-template"
       >
         <template>
+          <style>
+            /* Hack for safari */
+            step-slideshow {
+              @apply --layout-horizontal;
+            }
+            step-slideshow > ::slotted(*) {
+              min-width: 100%;
+              opacity: 0;
+            }
+            step-slideshow > ::slotted(*.neon-selected:not(.neon-animating)) {
+              opacity: 1;
+            }
+            step-slideshow > ::slotted(*:not(.neon-selected):not(.neon-animating)) {
+              display: none !important;
+            }
+          </style>
           <step-slideshow selected-step="[[selectedItem]]"></step-slideshow>
         </template>
       </slot>
